@@ -1,0 +1,175 @@
+/* components/comment-item/index.wxss */
+
+.comment-wrapper {
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.comment-wrapper:last-child {
+  border-bottom: none;
+}
+
+/* 主评论样式 */
+.comment-main {
+  display: flex;
+  margin-bottom: 20rpx;
+}
+
+.user-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.user-name {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.comment-time {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.comment-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 15rpx;
+  word-break: break-all;
+}
+
+.comment-footer {
+  display: flex;
+  align-items: center;
+}
+
+.comment-action {
+  display: flex;
+  align-items: center;
+  margin-right: 30rpx;
+}
+
+.action-icon {
+  font-size: 28rpx;
+  color: #999;
+  margin-right: 6rpx;
+}
+
+.action-icon.liked {
+  color: #ff4d4f;
+}
+
+.like-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.action-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 回复列表样式 */
+.replies-list {
+  margin-left: 100rpx;
+  margin-top: 10rpx;
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  padding: 15rpx;
+}
+
+.reply-item {
+  display: flex;
+  margin-bottom: 15rpx;
+}
+
+.reply-item:last-child {
+  margin-bottom: 0;
+}
+
+.reply-avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  margin-right: 15rpx;
+  flex-shrink: 0;
+}
+
+.reply-content {
+  flex: 1;
+}
+
+.reply-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6rpx;
+}
+
+.reply-user {
+  font-size: 26rpx;
+  color: #333;
+  font-weight: 500;
+}
+
+.reply-time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+.reply-text {
+  font-size: 26rpx;
+  color: #333;
+  line-height: 1.5;
+  margin-bottom: 10rpx;
+  word-break: break-all;
+}
+
+.reply-target {
+  color: #3cc51f;
+}
+
+.reply-footer {
+  display: flex;
+  align-items: center;
+}
+
+.reply-action {
+  display: flex;
+  align-items: center;
+}
+
+/* 展开更多回复 */
+.show-more-replies {
+  margin-left: 100rpx;
+  margin-top: 10rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.show-more-text {
+  font-size: 24rpx;
+  color: #3cc51f;
+  margin-right: 6rpx;
+}
+
+.show-more-icon {
+  font-size: 20rpx;
+  color: #3cc51f;
+}
