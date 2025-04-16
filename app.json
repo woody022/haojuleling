@@ -1,148 +1,79 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/launch/launch",
-    "pages/authorize/authorize",
-    "pages/activity/activity",
-    "pages/activity-detail/activity-detail",
-    "pages/login/login",
-    "pages/webview/webview",
-    "pages/messages/messages",
-    "pages/profile/profile",
-    "pages/profile/profileSettings/profileSettings",
-    "pages/admin/cloudResources",
-    "pages/get-openid/get-openid",
-    "pages/community/community",
-    "pages/organization/login/index",
-    "pages/organization/register/index",
-    "pages/organization/activityManage/activityManage",
-    "pages/organization/orgCenter/orgCenter",
-    "pages/organization/announcement/announcement",
-    "pages/organization/memberManage/memberManage",
-    "pages/organization/dataAnalysis/dataAnalysis",
-    "pages/organization/settings/settings",
-    "pages/organization/settings/profileSettings/profileSettings",
-    "pages/organization/settings/verificationSettings/verificationSettings",
-    "pages/organization/settings/privacySettings/privacySettings",
-    "pages/organization/settings/notificationSettings/notificationSettings",
-    "pages/organization/settings/activitySettings/activitySettings",
-    "pages/organization/certification/certification",
-    "pages/organization/activityManage/createActivity",
-    "pages/organization/messageCenter/messageCenter",
-    "pages/organization/messageDetail/messageDetail",
-    "pages/feedback/feedback",
-    "pages/about/about",
-    "pages/organization/activityCreate/orgActivityCreate",
+    "pages/activity/list/index",
+    "pages/activity/create/index",
+    "pages/activity/detail/index",
+    "pages/mine/index",
     "pages/utils-demo/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#3B82F6",
+    "navigationBarBackgroundColor": "#3cc51f",
     "navigationBarTitleText": "好聚乐龄",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#f8f8f8"
+    "backgroundColor": "#f7f7f7"
   },
-  "permission": {
-    "scope.userLocation": {
-      "desc": "您的位置信息将用于查看活动地点并提供导航服务"
-    }
-  },
-  "lazyCodeLoading": "requiredComponents",
-  "requiredPrivateInfos": [
-    "chooseAddress",
-    "chooseLocation",
-    "choosePoi",
-    "getLocation",
-    "onLocationChange",
-    "startLocationUpdate",
-    "startLocationUpdateBackground"
-  ],
-  "requiredBackgroundModes": ["audio", "location"],
-  "sitemapLocation": "sitemap.json",
   "tabBar": {
-    "custom": true,
-    "color": "#999999",
-    "selectedColor": "#3B82F6",
-    "backgroundColor": "#FFFFFF",
-    "borderStyle": "white",
+    "color": "#999",
+    "selectedColor": "#3cc51f",
+    "backgroundColor": "#fff",
+    "borderStyle": "black",
     "list": [
       {
         "pagePath": "pages/index/index",
         "text": "首页",
-        "iconPath": "assets/images/tabbar/home.png",
-        "selectedIconPath": "assets/images/tabbar/home-active.png"
+        "iconPath": "images/tabbar/home.png",
+        "selectedIconPath": "images/tabbar/home_selected.png"
       },
       {
-        "pagePath": "pages/activity/activity",
+        "pagePath": "pages/activity/list/index",
         "text": "活动",
-        "iconPath": "assets/images/tabbar/message.png",
-        "selectedIconPath": "assets/images/tabbar/message-active.png"
+        "iconPath": "images/tabbar/activity.png",
+        "selectedIconPath": "images/tabbar/activity_selected.png"
       },
       {
-        "pagePath": "pages/profile/profile",
+        "pagePath": "pages/mine/index",
         "text": "我的",
-        "iconPath": "assets/images/tabbar/profile.png",
-        "selectedIconPath": "assets/images/tabbar/profile-active.png"
-      },
-      {
-        "pagePath": "pages/community/community",
-        "text": "社区",
-        "iconPath": "assets/images/tabbar/hot.png",
-        "selectedIconPath": "assets/images/tabbar/hot-active.png"
+        "iconPath": "images/tabbar/mine.png",
+        "selectedIconPath": "images/tabbar/mine_selected.png"
       }
     ]
   },
-  "plugins": {
-    "WechatSI": {
-      "version": "0.3.6",
-      "provider": "wx069ba97219f66d99"
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于查找附近的活动"
     }
   },
+  "requiredPrivateInfos": [
+    "getLocation"
+  ],
+  "usingComponents": {},
   "subpackages": [
     {
-      "root": "packageActivity",
-      "name": "activity",
+      "root": "packageSocial",
       "pages": [
-        "pages/activityDetail/activityDetail",
-        "pages/activityCreate/activityCreate",
-        "pages/activityList/activityList",
-        "pages/activityJoin/activityJoin",
-        "pages/myActivities/myActivities",
-        "pages/participants/participants",
-        "pages/poster/poster"
+        "pages/friends/index",
+        "pages/chat/index",
+        "pages/groups/index"
       ]
     },
     {
-      "root": "packageAdmin",
-      "name": "admin",
+      "root": "packageHealth",
       "pages": [
-        "pages/index/index",
-        "pages/login/login",
-        "pages/activity/list",
-        "pages/user/list",
-        "pages/setting/index",
-        "pages/setup/setup",
-        "pages/organization/approval"
-      ]
-    },
-    {
-      "root": "packageVip",
-      "name": "vip",
-      "pages": [
-        "pages/vipCenter/vipCenter",
-        "pages/vipBenefits/vipBenefits"
-      ]
-    },
-    {
-      "root": "packageMine",
-      "name": "mine",
-      "pages": [
-        "pages/userInfo/userInfo",
-        "pages/settings/settings",
-        "pages/about/about",
-        "pages/myFavorites/myFavorites",
-        "pages/profile-edit/profile-edit"
+        "pages/record/index",
+        "pages/statistics/index",
+        "pages/tips/index"
       ]
     }
-  ]
+  ],
+  "preloadRule": {
+    "pages/index/index": {
+      "network": "all",
+      "packages": ["packageSocial"]
+    }
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
 }
