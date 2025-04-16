@@ -5,13 +5,13 @@
     <view class="user-info">
       <view class="avatar"></view>
       <view class="user-text">
-        <text class="welcome-text">欢迎回来</text>
-        <text class="profile-link">点击查看个人主页</text>
+        <text class="welcome-text">{{isLogin ? '欢迎回来' : '未登录'}}</text>
+        <text class="profile-link">{{isLogin ? userInfo.nickName || '点击查看个人主页' : '点击登录'}}</text>
       </view>
     </view>
     <view class="message-btn" bindtap="navigateToMessages">
       <text>消息</text>
-      <view class="message-dot" wx:if="{{userInfo.unreadMessageCount > 0}}"></view>
+      <view class="message-dot" wx:if="{{unreadCount > 0}}"></view>
     </view>
   </view>
 
@@ -89,12 +89,12 @@
               <text class="activity-title">{{item.title}}</text>
               <view class="enrollment-info">
                 <text class="enrolled-text">已报名</text>
-                <text class="enrolled-count">{{item.enrollCount}}</text>
+                <text class="enrolled-count">{{item.enrollCount || 0}}</text>
               </view>
             </view>
           </view>
           <view class="activity-bottom">
-            <text class="organizer">{{item.organizer}}</text>
+            <text class="organizer">{{item.organizer || '主办方'}}</text>
             <view class="tag {{item.tag === '热门' ? 'hot-tag' : (item.tag === '推荐' ? 'recommend-tag' : 'new-tag')}}">
               <text>{{item.tag}}</text>
             </view>
@@ -120,12 +120,12 @@
               <text class="activity-title">{{item.title}}</text>
               <view class="enrollment-info">
                 <text class="enrolled-text">已报名</text>
-                <text class="enrolled-count">{{item.enrollCount}}</text>
+                <text class="enrolled-count">{{item.enrollCount || 0}}</text>
               </view>
             </view>
           </view>
           <view class="activity-bottom">
-            <text class="organizer">{{item.organizer}}</text>
+            <text class="organizer">{{item.organizer || '主办方'}}</text>
             <view class="tag {{item.tag === '热门' ? 'hot-tag' : (item.tag === '推荐' ? 'recommend-tag' : 'new-tag')}}">
               <text>{{item.tag}}</text>
             </view>
