@@ -1,48 +1,19 @@
 /* pages/activity/create/index.wxss */
 
-.activity-create-container {
+/* 容器样式 */
+.container {
   padding: 30rpx;
-  background-color: #f8f8f8;
+  padding-top: calc(30rpx + var(--nav-height, 88px));
+  background-color: #f7f7f7;
   min-height: 100vh;
 }
 
-/* 头部样式 */
-.header {
-  margin-bottom: 40rpx;
-}
-
-.title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 10rpx;
-}
-
-.description {
-  font-size: 28rpx;
-  color: #666;
-}
-
 /* 表单样式 */
-.form-container {
-  margin-bottom: 40rpx;
-}
-
-.form-section {
+.form-group {
   background-color: #fff;
   border-radius: 12rpx;
-  padding: 30rpx;
-  margin-bottom: 30rpx;
+  padding: 20rpx;
   box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30rpx;
-  border-left: 8rpx solid #07c160;
-  padding-left: 20rpx;
 }
 
 .form-item {
@@ -53,384 +24,232 @@
   font-size: 28rpx;
   color: #333;
   margin-bottom: 15rpx;
-  display: flex;
-  align-items: center;
-}
-
-.required {
-  color: #e64340;
-  margin-left: 8rpx;
+  font-weight: 500;
 }
 
 .form-input {
   width: 100%;
   height: 80rpx;
-  border: 1rpx solid #ddd;
+  background-color: #f5f7fa;
   border-radius: 8rpx;
   padding: 0 20rpx;
-  box-sizing: border-box;
   font-size: 28rpx;
-  background-color: #fafafa;
+  color: #333;
+  box-sizing: border-box;
 }
 
-.error-text {
-  font-size: 24rpx;
-  color: #e64340;
-  margin-top: 10rpx;
+.form-textarea {
+  width: 100%;
+  height: 240rpx;
+  background-color: #f5f7fa;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+  box-sizing: border-box;
 }
 
-/* 选择器样式 */
-.picker-text {
+.form-picker {
   width: 100%;
   height: 80rpx;
-  border: 1rpx solid #ddd;
+  background-color: #f5f7fa;
   border-radius: 8rpx;
   padding: 0 20rpx;
-  box-sizing: border-box;
   font-size: 28rpx;
-  background-color: #fafafa;
+  color: #333;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.arrow {
+  color: #999;
+  font-size: 24rpx;
+  transform: rotate(90deg);
 }
 
 .placeholder {
   color: #999;
 }
 
-/* 文本区域样式 */
-.textarea-container {
-  position: relative;
-  width: 100%;
-}
-
-.form-textarea {
-  width: 100%;
-  height: 200rpx;
-  border: 1rpx solid #ddd;
-  border-radius: 8rpx;
-  padding: 20rpx;
-  box-sizing: border-box;
-  font-size: 28rpx;
-  background-color: #fafafa;
+.form-tip {
+  font-size: 24rpx;
+  color: #ff4d4f;
+  margin-top: 8rpx;
 }
 
 .textarea-counter {
-  position: absolute;
-  bottom: 10rpx;
-  right: 20rpx;
+  text-align: right;
   font-size: 24rpx;
   color: #999;
+  margin-top: 8rpx;
 }
 
-.textarea-counter.error {
-  color: #e64340;
-}
-
-/* 地点选择样式 */
-.location-input-group {
-  display: flex;
-  align-items: center;
-}
-
-.location-input {
-  flex: 1;
-  margin-right: 20rpx;
-}
-
-.location-btn {
-  width: 180rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  padding: 0;
-  font-size: 28rpx;
-  background-color: #07c160;
-  color: #fff;
-}
-
-.address-text {
-  font-size: 24rpx;
-  color: #666;
-  margin-top: 10rpx;
-  padding: 0 20rpx;
-}
-
-/* 时间选择样式 */
-.time-item {
-  position: relative;
-}
-
-.time-picker {
-  width: 100%;
-}
-
-/* 滑块样式 */
-.slider-item {
-  margin-bottom: 40rpx;
-}
-
-.slider-container {
-  padding: 0 20rpx;
-  margin-top: 20rpx;
-}
-
-/* 标签样式 */
-.tag-input-group {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20rpx;
-}
-
-.tag-input {
-  flex: 1;
-  margin-right: 20rpx;
-}
-
-.tag-btn {
-  width: 120rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  padding: 0;
-  font-size: 28rpx;
-  background-color: #07c160;
-  color: #fff;
-}
-
-.tags-container {
+/* 上传图片样式 */
+.upload-container {
   display: flex;
   flex-wrap: wrap;
-  margin-bottom: 20rpx;
 }
 
-.tag-item {
-  display: flex;
-  align-items: center;
-  background-color: #e6f7f1;
-  padding: 10rpx 20rpx;
-  border-radius: 40rpx;
-  margin-right: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.tag-text {
-  font-size: 26rpx;
-  color: #07c160;
-  margin-right: 10rpx;
-}
-
-.tag-remove {
-  font-size: 28rpx;
-  color: #07c160;
-  font-weight: bold;
-}
-
-/* 图片上传样式 */
-.cover-upload-container {
-  margin-bottom: 20rpx;
-}
-
-.cover-upload-box {
-  width: 100%;
-  height: 320rpx;
-  border: 2rpx dashed #ddd;
-  border-radius: 12rpx;
+.upload-button {
+  width: 200rpx;
+  height: 200rpx;
+  background-color: #f5f7fa;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  background-color: #fafafa;
+  justify-content: center;
+  border-radius: 8rpx;
+  color: #999;
+  font-size: 24rpx;
 }
 
 .upload-icon {
-  font-size: 60rpx;
-  color: #ccc;
-  margin-bottom: 20rpx;
+  font-size: 48rpx;
+  margin-bottom: 10rpx;
 }
 
-.upload-text {
-  font-size: 28rpx;
-  color: #999;
-}
-
-.cover-preview {
-  position: relative;
-  width: 100%;
-  height: 320rpx;
-  border-radius: 12rpx;
-  overflow: hidden;
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-}
-
-.image-remove {
-  position: absolute;
-  top: 10rpx;
-  right: 10rpx;
-  width: 50rpx;
-  height: 50rpx;
-  border-radius: 50%;
-  background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  font-size: 32rpx;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.images-container {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.image-upload-box {
-  width: 200rpx;
-  height: 200rpx;
-  border: 2rpx dashed #ddd;
-  border-radius: 8rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: #fafafa;
-  margin-right: 20rpx;
-  margin-bottom: 20rpx;
-}
-
-.image-preview {
-  position: relative;
+.upload-preview {
   width: 200rpx;
   height: 200rpx;
   border-radius: 8rpx;
+  position: relative;
   overflow: hidden;
-  margin-right: 20rpx;
-  margin-bottom: 20rpx;
 }
 
-.activity-image {
+.upload-preview image {
   width: 100%;
   height: 100%;
 }
 
-/* 开关设置项样式 */
-.switch-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10rpx 0;
-}
-
-.switch-label {
-  font-size: 28rpx;
-  color: #333;
-}
-
-/* 表单操作按钮 */
-.form-actions {
-  display: flex;
-  justify-content: space-between;
-  padding: 20rpx 0 60rpx 0;
-}
-
-.cancel-btn {
-  width: 45%;
-  height: 90rpx;
-  line-height: 90rpx;
-  background-color: #f8f8f8;
-  color: #333;
-  border: 1rpx solid #ddd;
-  font-size: 32rpx;
-}
-
-.submit-btn {
-  width: 45%;
-  height: 90rpx;
-  line-height: 90rpx;
-  background-color: #07c160;
+.upload-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  background-color: rgba(0, 0, 0, 0.5);
   color: #fff;
-  font-size: 32rpx;
-}
-
-.submit-btn.disabled {
-  background-color: #a5e1c0;
-}
-
-/* 时间选择器弹窗样式 */
-.picker-modal {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 999;
-}
-
-.picker-mask {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.picker-content {
-  position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 100%;
-  background-color: #fff;
-  border-radius: 24rpx 24rpx 0 0;
-  overflow: hidden;
-}
-
-.picker-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 30rpx;
-  border-bottom: 1rpx solid #eee;
+  justify-content: center;
+  font-size: 28rpx;
 }
 
-.picker-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #333;
-}
-
-.picker-close {
-  font-size: 40rpx;
-  color: #999;
-}
-
-.time-picker-view {
+/* 位置选择器样式 */
+.location-picker {
   width: 100%;
-  height: 400rpx;
-}
-
-.picker-actions {
-  display: flex;
-  justify-content: space-between;
-  padding: 20rpx 30rpx;
-  border-top: 1rpx solid #eee;
-}
-
-.picker-cancel, 
-.picker-confirm {
-  width: 45%;
   height: 80rpx;
-  line-height: 80rpx;
-  font-size: 30rpx;
+  background-color: #f5f7fa;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
 }
 
-.picker-cancel {
-  background-color: #f8f8f8;
+.location-placeholder {
+  color: #999;
+}
+
+.location-text {
   color: #333;
-  border: 1rpx solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
 }
 
-.picker-confirm {
-  background-color: #07c160;
+.icon-location {
+  font-size: 32rpx;
+  margin-left: 10rpx;
+}
+
+/* 时间选择器按钮样式 */
+.time-picker-trigger {
+  width: 100%;
+  height: 80rpx;
+  background-color: #f5f7fa;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  font-size: 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.time-placeholder {
+  color: #999;
+}
+
+.time-text {
+  color: #333;
+}
+
+.icon-calendar {
+  font-size: 32rpx;
+  margin-left: 10rpx;
+}
+
+/* 提交按钮样式 */
+.form-submit {
+  margin-top: 50rpx;
+  margin-bottom: 30rpx;
+}
+
+.submit-button {
+  width: 100%;
+  height: 88rpx;
+  background-color: #3cc51f;
   color: #fff;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 自定义导航栏 */
+.custom-nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  z-index: 999;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+}
+
+.nav-content {
+  position: absolute;
+  width: 100%;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 0 15rpx;
+}
+
+.nav-back {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-icon {
+  font-size: 36rpx;
+  color: #333;
+}
+
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 32rpx;
+  font-weight: 500;
+  color: #333;
 }
