@@ -1,193 +1,203 @@
 <!-- pages/utils-demo/index.wxml -->
 <view class="container">
   <view class="header">
-    <text class="title">通用工具类示例</text>
-    <view class="description">本页面展示了通用工具类的各项功能</view>
+    <view class="title">工具类功能演示</view>
+    <view class="description">这个页面展示了通用工具类的各种功能使用方法</view>
   </view>
 
-  <!-- 基础功能测试 -->
-  <view class="section">
-    <view class="section-title">基础功能测试</view>
-
+  <scroll-view scroll-y class="content-scroll">
     <!-- isEmpty 测试 -->
-    <view class="test-item">
-      <text class="test-title">isEmpty测试</text>
-      <view class="input-group">
-        <input class="input" bindinput="onInput" placeholder="输入内容测试是否为空" value="{{testInput}}" />
-        <button class="btn" bindtap="testIsEmpty">测试</button>
+    <view class="section">
+      <view class="section-title">isEmpty 空值检测</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" placeholder="输入任意值测试是否为空" model:value="{{isEmptyValue}}" />
+          <button class="btn" bindtap="testIsEmpty">测试</button>
+        </view>
+        <view class="result-box">结果: {{isEmptyResult}}</view>
       </view>
     </view>
 
     <!-- deepClone 测试 -->
-    <view class="test-item">
-      <text class="test-title">deepClone测试</text>
-      <view class="display-box">
-        <text>原对象: {{testObject.name}}, {{testObject.age}}岁</text>
-        <text wx:if="{{clonedObject}}">克隆后: {{clonedObject.name}}, {{clonedObject.age}}岁</text>
+    <view class="section">
+      <view class="section-title">deepClone 深拷贝</view>
+      <view class="test-item">
+        <view class="input-group">
+          <textarea class="textarea" placeholder="输入JSON对象" model:value="{{deepCloneObject}}"></textarea>
+          <button class="btn" bindtap="testDeepClone">测试</button>
+        </view>
+        <view class="result-box">
+          <text>{{deepCloneResult}}</text>
+        </view>
       </view>
-      <button class="btn" bindtap="testDeepClone">深度克隆</button>
     </view>
 
     <!-- merge 测试 -->
-    <view class="test-item">
-      <text class="test-title">merge测试</text>
-      <view class="display-box">
-        <text>原对象: {{testObject.name}}, {{testObject.age}}岁</text>
-        <text wx:if="{{mergedObject}}">合并后: {{mergedObject.name}}, {{mergedObject.age}}岁, {{mergedObject.hobby}}, {{mergedObject.gender}}</text>
+    <view class="section">
+      <view class="section-title">merge 对象合并</view>
+      <view class="test-item">
+        <view class="input-group">
+          <textarea class="textarea" placeholder="目标对象 (JSON)" model:value="{{mergeTarget}}"></textarea>
+          <textarea class="textarea" placeholder="源对象 (JSON)" model:value="{{mergeSource}}"></textarea>
+          <button class="btn" bindtap="testMerge">合并</button>
+        </view>
+        <view class="result-box">
+          <text>{{mergeResult}}</text>
+        </view>
       </view>
-      <button class="btn" bindtap="testMerge">合并对象</button>
     </view>
 
     <!-- formatDate 测试 -->
-    <view class="test-item">
-      <text class="test-title">formatDate测试</text>
-      <view class="display-box">
-        <text wx:if="{{formattedDate}}">格式化时间: {{formattedDate}}</text>
+    <view class="section">
+      <view class="section-title">formatDate 日期格式化</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" placeholder="日期字符串" model:value="{{formatDateValue}}" />
+          <input class="input" placeholder="格式化模板" model:value="{{formatDateFormat}}" />
+          <button class="btn" bindtap="testFormatDate">格式化</button>
+        </view>
+        <view class="result-box">结果: {{formatDateResult}}</view>
       </view>
-      <button class="btn" bindtap="testFormatDate">格式化当前时间</button>
     </view>
 
     <!-- formatNumber 测试 -->
-    <view class="test-item">
-      <text class="test-title">formatNumber测试</text>
-      <view class="display-box">
-        <text wx:if="{{formattedNumber}}">格式化数字: {{formattedNumber}}</text>
+    <view class="section">
+      <view class="section-title">formatNumber 数字格式化</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" type="digit" placeholder="数字" model:value="{{formatNumberValue}}" />
+          <input class="input" type="number" placeholder="小数位数" model:value="{{formatNumberDecimals}}" />
+          <switch checked="{{formatNumberAddCommas}}" bindchange="formatNumberAddCommas = $event.detail.value" />添加千位分隔符
+          <button class="btn" bindtap="testFormatNumber">格式化</button>
+        </view>
+        <view class="result-box">结果: {{formatNumberResult}}</view>
       </view>
-      <button class="btn" bindtap="testFormatNumber">格式化数字</button>
     </view>
 
     <!-- random 测试 -->
-    <view class="test-item">
-      <text class="test-title">random测试</text>
-      <view class="display-box">
-        <text>随机数: {{randomNumber}}</text>
+    <view class="section">
+      <view class="section-title">random 随机数生成</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" type="number" placeholder="最小值" model:value="{{randomMin}}" />
+          <input class="input" type="number" placeholder="最大值" model:value="{{randomMax}}" />
+          <switch checked="{{randomIsInteger}}" bindchange="randomIsInteger = $event.detail.value" />整数
+          <button class="btn" bindtap="testRandom">生成</button>
+        </view>
+        <view class="result-box">结果: {{randomResult}}</view>
       </view>
-      <button class="btn" bindtap="testRandom">生成随机数</button>
     </view>
 
     <!-- randomString 测试 -->
-    <view class="test-item">
-      <text class="test-title">randomString测试</text>
-      <view class="display-box">
-        <text>随机字符串: {{randomString}}</text>
+    <view class="section">
+      <view class="section-title">randomString 随机字符串</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" type="number" placeholder="长度" model:value="{{randomStringLength}}" />
+          <input class="input" placeholder="字符集（可选）" model:value="{{randomStringChars}}" />
+          <button class="btn" bindtap="testRandomString">生成</button>
+        </view>
+        <view class="result-box">结果: {{randomStringResult}}</view>
       </view>
-      <button class="btn" bindtap="testRandomString">生成随机字符串</button>
     </view>
 
     <!-- formatFileSize 测试 -->
-    <view class="test-item">
-      <text class="test-title">formatFileSize测试</text>
-      <view class="display-box">
-        <text>格式化文件大小: {{fileSize}}</text>
-      </view>
-      <button class="btn" bindtap="testFormatFileSize">格式化文件大小</button>
-    </view>
-  </view>
-
-  <!-- 防抖和节流测试 -->
-  <view class="section">
-    <view class="section-title">防抖和节流测试</view>
-    
-    <!-- 防抖测试 -->
-    <view class="test-item">
-      <text class="test-title">防抖测试 (连续点击按钮，只有停止点击1秒后才会触发)</text>
-      <view class="display-box">
-        <text>触发次数: {{debounceCount}}</text>
-        <text wx:if="{{lastTriggerTime}}">最后触发时间: {{lastTriggerTime}}</text>
-      </view>
-      <button class="btn" bindtap="testDebounce">快速点击测试防抖</button>
-    </view>
-
-    <!-- 节流测试 -->
-    <view class="test-item">
-      <text class="test-title">节流测试 (连续点击按钮，每隔1秒才会触发一次)</text>
-      <view class="display-box">
-        <text>触发次数: {{throttleCount}}</text>
-        <text wx:if="{{lastTriggerTime}}">最后触发时间: {{lastTriggerTime}}</text>
-      </view>
-      <button class="btn" bindtap="testThrottle">快速点击测试节流</button>
-    </view>
-  </view>
-
-  <!-- 表单验证测试 -->
-  <view class="section">
-    <view class="section-title">表单验证测试</view>
-    
-    <view class="form">
-      <view class="form-item">
-        <text class="form-label">用户名:</text>
-        <input class="form-input" data-field="username" bindinput="inputChange" placeholder="请输入用户名（至少3个字符）" />
-        <text class="error-text" wx:if="{{formErrors.username}}">{{formErrors.username}}</text>
-      </view>
-      
-      <view class="form-item">
-        <text class="form-label">邮箱:</text>
-        <input class="form-input" data-field="email" bindinput="inputChange" placeholder="请输入邮箱（可选）" />
-        <text class="error-text" wx:if="{{formErrors.email}}">{{formErrors.email}}</text>
-      </view>
-      
-      <view class="form-item">
-        <text class="form-label">手机号:</text>
-        <input class="form-input" data-field="phone" bindinput="inputChange" placeholder="请输入手机号（可选）" />
-        <text class="error-text" wx:if="{{formErrors.phone}}">{{formErrors.phone}}</text>
-      </view>
-      
-      <view class="form-item">
-        <text class="form-label">年龄:</text>
-        <input class="form-input" type="number" data-field="age" bindinput="inputChange" placeholder="请输入年龄（可选）" />
-        <text class="error-text" wx:if="{{formErrors.age}}">{{formErrors.age}}</text>
-      </view>
-      
-      <button class="btn submit-btn" bindtap="submitForm">提交表单</button>
-    </view>
-  </view>
-
-  <!-- 树形结构测试 -->
-  <view class="section">
-    <view class="section-title">树形结构测试</view>
-    
-    <view class="test-item">
-      <text class="test-title">buildTree测试</text>
-      <button class="btn" bindtap="testBuildTree">构建树形结构</button>
-      <scroll-view class="code-box" scroll-y wx:if="{{treeResult}}">
-        <text>{{treeResult}}</text>
-      </scroll-view>
-    </view>
-    
-    <view class="test-item">
-      <text class="test-title">flattenTree测试</text>
-      <button class="btn" bindtap="testFlattenTree">展平树形结构</button>
-      <scroll-view class="code-box" scroll-y wx:if="{{flattenResult}}">
-        <text>{{flattenResult}}</text>
-      </scroll-view>
-    </view>
-    
-    <view class="test-item">
-      <text class="test-title">getTreeNodePath测试</text>
-      <button class="btn" bindtap="testGetTreeNodePath">获取节点路径</button>
-      <view class="display-box" wx:if="{{nodePath}}">
-        <text>节点路径: {{nodePath}}</text>
-      </view>
-    </view>
-  </view>
-
-  <!-- 结果日志 -->
-  <view class="section">
-    <view class="section-title">
-      <text>操作结果</text>
-      <button class="mini-btn" bindtap="clearResults">清空</button>
-    </view>
-    
-    <scroll-view class="result-list" scroll-y>
-      <block wx:for="{{results}}" wx:key="index">
-        <view class="result-item">
-          <view class="result-header">
-            <text class="result-title">{{item.title}}</text>
-            <text class="result-time">{{item.time}}</text>
-          </view>
-          <view class="result-content">{{item.content}}</view>
+    <view class="section">
+      <view class="section-title">formatFileSize 文件大小格式化</view>
+      <view class="test-item">
+        <view class="input-group">
+          <input class="input" type="number" placeholder="字节数" model:value="{{formatFileSizeBytes}}" />
+          <input class="input" type="number" placeholder="小数位数" model:value="{{formatFileSizeDecimals}}" />
+          <button class="btn" bindtap="testFormatFileSize">格式化</button>
         </view>
-      </block>
+        <view class="result-box">结果: {{formatFileSizeResult}}</view>
+      </view>
+    </view>
+
+    <!-- debounce 测试 -->
+    <view class="section">
+      <view class="section-title">debounce 防抖函数</view>
+      <view class="test-item">
+        <view class="input-group">
+          <text class="hint">快速多次点击按钮，防抖函数将在停止点击1秒后执行一次</text>
+          <button class="btn" bindtap="debounceClick">快速点击</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- throttle 测试 -->
+    <view class="section">
+      <view class="section-title">throttle 节流函数</view>
+      <view class="test-item">
+        <view class="input-group">
+          <text class="hint">快速多次点击按钮，节流函数将每1秒最多执行一次</text>
+          <button class="btn" bindtap="throttleClick">快速点击</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 表单验证测试 -->
+    <view class="section">
+      <view class="section-title">表单验证</view>
+      <view class="test-item">
+        <view class="form">
+          <view class="form-item">
+            <input class="input" placeholder="用户名 (至少3个字符)" data-field="username" bindinput="handleInput" value="{{form.username}}" />
+            <text class="error-text" wx:if="{{formErrors.username}}">{{formErrors.username}}</text>
+          </view>
+          <view class="form-item">
+            <input class="input" placeholder="邮箱" data-field="email" bindinput="handleInput" value="{{form.email}}" />
+            <text class="error-text" wx:if="{{formErrors.email}}">{{formErrors.email}}</text>
+          </view>
+          <view class="form-item">
+            <input class="input" placeholder="手机号" data-field="phone" bindinput="handleInput" value="{{form.phone}}" />
+            <text class="error-text" wx:if="{{formErrors.phone}}">{{formErrors.phone}}</text>
+          </view>
+          <button class="btn" bindtap="validateForm">验证表单</button>
+        </view>
+      </view>
+    </view>
+
+    <!-- 树结构相关测试 -->
+    <view class="section">
+      <view class="section-title">树结构操作</view>
+      <view class="test-item">
+        <view class="input-group">
+          <button class="btn" bindtap="testBuildTree">构建树结构</button>
+          <button class="btn" bindtap="testGetTreeNodePath">查找节点路径</button>
+        </view>
+        <view class="result-title">构建树结果:</view>
+        <view class="result-box">
+          <text>{{treeResult}}</text>
+        </view>
+        <view class="result-title">展平树结果:</view>
+        <view class="result-box">
+          <text>{{flattenTreeResult}}</text>
+        </view>
+        <view class="result-title">节点路径结果:</view>
+        <view class="result-box">
+          <text>{{treeNodePath}}</text>
+        </view>
+      </view>
+    </view>
+
+  </scroll-view>
+
+  <!-- 结果记录列表 -->
+  <view class="result-list-container">
+    <view class="result-list-header">
+      <text class="result-list-title">操作记录</text>
+      <button class="btn-small" bindtap="clearResults">清除</button>
+    </view>
+    <scroll-view scroll-y class="result-list">
+      <view class="no-results" wx:if="{{results.length === 0}}">暂无操作记录</view>
+      <view wx:for="{{results}}" wx:key="id" class="result-item">
+        <view class="result-item-header">
+          <text class="result-item-title">{{item.title}}</text>
+          <text class="result-item-time">{{item.time}}</text>
+        </view>
+        <view class="result-item-content">{{item.content}}</view>
+      </view>
     </scroll-view>
   </view>
 </view>
