@@ -1,0 +1,17 @@
+{
+  "name": "haojuleling",
+  "version": "1.0.0",
+  "description": "好聚乐龄 - 老年人社区活动平台",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "微信小程序",
+    "老年人",
+    "社区活动"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "devDependencies": {}
+}

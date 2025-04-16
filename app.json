@@ -1,1 +1,147 @@
-{\n  \"pages\": [\n    \"pages/index/index\",\n    \"pages/launch/launch\",\n    \"pages/authorize/authorize\",\n    \"pages/activity/activity\",\n    \"pages/activity-detail/activity-detail\",\n    \"pages/login/login\",\n    \"pages/webview/webview\",\n    \"pages/messages/messages\",\n    \"pages/profile/profile\",\n    \"pages/profile/profileSettings/profileSettings\",\n    \"pages/admin/cloudResources\",\n    \"pages/get-openid/get-openid\",\n    \"pages/community/community\",\n    \"pages/organization/login/index\",\n    \"pages/organization/register/index\",\n    \"pages/organization/activityManage/activityManage\",\n    \"pages/organization/orgCenter/orgCenter\",\n    \"pages/organization/announcement/announcement\",\n    \"pages/organization/memberManage/memberManage\",\n    \"pages/organization/dataAnalysis/dataAnalysis\",\n    \"pages/organization/settings/settings\",\n    \"pages/organization/settings/profileSettings/profileSettings\",\n    \"pages/organization/settings/verificationSettings/verificationSettings\",\n    \"pages/organization/settings/privacySettings/privacySettings\",\n    \"pages/organization/settings/notificationSettings/notificationSettings\",\n    \"pages/organization/settings/activitySettings/activitySettings\",\n    \"pages/organization/certification/certification\",\n    \"pages/organization/activityManage/createActivity\",\n    \"pages/organization/messageCenter/messageCenter\",\n    \"pages/organization/messageDetail/messageDetail\",\n    \"pages/feedback/feedback\",\n    \"pages/about/about\",\n    \"pages/organization/activityCreate/orgActivityCreate\"\n  ],\n  \"window\": {\n    \"backgroundTextStyle\": \"light\",\n    \"navigationBarBackgroundColor\": \"#3B82F6\",\n    \"navigationBarTitleText\": \"好聚乐龄\",\n    \"navigationBarTextStyle\": \"white\",\n    \"backgroundColor\": \"#f8f8f8\"\n  },\n  \"permission\": {\n    \"scope.userLocation\": {\n      \"desc\": \"您的位置信息将用于查看活动地点并提供导航服务\"\n    }\n  },\n  \"lazyCodeLoading\": \"requiredComponents\",\n  \"requiredPrivateInfos\": [\n    \"chooseAddress\",\n    \"chooseLocation\",\n    \"choosePoi\",\n    \"getLocation\",\n    \"onLocationChange\",\n    \"startLocationUpdate\",\n    \"startLocationUpdateBackground\"\n  ],\n  \"requiredBackgroundModes\": [\"audio\", \"location\"],\n  \"sitemapLocation\": \"sitemap.json\",\n  \"tabBar\": {\n    \"custom\": true,\n    \"color\": \"#999999\",\n    \"selectedColor\": \"#3B82F6\",\n    \"backgroundColor\": \"#FFFFFF\",\n    \"borderStyle\": \"white\",\n    \"list\": [\n      {\n        \"pagePath\": \"pages/index/index\",\n        \"text\": \"首页\",\n        \"iconPath\": \"assets/images/tabbar/home.png\",\n        \"selectedIconPath\": \"assets/images/tabbar/home-active.png\"\n      },\n      {\n        \"pagePath\": \"pages/activity/activity\",\n        \"text\": \"活动\",\n        \"iconPath\": \"assets/images/tabbar/message.png\",\n        \"selectedIconPath\": \"assets/images/tabbar/message-active.png\"\n      },\n      {\n        \"pagePath\": \"pages/profile/profile\",\n        \"text\": \"我的\",\n        \"iconPath\": \"assets/images/tabbar/profile.png\",\n        \"selectedIconPath\": \"assets/images/tabbar/profile-active.png\"\n      },\n      {\n        \"pagePath\": \"pages/community/community\",\n        \"text\": \"社区\",\n        \"iconPath\": \"assets/images/tabbar/hot.png\",\n        \"selectedIconPath\": \"assets/images/tabbar/hot-active.png\"\n      }\n    ]\n  },\n  \"plugins\": {\n    \"WechatSI\": {\n      \"version\": \"0.3.6\",\n      \"provider\": \"wx069ba97219f66d99\"\n    }\n  },\n  \"subpackages\": [\n    {\n      \"root\": \"packageActivity\",\n      \"name\": \"activity\",\n      \"pages\": [\n        \"pages/activityDetail/activityDetail\",\n        \"pages/activityCreate/activityCreate\",\n        \"pages/activityList/activityList\",\n        \"pages/activityJoin/activityJoin\",\n        \"pages/myActivities/myActivities\",\n        \"pages/participants/participants\",\n        \"pages/poster/poster\"\n      ]\n    },\n    {\n      \"root\": \"packageAdmin\",\n      \"name\": \"admin\",\n      \"pages\": [\n        \"pages/index/index\",\n        \"pages/login/login\",\n        \"pages/activity/list\",\n        \"pages/user/list\",\n        \"pages/setting/index\",\n        \"pages/setup/setup\",\n        \"pages/organization/approval\"\n      ]\n    },\n    {\n      \"root\": \"packageVip\",\n      \"name\": \"vip\",\n      \"pages\": [\n        \"pages/vipCenter/vipCenter\",\n        \"pages/vipBenefits/vipBenefits\"\n      ]\n    },\n    {\n      \"root\": \"packageMine\",\n      \"name\": \"mine\",\n      \"pages\": [\n        \"pages/userInfo/userInfo\",\n        \"pages/settings/settings\",\n        \"pages/about/about\",\n        \"pages/myFavorites/myFavorites\",\n        \"pages/profile-edit/profile-edit\"\n      ]\n    }\n  ]\n}
+{
+  "pages": [
+    "pages/index/index",
+    "pages/launch/launch",
+    "pages/authorize/authorize",
+    "pages/activity/activity",
+    "pages/activity-detail/activity-detail",
+    "pages/login/login",
+    "pages/webview/webview",
+    "pages/messages/messages",
+    "pages/profile/profile",
+    "pages/profile/profileSettings/profileSettings",
+    "pages/admin/cloudResources",
+    "pages/get-openid/get-openid",
+    "pages/community/community",
+    "pages/organization/login/index",
+    "pages/organization/register/index",
+    "pages/organization/activityManage/activityManage",
+    "pages/organization/orgCenter/orgCenter",
+    "pages/organization/announcement/announcement",
+    "pages/organization/memberManage/memberManage",
+    "pages/organization/dataAnalysis/dataAnalysis",
+    "pages/organization/settings/settings",
+    "pages/organization/settings/profileSettings/profileSettings",
+    "pages/organization/settings/verificationSettings/verificationSettings",
+    "pages/organization/settings/privacySettings/privacySettings",
+    "pages/organization/settings/notificationSettings/notificationSettings",
+    "pages/organization/settings/activitySettings/activitySettings",
+    "pages/organization/certification/certification",
+    "pages/organization/activityManage/createActivity",
+    "pages/organization/messageCenter/messageCenter",
+    "pages/organization/messageDetail/messageDetail",
+    "pages/feedback/feedback",
+    "pages/about/about",
+    "pages/organization/activityCreate/orgActivityCreate"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#3B82F6",
+    "navigationBarTitleText": "好聚乐龄",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f8f8f8"
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "您的位置信息将用于查看活动地点并提供导航服务"
+    }
+  },
+  "lazyCodeLoading": "requiredComponents",
+  "requiredPrivateInfos": [
+    "chooseAddress",
+    "chooseLocation",
+    "choosePoi",
+    "getLocation",
+    "onLocationChange",
+    "startLocationUpdate",
+    "startLocationUpdateBackground"
+  ],
+  "requiredBackgroundModes": ["audio", "location"],
+  "sitemapLocation": "sitemap.json",
+  "tabBar": {
+    "custom": true,
+    "color": "#999999",
+    "selectedColor": "#3B82F6",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "assets/images/tabbar/home.png",
+        "selectedIconPath": "assets/images/tabbar/home-active.png"
+      },
+      {
+        "pagePath": "pages/activity/activity",
+        "text": "活动",
+        "iconPath": "assets/images/tabbar/message.png",
+        "selectedIconPath": "assets/images/tabbar/message-active.png"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的",
+        "iconPath": "assets/images/tabbar/profile.png",
+        "selectedIconPath": "assets/images/tabbar/profile-active.png"
+      },
+      {
+        "pagePath": "pages/community/community",
+        "text": "社区",
+        "iconPath": "assets/images/tabbar/hot.png",
+        "selectedIconPath": "assets/images/tabbar/hot-active.png"
+      }
+    ]
+  },
+  "plugins": {
+    "WechatSI": {
+      "version": "0.3.6",
+      "provider": "wx069ba97219f66d99"
+    }
+  },
+  "subpackages": [
+    {
+      "root": "packageActivity",
+      "name": "activity",
+      "pages": [
+        "pages/activityDetail/activityDetail",
+        "pages/activityCreate/activityCreate",
+        "pages/activityList/activityList",
+        "pages/activityJoin/activityJoin",
+        "pages/myActivities/myActivities",
+        "pages/participants/participants",
+        "pages/poster/poster"
+      ]
+    },
+    {
+      "root": "packageAdmin",
+      "name": "admin",
+      "pages": [
+        "pages/index/index",
+        "pages/login/login",
+        "pages/activity/list",
+        "pages/user/list",
+        "pages/setting/index",
+        "pages/setup/setup",
+        "pages/organization/approval"
+      ]
+    },
+    {
+      "root": "packageVip",
+      "name": "vip",
+      "pages": [
+        "pages/vipCenter/vipCenter",
+        "pages/vipBenefits/vipBenefits"
+      ]
+    },
+    {
+      "root": "packageMine",
+      "name": "mine",
+      "pages": [
+        "pages/userInfo/userInfo",
+        "pages/settings/settings",
+        "pages/about/about",
+        "pages/myFavorites/myFavorites",
+        "pages/profile-edit/profile-edit"
+      ]
+    }
+  ]
+}

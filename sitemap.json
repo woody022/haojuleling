@@ -1,1 +1,7 @@
-{\n  \"desc\": \"好聚乐龄小程序的索引配置文件\",\n  \"rules\": [\n    {\n      \"action\": \"allow\",\n      \"page\": \"*\"\n    }\n  ]\n}
+{
+  "desc": "关于本站的 sitemap",
+  "rules": [{
+    "action": "allow",
+    "page": "*"
+  }]
+}
