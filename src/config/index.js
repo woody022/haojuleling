@@ -1,96 +1,113 @@
 /**
- * 全局配置文件
- * 根据环境不同可以切换不同的配置
+ * 项目全局配置文件
+ * 包括API接口地址、版本号、请求超时时间等配置
  */
 
-// 环境变量
+// 环境配置
 const ENV = {
-  DEV: 'development',  // 开发环境
-  TEST: 'testing',     // 测试环境
-  PROD: 'production'   // 生产环境
+  DEV: 'development',
+  PROD: 'production'
 };
 
 // 当前环境
-const CUR_ENV = ENV.DEV;
+const CURRENT_ENV = ENV.DEV;
 
-// 各环境API地址配置
-const API_URL = {
-  [ENV.DEV]: 'https://dev-api.example.com',
-  [ENV.TEST]: 'https://test-api.example.com',
-  [ENV.PROD]: 'https://api.example.com'
-};
-
-// CDN地址配置
-const CDN_URL = {
-  [ENV.DEV]: 'https://dev-cdn.example.com',
-  [ENV.TEST]: 'https://test-cdn.example.com',
-  [ENV.PROD]: 'https://cdn.example.com'
-};
-
-// WebSocket地址配置
-const WS_URL = {
-  [ENV.DEV]: 'wss://dev-ws.example.com',
-  [ENV.TEST]: 'wss://test-ws.example.com',
-  [ENV.PROD]: 'wss://ws.example.com'
-};
-
-// 小程序版本信息
-const VERSION = {
-  NUMBER: '1.0.0',  // 版本号
-  BUILD: '20250416'  // 构建号
-};
-
-// 请求配置
-const REQUEST = {
-  TIMEOUT: 10000,  // 请求超时时间（毫秒）
-  RETRY_COUNT: 3,  // 请求失败重试次数
-  RETRY_DELAY: 1000  // 重试间隔时间（毫秒）
-};
-
-// 缓存配置
-const STORAGE = {
-  PREFIX: 'haojuleling_',  // 缓存键前缀
-  TOKEN_KEY: 'token',      // token缓存键
-  USER_INFO_KEY: 'userInfo',  // 用户信息缓存键
-  EXPIRES: {
-    TOKEN: 7 * 24 * 60 * 60 * 1000,  // token过期时间（毫秒）
-    USER_INFO: 7 * 24 * 60 * 60 * 1000,  // 用户信息过期时间（毫秒）
-    COMMON: 24 * 60 * 60 * 1000  // 普通缓存过期时间（毫秒）
-  }
-};
-
-// 分享配置
-const SHARE = {
-  TITLE: '好橘了了 - 您的智能生活助手',
-  IMAGE_URL: '/assets/images/share.png',
-  PATH: '/pages/index/index'
-};
-
-// 第三方服务配置
-const THIRD_PARTY = {
-  MAP: {
-    KEY: 'YOUR_MAP_KEY',  // 地图服务密钥
-    REFERER: 'miniprogram.example.com'  // 域名白名单
+// 基础配置
+const config = {
+  // 项目版本号
+  VERSION: '1.0.0',
+  
+  // 当前环境
+  ENV: CURRENT_ENV,
+  
+  // 是否为开发环境
+  IS_DEV: CURRENT_ENV === ENV.DEV,
+  
+  // 是否为生产环境
+  IS_PROD: CURRENT_ENV === ENV.PROD,
+  
+  // API相关配置
+  API: {
+    // 开发环境API地址
+    DEV_BASE_URL: 'https://dev-api.example.com',
+    
+    // 生产环境API地址
+    PROD_BASE_URL: 'https://api.example.com',
+    
+    // 根据环境获取基础URL
+    get BASE_URL() {
+      return config.IS_DEV ? this.DEV_BASE_URL : this.PROD_BASE_URL;
+    }
   },
-  PUSH: {
-    APP_ID: 'YOUR_PUSH_APP_ID',  // 推送服务APP ID
-    APP_KEY: 'YOUR_PUSH_APP_KEY'  // 推送服务APP KEY
+  
+  // 请求相关配置
+  REQUEST: {
+    // 请求超时时间（毫秒）
+    TIMEOUT: 30000,
+    
+    // 登录过期后是否自动跳转到登录页
+    AUTO_REDIRECT_LOGIN: true,
+    
+    // 是否开启请求日志
+    ENABLE_LOG: true
+  },
+  
+  // 本地存储相关配置
+  STORAGE: {
+    // 存储前缀，避免与其他小程序冲突
+    PREFIX: 'HJL_',
+    
+    // Token存储key
+    TOKEN_KEY: 'TOKEN',
+    
+    // 用户信息存储key
+    USER_INFO_KEY: 'USER_INFO',
+    
+    // 默认缓存时间（7天，单位：毫秒）
+    DEFAULT_EXPIRES: 7 * 24 * 60 * 60 * 1000
+  },
+  
+  // 主题配置
+  THEME: {
+    // 主色调
+    PRIMARY_COLOR: '#1989fa',
+    
+    // 辅助色
+    SUCCESS_COLOR: '#07c160',
+    WARNING_COLOR: '#ff976a',
+    DANGER_COLOR: '#ee0a24',
+    
+    // 文本颜色
+    TEXT_COLOR: '#323233',
+    TEXT_COLOR_LIGHT: '#969799'
+  },
+  
+  // 页面路径配置
+  PAGES: {
+    // 首页
+    HOME: '/pages/index/index',
+    
+    // 登录页
+    LOGIN: '/pages/login/index',
+    
+    // 个人中心页
+    PROFILE: '/pages/profile/index',
+    
+    // 404页面
+    NOT_FOUND: '/pages/notFound/index'
+  },
+  
+  // 分享默认配置
+  SHARE: {
+    // 默认分享标题
+    TITLE: '好橘乐零',
+    
+    // 默认分享图片
+    IMAGE_URL: '/static/images/share.png',
+    
+    // 默认分享路径
+    PATH: '/pages/index/index'
   }
 };
 
-// 导出配置
-export default {
-  ENV,
-  CUR_ENV,
-  IS_DEV: CUR_ENV === ENV.DEV,
-  IS_TEST: CUR_ENV === ENV.TEST,
-  IS_PROD: CUR_ENV === ENV.PROD,
-  API_URL: API_URL[CUR_ENV],
-  CDN_URL: CDN_URL[CUR_ENV],
-  WS_URL: WS_URL[CUR_ENV],
-  VERSION,
-  REQUEST,
-  STORAGE,
-  SHARE,
-  THIRD_PARTY
-};
+export default config;
