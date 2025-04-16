@@ -32,7 +32,8 @@
     "pages/organization/messageDetail/messageDetail",
     "pages/feedback/feedback",
     "pages/about/about",
-    "pages/organization/activityCreate/orgActivityCreate"
+    "pages/organization/activityCreate/orgActivityCreate",
+    "pages/utils-demo/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
