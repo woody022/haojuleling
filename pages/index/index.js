@@ -1,1 +1,202 @@
-// pages/index/index.js\nconst app = getApp();\n\nPage({\n  data: {\n    banners: [], // 轮播图数据\n    activities: [], // 活动列表\n    recommendActivities: [], // 推荐活动\n    nearbyActivities: [], // 附近活动\n    categories: [], // 活动分类\n    loading: true,\n    locationAuth: false,\n    motto: '好聚乐龄，乐享晚年生活',\n    hasUserInfo: false,\n    userInfo: {},\n    canIUseGetUserProfile: false,\n  },\n\n  onLoad() {\n    if (wx.getUserProfile) {\n      this.setData({\n        canIUseGetUserProfile: true\n      });\n    }\n    \n    // 查询活动分类\n    this.getCategories();\n    \n    // 获取轮播图数据\n    this.getBanners();\n    \n    // 检查位置授权状态\n    this.checkLocationAuth();\n    \n    // 获取活动列表\n    this.getActivityList();\n  },\n  \n  onShow() {\n    // 更新 TabBar 选中状态\n    if (typeof this.getTabBar === 'function' && this.getTabBar()) {\n      this.getTabBar().setData({\n        selected: 0\n      });\n    }\n    \n    // 如果全局位置信息已更新，刷新附近活动\n    if (app.globalData.location && this.data.locationAuth) {\n      this.getNearbyActivities();\n    }\n  },\n  \n  // 获取用户信息\n  getUserProfile() {\n    // 推荐使用 wx.getUserProfile 获取用户信息，开发者每次通过该接口获取用户个人信息均需用户确认\n    wx.getUserProfile({\n      desc: '用于完善会员资料', // 声明获取用户个人信息后的用途，后续会展示在弹窗中\n      success: (res) => {\n        console.log('获取用户信息成功:', res);\n        this.setData({\n          userInfo: res.userInfo,\n          hasUserInfo: true\n        });\n        \n        // 保存用户信息到全局和本地存储\n        app.globalData.userInfo = res.userInfo;\n        wx.setStorageSync('userInfo', res.userInfo);\n      },\n      fail: (err) => {\n        console.error('获取用户信息失败:', err);\n      }\n    });\n  },\n  \n  // 获取轮播图数据\n  getBanners() {\n    wx.cloud.callFunction({\n      name: 'banner',\n      data: {\n        action: 'getBanners',\n        position: 'home'\n      },\n      success: res => {\n        console.log('获取轮播图成功:', res);\n        const result = res.result || {};\n        if (result.code === 0) {\n          this.setData({\n            banners: result.data || []\n          });\n        }\n      },\n      fail: err => {\n        console.error('获取轮播图失败:', err);\n      }\n    });\n  },\n  \n  // 获取活动分类\n  getCategories() {\n    wx.cloud.callFunction({\n      name: 'activity',\n      data: {\n        action: 'getCategories'\n      },\n      success: res => {\n        console.log('获取活动分类成功:', res);\n        const result = res.result || {};\n        if (result.code === 0) {\n          this.setData({\n            categories: result.data || []\n          });\n        }\n      },\n      fail: err => {\n        console.error('获取活动分类失败:', err);\n      }\n    });\n  },\n  \n  // 获取活动列表\n  getActivityList() {\n    this.setData({ loading: true });\n    \n    // 获取推荐活动\n    wx.cloud.callFunction({\n      name: 'activity',\n      data: {\n        action: 'getRecommendActivities',\n        limit: 5\n      },\n      success: res => {\n        console.log('获取推荐活动成功:', res);\n        const result = res.result || {};\n        if (result.code === 0) {\n          this.setData({\n            recommendActivities: result.data || [],\n            loading: false\n          });\n        }\n      },\n      fail: err => {\n        console.error('获取推荐活动失败:', err);\n        this.setData({ loading: false });\n      }\n    });\n    \n    // 如果有位置权限，获取附近活动\n    if (this.data.locationAuth && app.globalData.location) {\n      this.getNearbyActivities();\n    }\n  },\n  \n  // 获取附近活动\n  getNearbyActivities() {\n    if (!app.globalData.location) {\n      console.log('位置信息不存在，无法获取附近活动');\n      return;\n    }\n    \n    const { latitude, longitude } = app.globalData.location;\n    \n    wx.cloud.callFunction({\n      name: 'activity',\n      data: {\n        action: 'getNearbyActivities',\n        latitude,\n        longitude,\n        maxDistance: 10000, // 10公里范围内\n        limit: 5\n      },\n      success: res => {\n        console.log('获取附近活动成功:', res);\n        const result = res.result || {};\n        if (result.code === 0) {\n          this.setData({\n            nearbyActivities: result.data || []\n          });\n        }\n      },\n      fail: err => {\n        console.error('获取附近活动失败:', err);\n      }\n    });\n  },\n  \n  // 检查位置授权状态\n  checkLocationAuth() {\n    wx.getSetting({\n      success: res => {\n        const locationAuth = res.authSetting['scope.userLocation'] === true;\n        this.setData({ locationAuth });\n        \n        if (locationAuth) {\n          // 有权限，获取位置信息\n          app.getLocation();\n        }\n      }\n    });\n  },\n  \n  // 点击请求位置权限\n  requestLocationAuth() {\n    wx.showModal({\n      title: '位置授权',\n      content: '请允许小程序获取您的位置信息，以便为您推荐附近的活动',\n      confirmText: '前往设置',\n      cancelText: '暂不授权',\n      success: res => {\n        if (res.confirm) {\n          // 打开设置页面让用户手动授权\n          wx.openSetting({\n            success: result => {\n              const locationAuth = result.authSetting['scope.userLocation'] === true;\n              this.setData({ locationAuth });\n              \n              if (locationAuth) {\n                // 用户同意授权，获取位置信息\n                app.getLocation();\n                \n                // 获取附近活动\n                setTimeout(() => {\n                  this.getNearbyActivities();\n                }, 1000);\n              }\n            }\n          });\n        }\n      }\n    });\n  },\n  \n  // 查看活动详情\n  navigateToDetail(e) {\n    const id = e.currentTarget.dataset.id;\n    wx.navigateTo({\n      url: `/packageActivity/pages/activityDetail/activityDetail?id=${id}`\n    });\n  },\n  \n  // 查看更多活动\n  viewMoreActivities(e) {\n    const type = e.currentTarget.dataset.type || 'all';\n    wx.navigateTo({\n      url: `/packageActivity/pages/activityList/activityList?type=${type}`\n    });\n  },\n  \n  // 查看分类活动\n  viewCategoryActivities(e) {\n    const categoryId = e.currentTarget.dataset.id;\n    const categoryName = e.currentTarget.dataset.name;\n    wx.navigateTo({\n      url: `/packageActivity/pages/activityList/activityList?categoryId=${categoryId}&categoryName=${categoryName}`\n    });\n  },\n  \n  // 轮播图点击事件\n  bannerTap(e) {\n    const banner = this.data.banners[e.currentTarget.dataset.index];\n    if (!banner) return;\n    \n    if (banner.type === 'activity' && banner.activityId) {\n      // 跳转到活动详情\n      wx.navigateTo({\n        url: `/packageActivity/pages/activityDetail/activityDetail?id=${banner.activityId}`\n      });\n    } else if (banner.type === 'url' && banner.url) {\n      // 跳转到 WebView\n      wx.navigateTo({\n        url: `/pages/webview/webview?url=${encodeURIComponent(banner.url)}&title=${banner.title || '详情'}`\n      });\n    }\n  },\n  \n  // 下拉刷新\n  onPullDownRefresh() {\n    // 重新加载数据\n    this.getBanners();\n    this.getActivityList();\n    \n    // 如果有位置权限，重新获取位置和附近活动\n    if (this.data.locationAuth) {\n      app.getLocation();\n      setTimeout(() => {\n        this.getNearbyActivities();\n      }, 1000);\n    }\n    \n    // 延迟停止下拉刷新\n    setTimeout(() => {\n      wx.stopPullDownRefresh();\n    }, 1500);\n  },\n  \n  // 页面上拉触底事件的处理函数\n  onReachBottom() {\n    // 首页默认不处理加载更多\n  },\n  \n  // 分享\n  onShareAppMessage() {\n    return {\n      title: '好聚乐龄 - 专为老年人设计的活动社区',\n      path: '/pages/index/index',\n      imageUrl: '/assets/images/share-cover.png'\n    };\n  }\n});
+const app = getApp();
+const { checkIsLogin, checkAndTipLogin } = require('../../utils/util');
+const api = require('../../api/index');
+const util = require('../../utils/util');
+// 导入路由服务
+const routerService = require('../../common/services/routerService');
+// 导入活动服务
+const activityService = require('../../common/services/activityService');
+
+Page({
+  /**
+   * 页面的初始数据
+   */
+  data: {
+    // 通用数据
+    isLogin: false,
+    userInfo: null,
+    unreadCount: 0,
+    
+    leftActivities: [],
+    rightActivities: [],
+    loading: false,
+    hasMore: true,
+    refreshing: false,
+    page: 1,
+    pageSize: 10,
+    totalCount: 0,
+    isLikeOpeating: false, // 收藏操作中标志
+    showTopBtn: false, // 控制返回顶部按钮显示
+
+    // 热门活动数据
+    hotActivities: [],
+    
+    // 社区活动数据
+    communityActivities: [],
+    
+    // 轮播图当前索引
+    currentBannerIndex: 0,
+    bannerList: [] // 轮播图列表
+  },
+
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    // 初始化用户缓存
+    if (!app.globalData.cachedUsers) {
+      app.globalData.cachedUsers = {};
+    }
+    
+    this.checkLoginStatus();
+    this.loadActivities();
+    this.fetchUserInfo();
+    this.fetchHotActivities(); // 获取热门活动数据
+    this.fetchCommunityActivities(); // 获取社区活动数据
+    this.loadBannerData(); // 加载轮播图数据
+  },
+
+  /**
+   * 生命周期函数--监听页面显示
+   */
+  onShow: function () {
+    // 设置底部菜单选中状态
+    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
+      this.getTabBar().setTabData({
+        selected: 0  // 首页索引
+      });
+    }
+    
+    // 检查登录状态，可能从其他页面登录后返回
+    this.checkLoginStatus();
+    
+    // 刷新未读消息数量
+    this.getUnreadCount();
+    
+    // 检查活动数据是否为空，如果为空则自动刷新
+    if ((this.data.leftActivities.length === 0 && this.data.rightActivities.length === 0) && !this.data.loading) {
+      console.log('活动列表为空，自动刷新');
+      this.loadActivities();
+    }
+
+    // 刷新热门活动数据和社区活动数据
+    this.fetchHotActivities();
+    this.fetchCommunityActivities();
+  },
+
+  /**
+   * 页面相关事件处理函数--监听用户下拉动作
+   */
+  onPullDownRefresh: function () {
+    this.setData({
+      leftActivities: [],
+      rightActivities: [],
+      page: 1,
+      hasMore: true,
+      refreshing: true
+    });
+    
+    this.loadActivities().then(() => {
+      this.setData({
+        refreshing: false
+      });
+    });
+  },
+  
+  /**
+   * 检查登录状态
+   */
+  checkLoginStatus: function() {
+    const isLogin = checkIsLogin();
+    this.setData({
+      isLogin,
+      userInfo: isLogin ? wx.getStorageSync('userInfo') : null
+    });
+  },
+  
+  /**
+   * 获取未读消息数量
+   */
+  getUnreadCount: function() {
+    if (!this.data.isLogin) return;
+    
+    // 从云函数获取未读消息数量
+    wx.cloud.callFunction({
+      name: 'notification',
+      data: {
+        action: 'getUnreadCount'
+      }
+    }).then(res => {
+      if (res.result && res.result.count !== undefined) {
+        this.setData({
+          unreadCount: res.result.count || 0
+        });
+      }
+    }).catch(err => {
+      console.error('获取未读消息数量失败', err);
+    });
+  },
+
+  // 加载活动
+  loadActivities: function() {
+    if (this.data.loading || !this.data.hasMore) return;
+
+    this.setData({ loading: true });
+
+    // 加载首页推荐活动
+    return this.loadRecommendedActivities().then(() => {
+      this.setData({ loading: false });
+    }).catch(err => {
+      console.error('加载活动失败:', err);
+      this.setData({ loading: false });
+      wx.showToast({
+        title: '加载失败，请重试',
+        icon: 'none'
+      });
+    });
+  },
+
+  // 加载推荐活动
+  loadRecommendedActivities: function() {
+    // 构建查询参数
+    const params = {
+      page: this.data.page,
+      pageSize: this.data.pageSize,
+      isRecommend: true,
+      includeCreator: true
+    };
+    
+    // 使用活动服务获取精选活动
+    return activityService.getActivityList(params)
+      .then(res => {
+        console.log('加载推荐活动返回:', res);
+        
+        // 处理返回的活动数据
+        if (res && res.code === 0) {
+          const activities = res.data?.list || [];
+          console.log(`获取到${activities.length}个推荐活动`);
+          
+          // 处理活动数据
+          this.processActivities(activities);
+        } else {
+          console.error('获取推荐活动失败:', res);
+          wx.showToast({
+            title: res?.message || '获取推荐活动失败',
+            icon: 'none'
+          });
+        }
+      })
+      .catch(err => {
+        console.error('加载推荐活动出错:', err);
+        throw err;
+      });
+  },
+
+  // 处理返回的活动数据
+  processActivities: function(activities) {
+    if (!activities || activities.length === 0) {
+      this.setData({ hasMore: false });
+      return;
+    }
+  }
+});
