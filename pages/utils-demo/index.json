@@ -1,9 +1,4 @@
 {
-  "navigationBarTitleText": "工具类演示",
-  "usingComponents": {},
-  "navigationBarBackgroundColor": "#3b7eeb",
-  "navigationBarTextStyle": "white",
-  "backgroundColor": "#f5f5f5",
-  "backgroundTextStyle": "dark",
-  "enablePullDownRefresh": false
+  "navigationBarTitleText": "工具类函数演示",
+  "usingComponents": {}
 }
