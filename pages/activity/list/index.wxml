@@ -1,0 +1,265 @@
+<!-- pages/activity/list/index.wxml -->
+<view class="container">
+  <!-- 顶部筛选栏 -->
+  <view class="filter-bar">
+    <view class="search-box">
+      <icon type="search" size="14" color="#999"></icon>
+      <input 
+        type="text" 
+        placeholder="搜索活动" 
+        placeholder-class="placeholder" 
+        value="{{searchKeyword}}" 
+        bindinput="onSearchInput" 
+        bindconfirm="onSearchConfirm"
+      />
+      <view class="clear-icon {{searchKeyword ? 'visible' : ''}}" bindtap="clearSearch">
+        <icon type="clear" size="14" color="#999"></icon>
+      </view>
+    </view>
+    <view class="filter-tabs">
+      <view 
+        class="tab {{currentFilter === 'all' ? 'active' : ''}}" 
+        data-filter="all" 
+        bindtap="switchFilter"
+      >全部</view>
+      <view 
+        class="tab {{currentFilter === 'ongoing' ? 'active' : ''}}" 
+        data-filter="ongoing" 
+        bindtap="switchFilter"
+      >进行中</view>
+      <view 
+        class="tab {{currentFilter === 'upcoming' ? 'active' : ''}}" 
+        data-filter="upcoming" 
+        bindtap="switchFilter"
+      >即将开始</view>
+      <view 
+        class="tab {{currentFilter === 'ended' ? 'active' : ''}}" 
+        data-filter="ended" 
+        bindtap="switchFilter"
+      >已结束</view>
+    </view>
+    
+    <!-- 高级筛选选项 -->
+    <view class="advanced-filter">
+      <view class="filter-item" bindtap="showCategoryFilter">
+        <text>分类</text>
+        <text class="value">{{selectedCategory || '全部'}}</text>
+        <view class="arrow"></view>
+      </view>
+      <view class="filter-item" bindtap="showDateRangeFilter">
+        <text>时间</text>
+        <text class="value">{{selectedDateRange || '全部'}}</text>
+        <view class="arrow"></view>
+      </view>
+      <view class="filter-item" bindtap="showSortOptions">
+        <text>排序</text>
+        <text class="value">{{sortOption || '默认'}}</text>
+        <view class="arrow"></view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 活动列表 -->
+  <scroll-view 
+    scroll-y="true" 
+    class="activity-list" 
+    bindscrolltolower="loadMoreActivities" 
+    lower-threshold="100"
+    enable-back-to-top="true"
+    refresher-enabled="{{true}}"
+    refresher-threshold="45"
+    refresher-default-style="black"
+    refresher-background="#f7f7f7"
+    refresher-triggered="{{isRefreshing}}"
+    bindrefresherpulling="onPulling"
+    bindrefresherrefresh="onRefresh"
+  >
+    <view wx:if="{{isLoading && activities.length === 0}}" class="loading-container">
+      <view class="loading-spinner"></view>
+      <text class="loading-text">加载中...</text>
+    </view>
+    
+    <view wx:elif="{{activities.length === 0}}" class="empty-container">
+      <image class="empty-image" src="/assets/images/empty-list.png" mode="aspectFit"></image>
+      <text class="empty-text">暂无活动</text>
+      <button class="refresh-btn" bindtap="onRefresh">刷新</button>
+    </view>
+    
+    <block wx:else>
+      <view class="activity-count" wx:if="{{totalCount > 0}}">
+        共找到 {{totalCount}} 个活动
+      </view>
+      
+      <view class="activity-cards">
+        <block wx:for="{{activities}}" wx:key="id">
+          <activity-card 
+            activity="{{item}}" 
+            isFavorite="{{favoriteIds.includes(item.id)}}"
+            bind:click="onActivityClick"
+            bind:favorite="onFavoriteClick"
+            bind:share="onShareClick"
+          />
+        </block>
+      </view>
+      
+      <view wx:if="{{isLoadingMore}}" class="loading-more">
+        <view class="loading-spinner"></view>
+        <text>加载更多...</text>
+      </view>
+      
+      <view wx:if="{{!hasMore && activities.length > 0}}" class="no-more">
+        没有更多活动了
+      </view>
+    </block>
+  </scroll-view>
+  
+  <!-- 悬浮按钮 - 创建活动 -->
+  <view class="floating-btn" bindtap="navigateToCreate">
+    <image src="/assets/images/icons/add.png" mode="aspectFit"></image>
+  </view>
+  
+  <!-- 分类筛选弹窗 -->
+  <view class="filter-popup {{showCategoryPopup ? 'show' : ''}}">
+    <view class="popup-mask" bindtap="hideCategoryFilter"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">选择分类</text>
+        <view class="popup-close" bindtap="hideCategoryFilter">×</view>
+      </view>
+      <view class="popup-body">
+        <view 
+          class="category-item {{selectedCategoryTemp === '' ? 'active' : ''}}" 
+          data-category="" 
+          bindtap="selectCategory"
+        >全部</view>
+        <block wx:for="{{categories}}" wx:key="id">
+          <view 
+            class="category-item {{selectedCategoryTemp === item.name ? 'active' : ''}}" 
+            data-category="{{item.name}}" 
+            bindtap="selectCategory"
+          >{{item.name}}</view>
+        </block>
+      </view>
+      <view class="popup-footer">
+        <button class="reset-btn" bindtap="resetCategory">重置</button>
+        <button class="confirm-btn" bindtap="confirmCategory">确定</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 时间筛选弹窗 -->
+  <view class="filter-popup {{showDateRangePopup ? 'show' : ''}}">
+    <view class="popup-mask" bindtap="hideDateRangeFilter"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">选择时间范围</text>
+        <view class="popup-close" bindtap="hideDateRangeFilter">×</view>
+      </view>
+      <view class="popup-body">
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === '' ? 'active' : ''}}" 
+          data-range="" 
+          bindtap="selectDateRange"
+        >全部时间</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'today' ? 'active' : ''}}" 
+          data-range="today" 
+          bindtap="selectDateRange"
+        >今天</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'tomorrow' ? 'active' : ''}}" 
+          data-range="tomorrow" 
+          bindtap="selectDateRange"
+        >明天</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'weekend' ? 'active' : ''}}" 
+          data-range="weekend" 
+          bindtap="selectDateRange"
+        >本周末</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'week' ? 'active' : ''}}" 
+          data-range="week" 
+          bindtap="selectDateRange"
+        >本周</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'month' ? 'active' : ''}}" 
+          data-range="month" 
+          bindtap="selectDateRange"
+        >本月</view>
+        <view 
+          class="date-range-item {{selectedDateRangeTemp === 'custom' ? 'active' : ''}}" 
+          data-range="custom" 
+          bindtap="selectDateRange"
+        >自定义</view>
+        
+        <view class="custom-date-range" wx:if="{{selectedDateRangeTemp === 'custom'}}">
+          <view class="date-picker">
+            <text>开始日期</text>
+            <picker 
+              mode="date" 
+              value="{{startDate}}" 
+              start="{{minDate}}" 
+              end="{{maxDate}}" 
+              bindchange="onStartDateChange"
+            >
+              <view class="picker-value">{{startDate || '请选择'}}</view>
+            </picker>
+          </view>
+          <view class="date-picker">
+            <text>结束日期</text>
+            <picker 
+              mode="date" 
+              value="{{endDate}}" 
+              start="{{startDate || minDate}}" 
+              end="{{maxDate}}" 
+              bindchange="onEndDateChange"
+            >
+              <view class="picker-value">{{endDate || '请选择'}}</view>
+            </picker>
+          </view>
+        </view>
+      </view>
+      <view class="popup-footer">
+        <button class="reset-btn" bindtap="resetDateRange">重置</button>
+        <button class="confirm-btn" bindtap="confirmDateRange">确定</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 排序选项弹窗 -->
+  <view class="filter-popup {{showSortPopup ? 'show' : ''}}">
+    <view class="popup-mask" bindtap="hideSortOptions"></view>
+    <view class="popup-content">
+      <view class="popup-header">
+        <text class="popup-title">排序方式</text>
+        <view class="popup-close" bindtap="hideSortOptions">×</view>
+      </view>
+      <view class="popup-body">
+        <view 
+          class="sort-item {{sortOptionTemp === 'default' ? 'active' : ''}}" 
+          data-sort="default" 
+          bindtap="selectSortOption"
+        >默认排序</view>
+        <view 
+          class="sort-item {{sortOptionTemp === 'newest' ? 'active' : ''}}" 
+          data-sort="newest" 
+          bindtap="selectSortOption"
+        >最新发布</view>
+        <view 
+          class="sort-item {{sortOptionTemp === 'popular' ? 'active' : ''}}" 
+          data-sort="popular" 
+          bindtap="selectSortOption"
+        >人气优先</view>
+        <view 
+          class="sort-item {{sortOptionTemp === 'startingSoon' ? 'active' : ''}}" 
+          data-sort="startingSoon" 
+          bindtap="selectSortOption"
+        >即将开始</view>
+      </view>
+      <view class="popup-footer">
+        <button class="reset-btn" bindtap="resetSortOption">重置</button>
+        <button class="confirm-btn" bindtap="confirmSortOption">确定</button>
+      </view>
+    </view>
+  </view>
+</view>
