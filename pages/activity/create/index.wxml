@@ -1,208 +1,192 @@
 <!-- pages/activity/create/index.wxml -->
 <view class="activity-create-container">
   <view class="header">
-    <text class="title">{{isEdit ? '编辑活动' : '创建活动'}}</text>
-    <text class="description">填写活动信息，让更多人了解你的活动</text>
+    <view class="title">创建新活动</view>
+    <view class="description">创建一个新的活动，与志同道合的朋友一起参与</view>
   </view>
-  
-  <form bindsubmit="submitForm">
+
+  <view class="form-container">
     <!-- 基本信息部分 -->
-    <view class="section">
+    <view class="form-section">
       <view class="section-title">基本信息</view>
       
       <view class="form-item">
-        <text class="label required">活动标题</text>
-        <view class="input-container">
-          <input class="input" value="{{title}}" bindinput="onTitleInput" placeholder="请输入活动标题" maxlength="50" />
-          <view class="error-text" wx:if="{{errors.title}}">{{errors.title}}</view>
-        </view>
+        <view class="form-label">活动标题<text class="required">*</text></view>
+        <input class="form-input" placeholder="请输入活动标题（5-30个字符）" maxlength="30" value="{{title}}" bindinput="onTitleInput" />
+        <view class="error-text" wx:if="{{errors.title}}">{{errors.title}}</view>
       </view>
       
       <view class="form-item">
-        <text class="label required">活动类型</text>
-        <view class="input-container">
-          <picker class="picker" mode="selector" range="{{typeOptions}}" value="{{typeIndex}}" bindchange="onTypeChange">
-            <view class="picker-content">
-              <text wx:if="{{type}}">{{type}}</text>
-              <text wx:else class="placeholder">请选择活动类型</text>
-              <text class="picker-arrow">></text>
-            </view>
-          </picker>
-          <view class="error-text" wx:if="{{errors.type}}">{{errors.type}}</view>
-        </view>
+        <view class="form-label">活动类型<text class="required">*</text></view>
+        <picker mode="selector" range="{{activityTypes}}" bindchange="onTypeChange">
+          <view class="picker-text {{type ? '' : 'placeholder'}}">
+            {{type || '请选择活动类型'}}
+          </view>
+        </picker>
+        <view class="error-text" wx:if="{{errors.type}}">{{errors.type}}</view>
       </view>
       
       <view class="form-item">
-        <text class="label">活动描述</text>
-        <view class="input-container">
-          <textarea class="textarea" value="{{description}}" bindinput="onDescriptionInput" placeholder="请输入活动描述" maxlength="{{maxDescriptionLength}}" />
-          <view class="textarea-counter">{{descriptionCount}}/{{maxDescriptionLength}}</view>
+        <view class="form-label">活动描述<text class="required">*</text></view>
+        <view class="textarea-container">
+          <textarea class="form-textarea" placeholder="请详细描述活动内容、亮点、注意事项等（10-500个字符）" maxlength="{{maxDescriptionLength}}" value="{{description}}" bindinput="onDescriptionInput"></textarea>
+          <view class="textarea-counter {{descriptionLength > maxDescriptionLength ? 'error' : ''}}">{{descriptionLength}}/{{maxDescriptionLength}}</view>
         </view>
+        <view class="error-text" wx:if="{{errors.description}}">{{errors.description}}</view>
       </view>
     </view>
     
     <!-- 时间地点部分 -->
-    <view class="section">
+    <view class="form-section">
       <view class="section-title">时间地点</view>
       
       <view class="form-item">
-        <text class="label required">活动地点</text>
-        <view class="input-container">
-          <view class="location-input">
-            <input class="input" value="{{address}}" bindinput="onAddressInput" placeholder="请输入活动地点" />
-            <button class="location-btn" bindtap="chooseLocation">定位</button>
+        <view class="form-label">活动地点<text class="required">*</text></view>
+        <view class="location-input-group">
+          <input class="form-input location-input" placeholder="请输入活动地点" value="{{location}}" bindinput="onLocationInput" />
+          <button class="location-btn" bindtap="chooseLocation">选择位置</button>
+        </view>
+        <view class="address-text" wx:if="{{address}}">{{address}}</view>
+        <view class="error-text" wx:if="{{errors.location}}">{{errors.location}}</view>
+      </view>
+      
+      <view class="form-item time-item">
+        <view class="form-label">开始时间<text class="required">*</text></view>
+        <view class="time-picker" bindtap="showTimePicker" data-type="start">
+          <view class="picker-text {{startTime ? '' : 'placeholder'}}">
+            {{startTime || '请选择开始时间'}}
           </view>
-          <view class="error-text" wx:if="{{errors.address}}">{{errors.address}}</view>
+        </view>
+        <view class="error-text" wx:if="{{errors.startTime}}">{{errors.startTime}}</view>
+      </view>
+      
+      <view class="form-item time-item">
+        <view class="form-label">结束时间<text class="required">*</text></view>
+        <view class="time-picker" bindtap="showTimePicker" data-type="end">
+          <view class="picker-text {{endTime ? '' : 'placeholder'}}">
+            {{endTime || '请选择结束时间'}}
+          </view>
+        </view>
+        <view class="error-text" wx:if="{{errors.endTime}}">{{errors.endTime}}</view>
+      </view>
+    </view>
+    
+    <!-- 参与人数部分 -->
+    <view class="form-section">
+      <view class="section-title">参与人数</view>
+      
+      <view class="form-item slider-item">
+        <view class="form-label">最少参与人数</view>
+        <view class="slider-container">
+          <slider min="2" max="50" value="{{minParticipants}}" show-value block-size="24" activeColor="#07c160" bindchange="onMinParticipantsChange" />
         </view>
       </view>
       
-      <view class="form-item">
-        <text class="label required">开始时间</text>
-        <view class="input-container">
-          <view class="date-picker" bindtap="showDatePicker" data-type="start">
-            <text>{{startDate}} {{startTime}}</text>
-            <text class="picker-arrow">></text>
-          </view>
-          <view class="error-text" wx:if="{{errors.startTime}}">{{errors.startTime}}</view>
-        </view>
-      </view>
-      
-      <view class="form-item">
-        <text class="label required">结束时间</text>
-        <view class="input-container">
-          <view class="date-picker" bindtap="showDatePicker" data-type="end">
-            <text>{{endDate}} {{endTime}}</text>
-            <text class="picker-arrow">></text>
-          </view>
-          <view class="error-text" wx:if="{{errors.endTime}}">{{errors.endTime}}</view>
-        </view>
-      </view>
-      
-      <view class="form-item">
-        <text class="label">人数限制</text>
-        <view class="input-container">
-          <input class="input" type="number" value="{{maxParticipants}}" bindinput="onMaxParticipantsInput" placeholder="不填则不限制人数" />
-          <view class="error-text" wx:if="{{errors.maxParticipants}}">{{errors.maxParticipants}}</view>
+      <view class="form-item slider-item">
+        <view class="form-label">最多参与人数</view>
+        <view class="slider-container">
+          <slider min="{{minParticipants}}" max="100" value="{{maxParticipants}}" show-value block-size="24" activeColor="#07c160" bindchange="onMaxParticipantsChange" />
         </view>
       </view>
     </view>
     
     <!-- 标签部分 -->
-    <view class="section">
+    <view class="form-section">
       <view class="section-title">活动标签</view>
       
       <view class="form-item">
-        <text class="label">添加标签</text>
-        <view class="input-container">
-          <view class="tag-input-container">
-            <input class="input tag-input" value="{{tagInput}}" bindinput="onTagInput" placeholder="输入标签后点击添加" />
-            <button class="tag-add-btn" bindtap="addTag">添加</button>
-          </view>
-          
-          <view class="tags-container" wx:if="{{tags.length > 0}}">
-            <view class="tag-item" wx:for="{{tags}}" wx:key="index">
-              <text>{{item}}</text>
-              <text class="tag-remove" bindtap="removeTag" data-index="{{index}}">×</text>
-            </view>
-          </view>
+        <view class="form-label">添加标签（最多5个）</view>
+        <view class="tag-input-group">
+          <input class="form-input tag-input" placeholder="输入标签后点击添加" value="{{tagInput}}" bindinput="onTagInput" />
+          <button class="tag-btn" bindtap="addTag">添加</button>
+        </view>
+      </view>
+      
+      <view class="tags-container" wx:if="{{tags.length > 0}}">
+        <view class="tag-item" wx:for="{{tags}}" wx:key="index">
+          <text class="tag-text">{{item}}</text>
+          <text class="tag-remove" bindtap="removeTag" data-index="{{index}}">×</text>
         </view>
       </view>
     </view>
     
-    <!-- 图片部分 -->
-    <view class="section">
+    <!-- 图片上传部分 -->
+    <view class="form-section">
       <view class="section-title">活动图片</view>
       
       <view class="form-item">
-        <text class="label required">封面图片</text>
-        <view class="input-container">
-          <view class="image-picker-container">
-            <view class="cover-image-container" wx:if="{{coverImage}}" bindtap="chooseCoverImage">
-              <image class="cover-image" src="{{coverImage}}" mode="aspectFill"></image>
-              <view class="image-remove" catchtap="removeCoverImage">×</view>
-            </view>
-            <view class="image-picker" wx:else bindtap="chooseCoverImage">
-              <text class="image-picker-icon">+</text>
-              <text class="image-picker-text">上传封面</text>
-            </view>
+        <view class="form-label">封面图片<text class="required">*</text></view>
+        <view class="cover-upload-container">
+          <view class="cover-upload-box" bindtap="chooseCoverImage" wx:if="{{!coverImage}}">
+            <view class="upload-icon">+</view>
+            <view class="upload-text">上传封面图片</view>
           </view>
-          <view class="error-text" wx:if="{{errors.coverImage}}">{{errors.coverImage}}</view>
+          <view class="cover-preview" wx:else>
+            <image src="{{coverImage}}" mode="aspectFill" class="cover-image"></image>
+            <view class="image-remove" bindtap="removeCoverImage">×</view>
+          </view>
         </view>
+        <view class="error-text" wx:if="{{errors.coverImage}}">{{errors.coverImage}}</view>
       </view>
       
       <view class="form-item">
-        <text class="label">活动图片</text>
-        <view class="input-container">
-          <view class="image-list">
-            <view class="image-item" wx:for="{{activityImages}}" wx:key="index">
-              <image class="activity-image" src="{{item}}" mode="aspectFill"></image>
-              <view class="image-remove" catchtap="removeImage" data-index="{{index}}">×</view>
-            </view>
-            
-            <view class="image-picker" wx:if="{{activityImages.length < 9}}" bindtap="chooseActivityImage">
-              <text class="image-picker-icon">+</text>
-              <text class="image-picker-text">添加图片</text>
-            </view>
+        <view class="form-label">活动图片（最多9张）</view>
+        <view class="images-container">
+          <view class="image-upload-box" bindtap="chooseActivityImages" wx:if="{{activityImages.length < maxImageCount}}">
+            <view class="upload-icon">+</view>
+            <view class="upload-text">上传图片</view>
           </view>
-          <text class="image-tip">最多上传9张活动图片</text>
+          <view class="image-preview" wx:for="{{activityImages}}" wx:key="index">
+            <image src="{{item}}" mode="aspectFill" class="activity-image"></image>
+            <view class="image-remove" bindtap="removeActivityImage" data-index="{{index}}">×</view>
+          </view>
         </view>
       </view>
     </view>
     
     <!-- 设置部分 -->
-    <view class="section">
+    <view class="form-section">
       <view class="section-title">活动设置</view>
       
-      <view class="form-item">
-        <text class="label">公开活动</text>
-        <view class="input-container">
-          <switch checked="{{isPublic}}" bindchange="togglePublic" color="#3cc51f" />
-          <text class="switch-text">{{isPublic ? '所有人可见' : '仅邀请可见'}}</text>
-        </view>
+      <view class="form-item switch-item">
+        <view class="switch-label">仅对好友可见</view>
+        <switch checked="{{isPrivate}}" bindchange="togglePrivate" color="#07c160" />
+      </view>
+      
+      <view class="form-item switch-item">
+        <view class="switch-label">加入需要审核</view>
+        <switch checked="{{needsReview}}" bindchange="toggleReview" color="#07c160" />
       </view>
     </view>
-    
-    <!-- 提交按钮 -->
-    <view class="submit-container">
-      <button class="submit-btn" form-type="submit" loading="{{isSubmitting}}" disabled="{{isSubmitting}}">
-        {{isEdit ? '保存修改' : '创建活动'}}
-      </button>
-    </view>
-  </form>
+  </view>
+  
+  <view class="form-actions">
+    <button class="cancel-btn" bindtap="onCancel">取消</button>
+    <button class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submitForm" disabled="{{submitting}}">
+      {{submitting ? '创建中...' : '创建活动'}}
+    </button>
+  </view>
 </view>
 
-<!-- 日期时间选择器弹窗 -->
-<view class="date-picker-modal" wx:if="{{showDatePicker}}">
-  <view class="date-picker-mask" bindtap="closeDatePicker"></view>
-  <view class="date-picker-content">
-    <view class="date-picker-header">
-      <text class="date-picker-title">选择{{datePickerType === 'start' ? '开始' : '结束'}}时间</text>
-      <text class="date-picker-close" bindtap="closeDatePicker">×</text>
+<!-- 时间选择器弹窗 -->
+<view class="picker-modal" wx:if="{{showStartPicker || showEndPicker}}">
+  <view class="picker-mask" bindtap="cancelDatePicker"></view>
+  <view class="picker-content">
+    <view class="picker-header">
+      <view class="picker-title">{{pickerTitle}}</view>
+      <view class="picker-close" bindtap="cancelDatePicker">×</view>
     </view>
-    
-    <picker-view class="picker-view" value="{{datePickerValue}}" bindchange="onDatePickerChange">
-      <!-- 日期时间选择器内容 -->
-      <!-- 注意：这里简化处理，实际项目中需要完整实现日期时间选择器 -->
+    <picker-view class="time-picker-view" value="{{pickerValue}}" bindchange="onPickerChange">
       <picker-view-column>
-        <!-- 年份列 -->
+        <!-- 日期选项 -->
       </picker-view-column>
       <picker-view-column>
-        <!-- 月份列 -->
-      </picker-view-column>
-      <picker-view-column>
-        <!-- 日期列 -->
-      </picker-view-column>
-      <picker-view-column>
-        <!-- 小时列 -->
-      </picker-view-column>
-      <picker-view-column>
-        <!-- 分钟列 -->
+        <!-- 时间选项 -->
       </picker-view-column>
     </picker-view>
-    
-    <view class="date-picker-footer">
-      <button class="cancel-btn" bindtap="closeDatePicker">取消</button>
-      <button class="confirm-btn" bindtap="confirmDatePicker">确定</button>
+    <view class="picker-actions">
+      <button class="picker-cancel" bindtap="cancelDatePicker">取消</button>
+      <button class="picker-confirm" bindtap="confirmDatePicker">确认</button>
     </view>
   </view>
 </view>
