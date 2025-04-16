@@ -1,0 +1,390 @@
+/* pages/activity/create/index.wxss */
+
+.container {
+  padding: 0 0 120rpx;
+  background-color: #f7f7f7;
+}
+
+.header {
+  padding: 40rpx 30rpx;
+  background-color: #ffffff;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+.description {
+  font-size: 28rpx;
+  color: #888888;
+}
+
+.form-wrapper {
+  padding: 0 30rpx;
+}
+
+.form-section {
+  margin-top: 30rpx;
+  padding: 30rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+  margin-bottom: 30rpx;
+  position: relative;
+  padding-left: 20rpx;
+}
+
+.section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8rpx;
+  height: 32rpx;
+  width: 8rpx;
+  background-color: #07c160;
+  border-radius: 4rpx;
+}
+
+.form-item {
+  margin-bottom: 30rpx;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+.required::after {
+  content: '*';
+  color: #ff4d4f;
+  margin-left: 8rpx;
+}
+
+.form-input {
+  width: 100%;
+  height: 88rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+.form-textarea {
+  width: 100%;
+  height: 240rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  padding: 24rpx;
+  font-size: 28rpx;
+  color: #333333;
+  box-sizing: border-box;
+}
+
+.textarea-counter {
+  text-align: right;
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 8rpx;
+}
+
+.picker-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.placeholder {
+  color: #999999;
+}
+
+.picker-arrow {
+  width: 16rpx;
+  height: 16rpx;
+  border-right: 2rpx solid #999;
+  border-bottom: 2rpx solid #999;
+  transform: rotate(45deg);
+}
+
+.tags-input-container {
+  display: flex;
+  margin-bottom: 20rpx;
+}
+
+.tags-input {
+  flex: 1;
+  height: 88rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx 0 0 8rpx;
+  padding: 0 24rpx;
+  font-size: 28rpx;
+}
+
+.tag-add-btn {
+  width: 160rpx;
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #07c160;
+  color: #ffffff;
+  font-size: 28rpx;
+  border-radius: 0 8rpx 8rpx 0;
+  text-align: center;
+  padding: 0;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.tag-item {
+  height: 64rpx;
+  line-height: 64rpx;
+  padding: 0 20rpx;
+  background-color: #e6f7ef;
+  color: #07c160;
+  font-size: 26rpx;
+  border-radius: 32rpx;
+  margin-right: 16rpx;
+  margin-bottom: 16rpx;
+  display: flex;
+  align-items: center;
+}
+
+.tag-remove {
+  margin-left: 12rpx;
+  font-size: 32rpx;
+  height: 40rpx;
+  width: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tags-placeholder {
+  font-size: 26rpx;
+  color: #999999;
+  margin-bottom: 16rpx;
+}
+
+.image-section {
+  margin-bottom: 30rpx;
+}
+
+.cover-uploader {
+  margin-bottom: 20rpx;
+}
+
+.cover-image {
+  width: 100%;
+  height: 360rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.cover-image image {
+  width: 100%;
+  height: 100%;
+}
+
+.upload-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-add {
+  font-size: 60rpx;
+  color: #999999;
+  line-height: 1;
+}
+
+.upload-text {
+  font-size: 28rpx;
+  color: #999999;
+  margin-top: 10rpx;
+}
+
+.cover-tip, .image-tip {
+  font-size: 24rpx;
+  color: #999999;
+  margin-top: 10rpx;
+}
+
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-item, .image-uploader {
+  width: 220rpx;
+  height: 220rpx;
+  background-color: #f5f5f5;
+  border-radius: 8rpx;
+  margin-right: 15rpx;
+  margin-bottom: 15rpx;
+  overflow: hidden;
+  position: relative;
+}
+
+.image-item:nth-child(3n), .image-uploader:nth-child(3n) {
+  margin-right: 0;
+}
+
+.image-item image {
+  width: 100%;
+  height: 100%;
+}
+
+.image-remove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+}
+
+.image-uploader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.switch-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+
+.switch-tip {
+  font-size: 24rpx;
+  color: #999999;
+}
+
+.submit-section {
+  margin-top: 60rpx;
+}
+
+.submit-btn {
+  width: 100%;
+  height: 88rpx;
+  line-height: 88rpx;
+  background-color: #07c160;
+  color: #ffffff;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+  text-align: center;
+}
+
+.submit-btn.loading {
+  opacity: 0.7;
+}
+
+/* 日期时间选择器 */
+.date-picker-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 1000;
+}
+
+.date-picker-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.date-picker-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 24rpx 24rpx 0 0;
+  overflow: hidden;
+}
+
+.date-picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.date-picker-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.date-picker-close {
+  font-size: 40rpx;
+  color: #999999;
+  width: 60rpx;
+  height: 60rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.date-picker-footer {
+  display: flex;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #f0f0f0;
+}
+
+.date-picker-cancel,
+.date-picker-confirm {
+  flex: 1;
+  height: 88rpx;
+  line-height: 88rpx;
+  text-align: center;
+  font-size: 32rpx;
+  border-radius: 44rpx;
+}
+
+.date-picker-cancel {
+  margin-right: 20rpx;
+  background-color: #f5f5f5;
+  color: #666666;
+}
+
+.date-picker-confirm {
+  background-color: #07c160;
+  color: #ffffff;
+}
