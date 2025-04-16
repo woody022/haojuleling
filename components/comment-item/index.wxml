@@ -1,0 +1,66 @@
+<!-- components/comment-item/index.wxml -->
+<view class="comment-wrapper">
+  <!-- 主评论 -->
+  <view class="comment-main">
+    <image class="user-avatar" src="{{comment.userAvatar}}" mode="aspectFill"></image>
+    
+    <view class="comment-content">
+      <view class="comment-header">
+        <text class="user-name">{{comment.userName}}</text>
+        <text class="comment-time">{{comment.createTime}}</text>
+      </view>
+      
+      <view class="comment-text">{{comment.content}}</view>
+      
+      <view class="comment-footer">
+        <view class="comment-action" bindtap="onLike">
+          <text class="action-icon {{isLiked ? 'liked' : ''}}">👍</text>
+          <text class="like-count">{{likeCount}}</text>
+        </view>
+        
+        <view class="comment-action" bindtap="onReply">
+          <text class="action-icon">↩️</text>
+          <text class="action-text">回复</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 回复列表 -->
+  <view class="replies-list" wx:if="{{comment.replies && comment.replies.length > 0}}">
+    <view class="reply-item" wx:for="{{comment.replies}}" wx:key="id">
+      <image class="reply-avatar" src="{{item.userAvatar}}" mode="aspectFill"></image>
+      
+      <view class="reply-content">
+        <view class="reply-header">
+          <text class="reply-user">{{item.userName}}</text>
+          <text class="reply-time">{{item.createTime}}</text>
+        </view>
+        
+        <view class="reply-text">
+          <text wx:if="{{item.targetUserName}}" class="reply-target">回复 {{item.targetUserName}}：</text>
+          {{item.content}}
+        </view>
+        
+        <view class="reply-footer">
+          <view class="reply-action" data-index="{{index}}" bindtap="onReplyToReply">
+            <text class="action-icon">↩️</text>
+            <text class="action-text">回复</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 展开更多回复 -->
+  <view class="show-more-replies" wx:if="{{comment.replies && comment.replies.length > 3 && !showAllReplies}}" bindtap="toggleReplies">
+    <text class="show-more-text">展开{{comment.replies.length - 3}}条回复</text>
+    <text class="show-more-icon">▼</text>
+  </view>
+  
+  <!-- 收起回复 -->
+  <view class="show-more-replies" wx:if="{{comment.replies && comment.replies.length > 3 && showAllReplies}}" bindtap="toggleReplies">
+    <text class="show-more-text">收起回复</text>
+    <text class="show-more-icon">▲</text>
+  </view>
+</view>
