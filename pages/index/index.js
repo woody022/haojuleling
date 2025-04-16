@@ -1,585 +1,346 @@
-const app = getApp();
-const { checkIsLogin, checkAndTipLogin } = require('../../utils/util');
-const api = require('../../api/index');
-const util = require('../../utils/util');
-// 导入路由服务
-const routerService = require('../../common/services/routerService');
-// 导入活动服务
-const activityService = require('../../common/services/activityService');
+// pages/index/index.js
+const app = getApp()
 
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    // 通用数据
-    isLogin: false,
-    userInfo: null,
-    unreadCount: 0,
+    // 定位信息
+    location: {
+      name: '北京市海淀区',
+      latitude: 39.9,
+      longitude: 116.3
+    },
     
-    leftActivities: [],
-    rightActivities: [],
-    loading: false,
-    hasMore: true,
-    refreshing: false,
-    page: 1,
-    pageSize: 10,
-    totalCount: 0,
-    isLikeOpeating: false, // 收藏操作中标志
-    showTopBtn: false, // 控制返回顶部按钮显示
-
-    // 热门活动数据
-    hotActivities: [],
+    // 轮播图数据
+    banners: [
+      {
+        id: 1,
+        imageUrl: '/images/banner/banner1.jpg',
+        linkUrl: '/pages/activity/detail/index?id=1'
+      },
+      {
+        id: 2,
+        imageUrl: '/images/banner/banner2.jpg',
+        linkUrl: '/pages/activity/detail/index?id=2'
+      },
+      {
+        id: 3,
+        imageUrl: '/images/banner/banner3.jpg',
+        linkUrl: '/pages/activity/detail/index?id=3'
+      }
+    ],
     
-    // 社区活动数据
-    communityActivities: [],
+    // 活动类型
+    activityTypes: [
+      { id: 1, name: '运动健身', icon: '/images/activity/sports.png' },
+      { id: 2, name: '户外探险', icon: '/images/activity/outdoor.png' },
+      { id: 3, name: '志愿服务', icon: '/images/activity/volunteer.png' },
+      { id: 4, name: '文化艺术', icon: '/images/activity/culture.png' },
+      { id: 5, name: '教育学习', icon: '/images/activity/education.png' },
+      { id: 6, name: '社交聚会', icon: '/images/activity/social.png' },
+      { id: 7, name: '其他', icon: '/images/activity/other.png' },
+      { id: 8, name: '更多', icon: '/images/activity/more.png' }
+    ],
     
-    // 轮播图当前索引
-    currentBannerIndex: 0,
-    bannerList: [] // 轮播图列表
+    // 热门活动
+    hotActivities: [
+      {
+        id: 1,
+        title: '周末太极拳学习班',
+        coverImage: '/images/activity/taichi.jpg',
+        startTime: '2023-06-10 09:00',
+        address: '北京市海淀区中关村公园',
+        participantsCount: 28,
+        status: '报名中'
+      },
+      {
+        id: 2,
+        title: '老年人数码产品使用指导',
+        coverImage: '/images/activity/digital.jpg',
+        startTime: '2023-06-12 14:00',
+        address: '北京市朝阳区望京社区中心',
+        participantsCount: 15,
+        status: '报名中'
+      },
+      {
+        id: 3,
+        title: '社区花艺培训',
+        coverImage: '/images/activity/flower.jpg',
+        startTime: '2023-06-15 10:00',
+        address: '北京市西城区德胜社区',
+        participantsCount: 20,
+        status: '已结束'
+      }
+    ],
+    
+    // 推荐活动
+    recommendActivities: [
+      {
+        id: 4,
+        title: '健康讲座：中老年常见疾病预防',
+        coverImage: '/images/activity/health.jpg',
+        startTime: '2023-06-18 15:00',
+        address: '北京市海淀区五道口医院',
+        participantsCount: 42,
+        status: '报名中'
+      },
+      {
+        id: 5,
+        title: '书法爱好者交流会',
+        coverImage: '/images/activity/calligraphy.jpg',
+        startTime: '2023-06-20 09:30',
+        address: '北京市东城区文化馆',
+        participantsCount: 18,
+        status: '报名中'
+      },
+      {
+        id: 6,
+        title: '社区老年人棋牌比赛',
+        coverImage: '/images/activity/chess.jpg',
+        startTime: '2023-06-25 13:00',
+        address: '北京市丰台区花乡社区',
+        participantsCount: 32,
+        status: '报名中'
+      }
+    ]
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    // 初始化用户缓存
-    if (!app.globalData.cachedUsers) {
-      app.globalData.cachedUsers = {};
-    }
+  onLoad() {
+    // 获取定位
+    this.getLocation()
     
-    this.checkLoginStatus();
-    this.loadActivities();
-    this.fetchUserInfo();
-    this.fetchHotActivities(); // 获取热门活动数据
-    this.fetchCommunityActivities(); // 获取社区活动数据
-    this.loadBannerData(); // 加载轮播图数据
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-    // 设置底部菜单选中状态
-    if (typeof this.getTabBar === 'function' && this.getTabBar()) {
-      this.getTabBar().setTabData({
-        selected: 0  // 首页索引
-      });
-    }
+    // 获取轮播图数据
+    this.getBanners()
     
-    // 检查登录状态，可能从其他页面登录后返回
-    this.checkLoginStatus();
+    // 获取活动类型
+    this.getActivityTypes()
     
-    // 刷新未读消息数量
-    this.getUnreadCount();
+    // 获取热门活动
+    this.getHotActivities()
     
-    // 检查活动数据是否为空，如果为空则自动刷新
-    if ((this.data.leftActivities.length === 0 && this.data.rightActivities.length === 0) && !this.data.loading) {
-      console.log('活动列表为空，自动刷新');
-      this.loadActivities();
-    }
-
-    // 刷新热门活动数据和社区活动数据
-    this.fetchHotActivities();
-    this.fetchCommunityActivities();
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-    this.setData({
-      leftActivities: [],
-      rightActivities: [],
-      page: 1,
-      hasMore: true,
-      refreshing: true
-    });
-    
-    this.loadActivities().then(() => {
-      this.setData({
-        refreshing: false
-      });
-      wx.stopPullDownRefresh();
-    }).catch(() => {
-      this.setData({
-        refreshing: false
-      });
-      wx.stopPullDownRefresh();
-    });
+    // 获取推荐活动
+    this.getRecommendActivities()
   },
   
-  /**
-   * 页面上拉触底事件处理函数
-   */
-  onReachBottom: function () {
-    // 如果还有更多数据且不在加载中，加载下一页
-    if (this.data.hasMore && !this.data.loading) {
-      this.loadMoreActivities();
-    }
-  },
-  
-  /**
-   * 加载更多活动
-   */
-  loadMoreActivities: function() {
-    // 增加页码
-    this.setData({
-      page: this.data.page + 1
-    });
+  // 获取定位
+  getLocation() {
+    const that = this
     
-    // 加载数据
-    this.loadActivities();
-  },
-  
-  /**
-   * 检查登录状态
-   */
-  checkLoginStatus: function() {
-    const isLogin = checkIsLogin();
-    this.setData({
-      isLogin,
-      userInfo: isLogin ? wx.getStorageSync('userInfo') : null
-    });
-    
-    // 同步到全局数据
-    if (app.globalData) {
-      app.globalData.isLogin = isLogin;
-      if (isLogin && !app.globalData.userInfo) {
-        app.globalData.userInfo = wx.getStorageSync('userInfo');
-      }
-    }
-  },
-  
-  /**
-   * 获取用户信息
-   */
-  fetchUserInfo: function() {
-    if (!this.data.isLogin) return Promise.resolve(null);
-    
-    return wx.cloud.callFunction({
-      name: 'user',
-      data: {
-        action: 'getUserInfo'
-      }
-    }).then(res => {
-      if (res.result && res.result.code === 0) {
-        const userInfo = res.result.data;
-        
-        // 更新存储的用户信息
-        wx.setStorageSync('userInfo', userInfo);
-        
-        // 更新页面数据
-        this.setData({
-          userInfo
-        });
-        
-        // 更新全局数据
-        app.globalData.userInfo = userInfo;
-        app.globalData.userId = userInfo._id || userInfo.userId;
-        
-        return userInfo;
-      }
-      return null;
-    }).catch(err => {
-      console.error('获取用户信息失败:', err);
-      return null;
-    });
-  },
-  
-  /**
-   * 获取未读消息数量
-   */
-  getUnreadCount: function() {
-    if (!this.data.isLogin) return Promise.resolve(0);
-    
-    // 从云函数获取未读消息数量
-    return wx.cloud.callFunction({
-      name: 'notification',
-      data: {
-        action: 'getUnreadCount'
-      }
-    }).then(res => {
-      if (res.result && res.result.count !== undefined) {
-        const unreadCount = res.result.count || 0;
-        this.setData({
-          unreadCount
-        });
-        return unreadCount;
-      }
-      return 0;
-    }).catch(err => {
-      console.error('获取未读消息数量失败', err);
-      return 0;
-    });
-  },
-
-  /**
-   * 加载活动
-   */
-  loadActivities: function() {
-    if (this.data.loading || !this.data.hasMore) return Promise.resolve();
-
-    this.setData({ loading: true });
-
-    // 加载首页推荐活动
-    return this.loadRecommendedActivities().then(() => {
-      this.setData({ loading: false });
-    }).catch(err => {
-      console.error('加载活动失败:', err);
-      this.setData({ loading: false });
-      wx.showToast({
-        title: '加载失败，请重试',
-        icon: 'none'
-      });
-    });
-  },
-
-  /**
-   * 加载推荐活动
-   */
-  loadRecommendedActivities: function() {
-    // 构建查询参数
-    const params = {
-      page: this.data.page,
-      pageSize: this.data.pageSize,
-      isRecommend: true,
-      includeCreator: true
-    };
-    
-    // 使用活动服务获取精选活动
-    return activityService.getActivityList(params)
-      .then(res => {
-        console.log('加载推荐活动返回:', res);
-        
-        // 处理返回的活动数据
-        if (res && res.code === 0) {
-          const activities = res.data?.list || [];
-          console.log(`获取到${activities.length}个推荐活动`);
-          
-          // 处理活动数据
-          this.processActivities(activities);
-          return activities;
-        } else {
-          console.error('获取推荐活动失败:', res);
-          wx.showToast({
-            title: res?.message || '获取推荐活动失败',
-            icon: 'none'
-          });
-          return [];
-        }
-      })
-      .catch(err => {
-        console.error('加载推荐活动出错:', err);
-        throw err;
-      });
-  },
-
-  /**
-   * 处理返回的活动数据，实现瀑布流布局
-   * @param {Array} activities 活动数组
-   */
-  processActivities: function(activities) {
-    if (!activities || activities.length === 0) {
-      this.setData({ hasMore: false });
-      return;
-    }
-    
-    let { leftActivities, rightActivities, totalCount } = this.data;
-    let leftHeight = 0;
-    let rightHeight = 0;
-    
-    // 如果是第一页，重置列表
-    if (this.data.page === 1) {
-      leftActivities = [];
-      rightActivities = [];
-      leftHeight = 0;
-      rightHeight = 0;
-    }
-    
-    // 处理每个活动数据
-    activities.forEach(activity => {
-      // 确保活动对象包含所有必要字段
-      if (!activity.id && activity._id) {
-        activity.id = activity._id;
-      }
-      
-      // 根据活动类型计算卡片高度（这里简化处理，实际应该根据内容量计算）
-      const isLarge = activity.type === 'offline' || (activity.images && activity.images.length > 2);
-      const cardHeight = isLarge ? 450 : 380; // 模拟不同卡片的高度
-      
-      // 处理活动数据，添加额外属性
-      const processedActivity = {
-        ...activity,
-        coverUrl: activityService.processActivityCover(activity.coverUrl),
-        tag: activity.isHot ? '热门' : (activity.isRecommend ? '推荐' : '新发布'),
-        coverType: isLarge ? 'cover-large' : 'cover-normal',
-        cardHeight,
-        // 确保enrollCount有值
-        enrollCount: activity.enrollCount || 0,
-        // 确保organizer有值
-        organizer: activity.organizer || (activity.creator ? activity.creator.nickName : '主办方')
-      };
-      
-      // 将活动添加到高度较低的一列
-      if (leftHeight <= rightHeight) {
-        leftActivities.push(processedActivity);
-        leftHeight += cardHeight;
-      } else {
-        rightActivities.push(processedActivity);
-        rightHeight += cardHeight;
-      }
-    });
-    
-    // 更新页面数据
-    this.setData({
-      leftActivities,
-      rightActivities,
-      totalCount: totalCount + activities.length,
-      hasMore: activities.length >= this.data.pageSize
-    });
-  },
-  
-  /**
-   * 获取热门活动
-   */
-  fetchHotActivities: function() {
-    return activityService.getHotActivities({ pageSize: 6 })
-      .then(res => {
-        if (res && res.code === 0) {
-          // 确保数据中包含必要字段
-          const activities = (res.data.list || []).map(item => {
-            if (!item.id && item._id) {
-              item.id = item._id;
+    // 检查是否有定位权限
+    wx.getSetting({
+      success(res) {
+        if (res.authSetting['scope.userLocation']) {
+          // 获取定位
+          wx.getLocation({
+            type: 'gcj02',
+            success(res) {
+              const latitude = res.latitude
+              const longitude = res.longitude
+              
+              // 调用逆地理编码获取位置名称
+              that.getLocationName(latitude, longitude)
+            },
+            fail() {
+              wx.showToast({
+                title: '获取位置失败',
+                icon: 'none'
+              })
             }
-            return {
-              ...item,
-              enrollCount: item.enrollCount || 0,
-              organizer: item.organizer || (item.creator ? item.creator.nickName : '主办方')
-            };
-          });
-          
-          this.setData({
-            hotActivities: activities
-          });
-          return activities;
+          })
         } else {
-          console.error('获取热门活动失败:', res);
-          return [];
-        }
-      })
-      .catch(err => {
-        console.error('获取热门活动出错:', err);
-        return [];
-      });
-  },
-  
-  /**
-   * 获取社区活动
-   */
-  fetchCommunityActivities: function() {
-    return activityService.getCommunityActivities({ pageSize: 6 })
-      .then(res => {
-        if (res && res.code === 0) {
-          // 确保数据中包含必要字段
-          const activities = (res.data.list || []).map(item => {
-            if (!item.id && item._id) {
-              item.id = item._id;
+          // 请求定位权限
+          wx.authorize({
+            scope: 'scope.userLocation',
+            success() {
+              that.getLocation()
+            },
+            fail() {
+              wx.showToast({
+                title: '请开启位置权限以获取附近活动',
+                icon: 'none',
+                duration: 2000
+              })
             }
-            return {
-              ...item,
-              enrollCount: item.enrollCount || 0,
-              organizer: item.organizer || (item.creator ? item.creator.nickName : '主办方')
-            };
-          });
-          
-          this.setData({
-            communityActivities: activities
-          });
-          return activities;
-        } else {
-          console.error('获取社区活动失败:', res);
-          return [];
-        }
-      })
-      .catch(err => {
-        console.error('获取社区活动出错:', err);
-        return [];
-      });
-  },
-  
-  /**
-   * 加载轮播图数据
-   */
-  loadBannerData: function() {
-    return activityService.getBanners()
-      .then(res => {
-        if (res && res.code === 0) {
-          // 确保轮播图数据有完整的字段
-          const banners = (res.data || []).map(banner => {
-            return {
-              ...banner,
-              // 设置默认值，避免未定义错误
-              category: banner.category || '活动',
-              title: banner.title || '精彩活动',
-              price: banner.price || '免费'
-            };
-          });
-          
-          this.setData({
-            bannerList: banners
-          });
-          return banners;
-        } else {
-          console.error('获取轮播图数据失败:', res);
-          return [];
-        }
-      })
-      .catch(err => {
-        console.error('获取轮播图数据出错:', err);
-        return [];
-      });
-  },
-  
-  /**
-   * 轮播图切换事件
-   */
-  onBannerChange: function(e) {
-    this.setData({
-      currentBannerIndex: e.detail.current
-    });
-  },
-  
-  /**
-   * 点击轮播图
-   */
-  onBannerTap: function(e) {
-    const { id } = e.currentTarget.dataset;
-    if (id) {
-      // 如果是活动ID，跳转到活动详情
-      routerService.openActivityDetail(id);
-    }
-  },
-  
-  /**
-   * 切换导航类型
-   */
-  switchNavType: function(e) {
-    const { type } = e.currentTarget.dataset;
-    console.log('切换导航类型:', type);
-    
-    // 根据类型跳转到相应页面
-    if (type === 'hot') {
-      // 热门活动
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'hot' });
-    } else if (type === 'recommend') {
-      // 推荐活动
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'recommend' });
-    } else if (type === 'nearby') {
-      // 附近活动
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'nearby' });
-    } else if (type === 'soon') {
-      // 即将开始
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'soon' });
-    }
-  },
-  
-  /**
-   * 查看更多活动
-   */
-  viewMoreActivities: function(e) {
-    const { type } = e.currentTarget.dataset;
-    console.log('查看更多:', type);
-    
-    // 根据类型跳转到相应页面
-    if (type === 'hot') {
-      // 热门活动
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'hot' });
-    } else if (type === 'community') {
-      // 社区活动
-      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'community' });
-    }
-  },
-  
-  /**
-   * 跳转到活动详情
-   */
-  navigateToActivityDetail: function(e) {
-    const { id } = e.currentTarget.dataset;
-    if (!id) {
-      console.error('缺少活动ID');
-      return;
-    }
-    routerService.openActivityDetail(id);
-  },
-  
-  /**
-   * 前往消息页面
-   */
-  navigateToMessages: function() {
-    if (!this.data.isLogin) {
-      return checkAndTipLogin(() => {
-        routerService.openMessages();
-      });
-    }
-    routerService.openMessages();
-  },
-  
-  /**
-   * 切换底部标签
-   */
-  switchTab: function(e) {
-    const { index } = e.currentTarget.dataset;
-    routerService.switchTab(parseInt(index, 10));
-  },
-  
-  /**
-   * 显示发布选项
-   */
-  showPublishOptions: function() {
-    // 检查登录状态
-    if (!this.data.isLogin) {
-      return checkAndTipLogin(() => {
-        this.showPublishOptions();
-      });
-    }
-    
-    wx.showActionSheet({
-      itemList: ['发布活动'],
-      success: (res) => {
-        if (res.tapIndex === 0) {
-          // 发布活动
-          routerService.openActivityCreate();
+          })
         }
       }
-    });
+    })
   },
   
-  /**
-   * 图片加载错误处理
-   */
-  onImageError: function(e) {
-    const { index } = e.currentTarget.dataset;
-    console.log('图片加载错误:', index);
+  // 根据经纬度获取位置名称
+  getLocationName(latitude, longitude) {
+    // 实际项目中应该调用地图API获取位置名称
+    // 这里使用模拟数据
+    this.setData({
+      'location.latitude': latitude,
+      'location.longitude': longitude,
+      'location.name': '北京市海淀区'
+    })
+  },
+  
+  // 选择位置
+  chooseLocation() {
+    const that = this
+    wx.chooseLocation({
+      success(res) {
+        that.setData({
+          location: {
+            name: res.name || res.address,
+            latitude: res.latitude,
+            longitude: res.longitude
+          }
+        })
+        
+        // 根据新位置获取附近活动
+        that.getNearbyActivities()
+      }
+    })
+  },
+  
+  // 获取附近活动
+  getNearbyActivities() {
+    // 实际项目中应该根据位置获取附近活动
+    // 这里仅更新一下现有数据作为演示
+    const hotActivities = this.data.hotActivities.map(item => {
+      return {
+        ...item,
+        address: `${this.data.location.name}附近`
+      }
+    })
     
-    // 解析索引，格式例如 "hot-0"
-    const [type, idx] = index.split('-');
-    const i = parseInt(idx, 10);
+    this.setData({
+      hotActivities
+    })
+  },
+  
+  // 获取轮播图数据
+  getBanners() {
+    // 实际项目中应该从服务器获取轮播图数据
+    // 这里使用模拟数据，数据已在data中定义
+  },
+  
+  // 获取活动类型
+  getActivityTypes() {
+    // 实际项目中应该从服务器获取活动类型
+    // 这里使用全局数据
+    if (app.globalData.activityTypes) {
+      this.setData({
+        activityTypes: app.globalData.activityTypes
+      })
+    }
+  },
+  
+  // 获取热门活动
+  getHotActivities() {
+    // 实际项目中应该从服务器获取热门活动
+    // 这里使用模拟数据，数据已在data中定义
+  },
+  
+  // 获取推荐活动
+  getRecommendActivities() {
+    // 实际项目中应该从服务器获取推荐活动
+    // 这里使用模拟数据，数据已在data中定义
+  },
+  
+  // 跳转到搜索页面
+  goToSearch() {
+    wx.navigateTo({
+      url: '/pages/search/index'
+    })
+  },
+  
+  // 跳转到轮播图链接
+  navigateToBanner(e) {
+    const id = e.currentTarget.dataset.id
+    const banner = this.data.banners.find(item => item.id === id)
     
-    if (type === 'hot' && this.data.hotActivities[i]) {
-      // 更新热门活动列表中的图片路径为默认图片
-      const newHotActivities = [...this.data.hotActivities];
-      newHotActivities[i].coverUrl = '/assets/images/default-activity-cover.jpg';
-      this.setData({
-        hotActivities: newHotActivities
-      });
-    } else if (type === 'community' && this.data.communityActivities[i]) {
-      // 更新社区活动列表中的图片路径为默认图片
-      const newCommunityActivities = [...this.data.communityActivities];
-      newCommunityActivities[i].coverUrl = '/assets/images/default-activity-cover.jpg';
-      this.setData({
-        communityActivities: newCommunityActivities
-      });
+    if (banner && banner.linkUrl) {
+      wx.navigateTo({
+        url: banner.linkUrl
+      })
+    }
+  },
+  
+  // 跳转到分类页面
+  navigateToCategory(e) {
+    const id = e.currentTarget.dataset.id
+    
+    wx.navigateTo({
+      url: `/pages/activity/list/index?categoryId=${id}`
+    })
+  },
+  
+  // 跳转到更多活动
+  navigateToMore(e) {
+    const type = e.currentTarget.dataset.type
+    
+    wx.navigateTo({
+      url: `/pages/activity/list/index?type=${type}`
+    })
+  },
+  
+  // 跳转到活动详情
+  navigateToDetail(e) {
+    const id = e.currentTarget.dataset.id
+    
+    wx.navigateTo({
+      url: `/pages/activity/detail/index?id=${id}`
+    })
+  },
+  
+  // 跳转到创建活动
+  navigateToCreate() {
+    wx.navigateTo({
+      url: '/pages/activity/create/index'
+    })
+  },
+  
+  // 下拉刷新
+  onPullDownRefresh() {
+    // 重新加载数据
+    this.getBanners()
+    this.getHotActivities()
+    this.getRecommendActivities()
+    
+    setTimeout(() => {
+      wx.stopPullDownRefresh()
+    }, 1000)
+  },
+  
+  // 上拉加载更多
+  onReachBottom() {
+    // 加载更多推荐活动
+    const newActivities = [
+      {
+        id: 7,
+        title: '春季踏青健走活动',
+        coverImage: '/images/activity/walking.jpg',
+        startTime: '2023-07-01 08:00',
+        address: '北京市昌平区蟒山国家森林公园',
+        participantsCount: 50,
+        status: '报名中'
+      },
+      {
+        id: 8,
+        title: '中老年时尚穿搭讲座',
+        coverImage: '/images/activity/fashion.jpg',
+        startTime: '2023-07-05 14:30',
+        address: '北京市朝阳区三里屯太古里',
+        participantsCount: 22,
+        status: '报名中'
+      }
+    ]
+    
+    this.setData({
+      recommendActivities: [...this.data.recommendActivities, ...newActivities]
+    })
+  },
+  
+  // 分享
+  onShareAppMessage() {
+    return {
+      title: '好聚乐龄 - 中老年人专属社交活动平台',
+      path: '/pages/index/index',
+      imageUrl: '/images/share.jpg'
     }
   }
-});
+})
