@@ -1,11 +1,24 @@
 // pages/utils-demo/index.js
-const utils = require('../../utils/common.js');
+const utils = require('../../src/utils/common.js');
 
 Page({
   data: {
-    results: [],
+    testInput: '',
+    testObject: { name: '张三', age: 25 },
+    clonedObject: null,
+    mergedObject: null,
+    formattedDate: '',
+    formattedNumber: '',
+    randomNumber: 0,
+    randomString: '',
+    fileSize: '',
+    
+    // 防抖和节流测试
     debounceCount: 0,
     throttleCount: 0,
+    lastTriggerTime: '',
+    
+    // 表单验证
     formData: {
       username: '',
       email: '',
@@ -18,332 +31,301 @@ Page({
       phone: '',
       age: ''
     },
-    networkResult: ''
+    
+    // 结果展示
+    results: [],
+    
+    // 树形结构测试数据
+    treeData: [
+      { id: 1, parentId: 0, name: '水果' },
+      { id: 2, parentId: 0, name: '蔬菜' },
+      { id: 3, parentId: 1, name: '苹果' },
+      { id: 4, parentId: 1, name: '香蕉' },
+      { id: 5, parentId: 2, name: '胡萝卜' },
+      { id: 6, parentId: 2, name: '白菜' },
+      { id: 7, parentId: 3, name: '红富士' },
+      { id: 8, parentId: 3, name: '青苹果' }
+    ],
+    treeResult: '',
+    flattenResult: '',
+    nodePath: ''
   },
 
   onLoad: function() {
     // 页面加载时初始化
-    this.setData({
-      results: [{
-        title: '工具类加载成功',
-        result: '可以开始测试各项功能'
-      }]
-    });
-    
-    // 创建防抖和节流函数
-    this.debouncedClick = utils.debounce(() => {
-      this.setData({
-        debounceCount: this.data.debounceCount + 1
-      });
-    }, 500);
-    
-    this.throttledClick = utils.throttle(() => {
-      this.setData({
-        throttleCount: this.data.throttleCount + 1
-      });
-    }, 500);
+    this.addResult('页面加载', '工具类测试页面初始化完成');
   },
   
-  // 清空结果
-  clearResults() {
-    this.setData({
-      results: []
-    });
+  // 基础功能测试
+  testIsEmpty: function() {
+    const value = this.data.testInput;
+    const result = utils.isEmpty(value);
+    this.addResult('isEmpty测试', `输入值: "${value}", 结果: ${result}`);
   },
   
-  // 添加一条结果
-  addResult(title, result) {
-    let resultValue;
-    
-    if (typeof result === 'object') {
-      try {
-        resultValue = JSON.stringify(result);
-      } catch (e) {
-        resultValue = '[复杂对象]';
-      }
-    } else {
-      resultValue = String(result);
-    }
-    
-    let newResults = [{
-      title: title,
-      result: resultValue
-    }, ...this.data.results];
-    
-    if (newResults.length > 20) {
-      newResults = newResults.slice(0, 20);
-    }
-    
-    this.setData({
-      results: newResults
-    });
-  },
-  
-  // 测试isEmpty函数
-  testIsEmpty() {
-    const testCases = [
-      '', null, undefined, {}, [], 0, '0', false, true, 'hello', { a: 1 }, [1, 2, 3]
-    ];
-    
-    testCases.forEach(value => {
-      const result = utils.isEmpty(value);
-      this.addResult(`isEmpty(${String(value)})`, result);
-    });
-  },
-  
-  // 测试深拷贝
-  testDeepClone() {
-    const original = {
-      name: 'test',
-      age: 25,
-      hobbies: ['reading', 'gaming'],
-      address: {
-        city: 'Beijing',
-        street: 'Wangfujing'
-      }
-    };
-    
+  testDeepClone: function() {
+    const original = this.data.testObject;
     const cloned = utils.deepClone(original);
-    cloned.name = 'modified';
-    cloned.hobbies.push('running');
-    cloned.address.city = 'Shanghai';
+    cloned.name = '李四';
+    cloned.age = 30;
     
-    this.addResult('原始对象', original);
-    this.addResult('深拷贝后的对象', cloned);
+    this.setData({
+      clonedObject: cloned
+    });
+    
+    this.addResult('deepClone测试', `原对象: ${JSON.stringify(original)}, 克隆后: ${JSON.stringify(cloned)}`);
   },
   
-  // 测试对象合并
-  testMerge() {
-    const obj1 = { a: 1, b: { c: 2 } };
-    const obj2 = { b: { d: 3 }, e: 4 };
+  testMerge: function() {
+    const target = this.data.testObject;
+    const source = { hobby: '读书', gender: '男' };
+    const merged = utils.merge(target, source);
     
-    const merged = utils.merge(obj1, obj2);
+    this.setData({
+      mergedObject: merged
+    });
     
-    this.addResult('obj1', obj1);
-    this.addResult('obj2', obj2);
-    this.addResult('合并结果', merged);
+    this.addResult('merge测试', `合并结果: ${JSON.stringify(merged)}`);
   },
   
-  // 测试日期格式化
-  testFormatDate() {
+  testFormatDate: function() {
     const now = new Date();
+    const formatted = utils.formatDate(now, 'YYYY-MM-DD HH:mm:ss');
     
-    const formats = [
-      'YYYY-MM-DD',
-      'YYYY年MM月DD日',
-      'YYYY-MM-DD hh:mm:ss',
-      'hh:mm:ss',
-      'MM/DD/YYYY'
-    ];
-    
-    formats.forEach(format => {
-      const result = utils.formatDate(now, format);
-      this.addResult(`formatDate(${format})`, result);
+    this.setData({
+      formattedDate: formatted
     });
+    
+    this.addResult('formatDate测试', `当前时间格式化: ${formatted}`);
   },
   
-  // 测试数字格式化
-  testFormatNumber() {
-    const numbers = [
-      1234.5678,
-      0,
-      -1000.123,
-      9999999.99
-    ];
+  testFormatNumber: function() {
+    const num = 12345.6789;
+    const formatted = utils.formatNumber(num, 2, true);
     
-    numbers.forEach(num => {
-      const withDecimals = utils.formatNumber(num, 2);
-      const withCommas = utils.formatNumber(num, 2, true);
-      
-      this.addResult(`formatNumber(${num}, 2)`, withDecimals);
-      this.addResult(`formatNumber(${num}, 2, true)`, withCommas);
+    this.setData({
+      formattedNumber: formatted
     });
+    
+    this.addResult('formatNumber测试', `数字 ${num} 格式化为: ${formatted}`);
   },
   
-  // 测试随机数生成
-  testRandom() {
-    for (let i = 0; i < 5; i++) {
-      const randomInt = utils.random(1, 100, true);
-      const randomFloat = utils.random(1, 100, false);
+  testRandom: function() {
+    const min = 1;
+    const max = 100;
+    const random = utils.random(min, max, true);
+    
+    this.setData({
+      randomNumber: random
+    });
+    
+    this.addResult('random测试', `生成 ${min} 到 ${max} 之间的随机整数: ${random}`);
+  },
+  
+  testRandomString: function() {
+    const length = 10;
+    const random = utils.randomString(length);
+    
+    this.setData({
+      randomString: random
+    });
+    
+    this.addResult('randomString测试', `生成长度为 ${length} 的随机字符串: ${random}`);
+  },
+  
+  testFormatFileSize: function() {
+    const bytes = 1024 * 1024 * 3.5; // 3.5MB
+    const formatted = utils.formatFileSize(bytes);
+    
+    this.setData({
+      fileSize: formatted
+    });
+    
+    this.addResult('formatFileSize测试', `${bytes} 字节格式化为: ${formatted}`);
+  },
+  
+  // 防抖测试
+  setupDebounce: function() {
+    this.debouncedIncrement = utils.debounce(() => {
+      const count = this.data.debounceCount + 1;
+      const now = new Date();
       
-      this.addResult(`随机整数(1-100)`, randomInt);
-      this.addResult(`随机浮点数(1-100)`, randomFloat);
+      this.setData({
+        debounceCount: count,
+        lastTriggerTime: utils.formatDate(now, 'HH:mm:ss.SSS')
+      });
+      
+      this.addResult('防抖测试', `触发计数: ${count}, 时间: ${this.data.lastTriggerTime}`);
+    }, 1000);
+  },
+  
+  testDebounce: function() {
+    if (!this.debouncedIncrement) {
+      this.setupDebounce();
     }
+    this.debouncedIncrement();
   },
   
-  // 测试URL参数提取
-  testGetUrlParam() {
-    const url = 'https://example.com?id=123&name=test&active=true';
-    
-    const id = utils.getUrlParam('id', url);
-    const name = utils.getUrlParam('name', url);
-    const active = utils.getUrlParam('active', url);
-    const notExist = utils.getUrlParam('notExist', url);
-    
-    this.addResult('URL', url);
-    this.addResult('id参数', id);
-    this.addResult('name参数', name);
-    this.addResult('active参数', active);
-    this.addResult('notExist参数', notExist);
+  // 节流测试
+  setupThrottle: function() {
+    this.throttledIncrement = utils.throttle(() => {
+      const count = this.data.throttleCount + 1;
+      const now = new Date();
+      
+      this.setData({
+        throttleCount: count,
+        lastTriggerTime: utils.formatDate(now, 'HH:mm:ss.SSS')
+      });
+      
+      this.addResult('节流测试', `触发计数: ${count}, 时间: ${this.data.lastTriggerTime}`);
+    }, 1000);
   },
   
-  // 测试URL参数构建
-  testBuildUrlParams() {
-    const params = {
-      id: 123,
-      name: 'test',
-      active: true,
-      tags: ['a', 'b', 'c']
-    };
-    
-    const urlParams = utils.buildUrlParams(params);
-    
-    this.addResult('参数对象', params);
-    this.addResult('构建的URL参数', urlParams);
+  testThrottle: function() {
+    if (!this.throttledIncrement) {
+      this.setupThrottle();
+    }
+    this.throttledIncrement();
   },
   
-  // 测试随机字符串生成
-  testRandomString() {
-    // 默认字符集
-    const str1 = utils.randomString(10);
-    // 指定字符集
-    const str2 = utils.randomString(8, 'abcdef123456');
-    // 纯数字
-    const str3 = utils.randomString(6, '0123456789');
-    
-    this.addResult('随机字符串(10位)', str1);
-    this.addResult('随机字符串(8位,自定义字符集)', str2);
-    this.addResult('随机数字(6位)', str3);
-  },
-  
-  // 测试文件大小格式化
-  testFormatFileSize() {
-    const sizes = [
-      0,
-      1024,
-      1024 * 1024,
-      1024 * 1024 * 1024,
-      1024 * 1024 * 1024 * 10.5
-    ];
-    
-    sizes.forEach(size => {
-      const formatted = utils.formatFileSize(size);
-      this.addResult(`格式化文件大小(${size}字节)`, formatted);
-    });
-  },
-  
-  // 测试防抖函数
-  handleDebounceClick() {
-    this.debouncedClick();
-  },
-  
-  // 测试节流函数
-  handleThrottleClick() {
-    this.throttledClick();
-  },
-  
-  // 处理表单输入
-  handleInput(e) {
+  // 表单输入处理
+  inputChange: function(e) {
     const { field } = e.currentTarget.dataset;
     const { value } = e.detail;
     
     this.setData({
-      [`formData.${field}`]: value
+      [`formData.${field}`]: value,
+      [`formErrors.${field}`]: ''
     });
   },
   
-  // 表单验证
-  validateForm() {
-    const { username, email, phone, age } = this.data.formData;
-    const errors = {};
+  submitForm: function() {
     let isValid = true;
+    const formData = this.data.formData;
+    const formErrors = {};
     
-    // 验证用户名
-    if (utils.isEmpty(username)) {
-      errors.username = '用户名不能为空';
+    // 用户名验证
+    if (utils.isEmpty(formData.username)) {
+      formErrors.username = '用户名不能为空';
+      isValid = false;
+    } else if (formData.username.length < 3) {
+      formErrors.username = '用户名不能少于3个字符';
       isValid = false;
     }
     
-    // 验证邮箱
-    if (!utils.isEmpty(email) && !/^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(email)) {
-      errors.email = '邮箱格式不正确';
+    // 邮箱验证 (使用简单正则)
+    if (!utils.isEmpty(formData.email) && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
+      formErrors.email = '邮箱格式不正确';
       isValid = false;
     }
     
-    // 验证手机号
-    if (!utils.isEmpty(phone) && !/^1[3-9]\d{9}$/.test(phone)) {
-      errors.phone = '手机号格式不正确';
+    // 手机号验证
+    if (!utils.isEmpty(formData.phone) && !/^1[3-9]\d{9}$/.test(formData.phone)) {
+      formErrors.phone = '手机号格式不正确';
       isValid = false;
     }
     
-    // 验证年龄
-    if (!utils.isEmpty(age)) {
-      const ageNum = parseInt(age);
-      if (isNaN(ageNum) || ageNum < 1 || ageNum > 120) {
-        errors.age = '年龄必须是1-120之间的数字';
+    // 年龄验证
+    if (!utils.isEmpty(formData.age)) {
+      const age = parseInt(formData.age);
+      if (isNaN(age) || age < 1 || age > 120) {
+        formErrors.age = '年龄必须是1-120之间的数字';
         isValid = false;
       }
     }
     
-    this.setData({
-      formErrors: errors
-    });
+    this.setData({ formErrors });
+    
+    if (isValid) {
+      this.addResult('表单验证', `验证通过，提交的数据: ${JSON.stringify(formData)}`);
+    } else {
+      this.addResult('表单验证', '验证失败，请检查表单错误提示');
+    }
     
     return isValid;
   },
   
-  // 提交表单
-  submitForm() {
-    if (this.validateForm()) {
-      // 模拟网络请求
-      this.setData({
-        networkResult: '提交中...'
-      });
-      
-      setTimeout(() => {
-        this.setData({
-          networkResult: '表单提交成功！数据：' + JSON.stringify(this.data.formData)
-        });
-      }, 1500);
-    }
-  },
-  
-  // 测试树结构构建和扁平化
-  testTreeOperations() {
-    const items = [
-      { id: 1, name: '水果', parentId: 0 },
-      { id: 2, name: '蔬菜', parentId: 0 },
-      { id: 3, name: '苹果', parentId: 1 },
-      { id: 4, name: '香蕉', parentId: 1 },
-      { id: 5, name: '白菜', parentId: 2 },
-      { id: 6, name: '青菜', parentId: 2 },
-      { id: 7, name: '红富士', parentId: 3 },
-      { id: 8, name: '国光', parentId: 3 }
-    ];
-    
-    // 构建树
-    const tree = utils.buildTree(items, {
+  // 树形结构测试
+  testBuildTree: function() {
+    const tree = utils.buildTree(this.data.treeData, {
       idKey: 'id',
       parentIdKey: 'parentId',
-      rootValue: 0
+      childrenKey: 'children',
+      rootParentId: 0
     });
     
-    this.addResult('原始数据', items);
-    this.addResult('构建的树结构', tree);
+    this.setData({
+      treeResult: JSON.stringify(tree, null, 2)
+    });
     
-    // 扁平化树
+    this.addResult('buildTree测试', '成功构建树形结构，详细结果请查看树形结构测试区域');
+  },
+  
+  testFlattenTree: function() {
+    // 先构建树
+    const tree = utils.buildTree(this.data.treeData, {
+      idKey: 'id',
+      parentIdKey: 'parentId',
+      childrenKey: 'children',
+      rootParentId: 0
+    });
+    
+    // 再展平
     const flattened = utils.flattenTree(tree, {
       childrenKey: 'children'
     });
     
-    this.addResult('扁平化后的树', flattened);
-    
-    // 获取节点路径
-    const path = utils.getTreeNodePath(tree, 7, {
-      idKey: 'id',
-      childrenKey: 'children'
+    this.setData({
+      flattenResult: JSON.stringify(flattened, null, 2)
     });
     
-    this.addResult('节点id=7的路径', path);
+    this.addResult('flattenTree测试', '成功展平树形结构，详细结果请查看树形结构测试区域');
+  },
+  
+  testGetTreeNodePath: function() {
+    // 先构建树
+    const tree = utils.buildTree(this.data.treeData, {
+      idKey: 'id',
+      parentIdKey: 'parentId',
+      childrenKey: 'children',
+      rootParentId: 0
+    });
+    
+    // 查找路径(例如查找"红富士"的路径)
+    const targetNodeId = 7;
+    const path = utils.getTreeNodePath(tree, targetNodeId, {
+      idKey: 'id',
+      childrenKey: 'children',
+      pathSeparator: ' > '
+    });
+    
+    this.setData({
+      nodePath: path.map(node => node.name).join(' > ')
+    });
+    
+    this.addResult('getTreeNodePath测试', `获取节点(ID=${targetNodeId})路径: ${this.data.nodePath}`);
+  },
+  
+  // 通用方法 - 添加结果
+  addResult: function(title, content) {
+    const results = [{
+      title,
+      content,
+      time: utils.formatDate(new Date(), 'HH:mm:ss')
+    }, ...this.data.results].slice(0, 20); // 最多保留20条记录
+    
+    this.setData({ results });
+  },
+  
+  // 清空结果
+  clearResults: function() {
+    this.setData({ results: [] });
+  },
+  
+  // 输入框输入事件
+  onInput: function(e) {
+    this.setData({
+      testInput: e.detail.value
+    });
   }
 });
