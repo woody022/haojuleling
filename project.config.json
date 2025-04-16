@@ -1,19 +1,10 @@
 {
-  "description": "项目配置文件",
+  "description": "项目配置文件，详见文档：https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html",
   "packOptions": {
     "ignore": [],
     "include": []
   },
-  "miniprogramRoot": "",
-  "cloudfunctionRoot": "cloudfunctions/",
   "setting": {
-    "packNpmManually": true,
-    "packNpmRelationList": [
-      {
-        "packageJsonPath": "./package.json",
-        "miniprogramNpmDistDir": "./"
-      }
-    ],
     "urlCheck": true,
     "es6": true,
     "enhance": true,
@@ -22,7 +13,7 @@
     "minified": true,
     "newFeature": false,
     "coverView": true,
-    "nodeModules": true,
+    "nodeModules": false,
     "autoAudits": false,
     "showShadowRootInWxmlPanel": true,
     "scopeDataCheck": false,
@@ -40,32 +31,24 @@
       "disablePlugins": [],
       "outputPath": ""
     },
-    "useIsolateContext": false,
-    "useCompilerPlugins": [
-      "typescript"
-    ],
-    "userConfirmedUseCompilerModules": false,
+    "enableEngineNative": false,
+    "useIsolateContext": true,
+    "userConfirmedBundleSwitch": false,
+    "packNpmManually": false,
+    "packNpmRelationList": [],
     "minifyWXSS": true,
     "disableUseStrict": false,
     "minifyWXML": true,
     "showES6CompileOption": false,
-    "ignoreUploadUnusedFiles": true
+    "useCompilerPlugins": false
   },
   "compileType": "miniprogram",
-  "libVersion": "2.32.3",
+  "libVersion": "2.19.4",
+  "appid": "wx123456789abc",
   "projectname": "好聚乐龄",
-  "cloudfunctionTemplateRoot": "cloudfunctionTemplate/",
   "condition": {},
   "editorSetting": {
     "tabIndent": "insertSpaces",
     "tabSize": 2
-  },
-  "cloudenvironment": "cloudbase-8go8pejqd6bea684",
-  "privateSupport": true,
-  "privateApplet": {
-    "useFetchPrivacyAuthorize": true,
-    "fetchPrivacyAuthorizeAtForeshow": false,
-    "enablePrivacyAuthorize": true
-  },
-  "appid": "your-appid-here"
+  }
 }
