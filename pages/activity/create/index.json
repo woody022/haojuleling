@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "创建活动",
+  "usingComponents": {
+    "time-picker": "/components/time-picker/index"
+  },
+  "navigationBarBackgroundColor": "#3cc51f",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": false,
+  "disableScroll": false
+}
