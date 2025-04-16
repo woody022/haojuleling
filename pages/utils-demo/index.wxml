@@ -1,0 +1,50 @@
+<!-- pages/utils-demo/index.wxml -->
+<view class="container">
+  <view class="header">
+    <text class="title">工具类使用示例</text>
+  </view>
+  
+  <view class="section">
+    <view class="section-title">测试结果</view>
+    <view class="result-list">
+      <block wx:if="{{results.length > 0}}">
+        <view class="result-item" wx:for="{{results}}" wx:key="index">{{item}}</view>
+      </block>
+      <view class="empty-tip" wx:else>暂无测试结果</view>
+    </view>
+    <view class="button-group">
+      <button bindtap="clearResults" type="default" size="mini">清空结果</button>
+      <button bindtap="testUtils" type="primary" size="mini">重新测试</button>
+    </view>
+  </view>
+  
+  <view class="section">
+    <view class="section-title">表单验证示例</view>
+    <view class="form-container">
+      <view class="form-item">
+        <text class="form-label">用户名：</text>
+        <input class="form-input" data-field="username" bindinput="onInput" value="{{formData.username}}" placeholder="请输入用户名" />
+        <view class="error-tip" wx:if="{{formErrors.username}}">{{formErrors.username}}</view>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">手机号：</text>
+        <input class="form-input" data-field="phone" bindinput="onInput" value="{{formData.phone}}" placeholder="请输入手机号" type="number" />
+        <view class="error-tip" wx:if="{{formErrors.phone}}">{{formErrors.phone}}</view>
+      </view>
+      
+      <view class="form-item">
+        <text class="form-label">邮箱：</text>
+        <input class="form-input" data-field="email" bindinput="onInput" value="{{formData.email}}" placeholder="请输入邮箱" />
+        <view class="error-tip" wx:if="{{formErrors.email}}">{{formErrors.email}}</view>
+      </view>
+      
+      <button class="submit-btn" bindtap="submitForm" type="primary">提交表单</button>
+    </view>
+  </view>
+  
+  <view class="section">
+    <view class="section-title">网络请求示例</view>
+    <button bindtap="onRequestTest" type="primary">发起请求</button>
+  </view>
+</view>
