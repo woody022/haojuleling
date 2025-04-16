@@ -1,216 +1,108 @@
-# 好聚乐玲微信小程序
+# 好聚乐龄微信小程序
 
-## 项目介绍
+好聚乐龄是一款专为老年人设计的社区活动平台，旨在促进老年人社交互动、丰富晚年生活。
 
-好聚乐玲微信小程序是一款为用户提供休闲娱乐服务的平台，旨在为用户提供丰富多彩的休闲活动和交友机会。本项目采用微信小程序原生框架开发，使用了组件化、模块化的开发方式，提供了良好的用户体验和性能优化。
+## 项目简介
+
+本项目是基于微信小程序云开发的全栈应用，主要功能包括：
+
+- 活动发布与参与
+- 社区互动
+- 个人信息管理
+- 组织管理
+- 消息通知
+- 位置服务
 
 ## 技术栈
 
-- 微信小程序原生框架
-- ES6+
-- TypeScript
-- WXSS/SCSS
-- 微信云开发
+- 前端：微信小程序原生框架
+- 后端：云开发（云函数、数据库、云存储）
+- 工具库：封装了常用工具函数
+
+## 安装与运行
+
+1. 克隆代码到本地
+   ```
+   git clone https://github.com/woody022/haojuleling.git
+   ```
+
+2. 安装依赖（如果有）
+   ```
+   npm install
+   ```
+
+3. 导入到微信开发者工具
+   - 填入您的AppID
+   - 开通云开发
+   - 创建云环境并替换project.config.json中的云环境ID
+
+4. 部署云函数
+   - 在cloudfunctions目录右键选择"上传并部署：云端安装依赖"
 
 ## 项目结构
 
 ```
-haojuleling/
-├── src/                     # 源代码目录
-│   ├── app.js               # 小程序入口文件
-│   ├── app.json             # 小程序全局配置
-│   ├── app.wxss             # 小程序全局样式
-│   ├── pages/               # 页面目录
-│   ├── components/          # 组件目录
-│   ├── utils/               # 工具类目录
-│   │   ├── common.js        # 通用工具函数
-│   │   ├── request.js       # 网络请求工具
-│   │   ├── validate.js      # 表单验证工具
-│   │   ├── storage.js       # 本地存储工具
-│   │   └── index.js         # 工具类统一导出
-│   ├── services/            # 服务层目录
-│   ├── assets/              # 静态资源目录
-│   ├── styles/              # 样式目录
-│   └── config/              # 配置目录
-├── typings/                 # 类型定义目录
-├── project.config.json      # 项目配置文件
-└── README.md                # 项目说明文档
+project/
+├── cloudfunctions/         # 云函数目录
+│   ├── user/               # 用户相关云函数
+│   ├── activity/           # 活动相关云函数
+│   └── notification/       # 通知相关云函数
+├── miniprogram/            # 小程序源码
+│   ├── pages/              # 页面
+│   ├── components/         # 组件
+│   ├── api/                # API接口
+│   ├── src/                # 源码目录
+│   │   └── utils/          # 工具类目录
+│   ├── utils/              # 工具函数
+│   └── common/             # 公共函数和服务
+└── package.json            # 项目配置
 ```
 
-## 工具类说明
+## 云函数说明
 
-### 1. 通用工具类 (`common.js`)
+项目使用云函数作为后端服务，主要有以下几个云函数：
 
-提供了各种通用的工具函数，方便开发中的常见操作。
+1. **user** - 用户相关功能
+   - 登录注册
+   - 获取用户信息
+   - 更新用户信息
+   - VIP管理
 
-主要函数：
+2. **activity** - 活动相关功能
+   - 创建活动
+   - 获取活动列表
+   - 活动详情
+   - 参与活动管理
 
-- `isEmpty(value)`: 检查变量是否为空
-- `deepClone(obj)`: 对象深拷贝
-- `merge(target, source)`: 合并对象
-- `formatDate(date, format)`: 日期格式化
-- `formatNumber(number, decimals, addCommas)`: 数字格式化
-- `random(min, max, isInteger)`: 生成随机数
-- `debounce(fn, delay)`: 函数防抖
-- `throttle(fn, delay)`: 函数节流
-- `getUrlParam(name, url)`: 获取URL参数
-- `buildUrlParams(params)`: 构建URL参数串
-- `randomString(length, chars)`: 生成随机字符串
-- `formatFileSize(bytes, decimals)`: 格式化文件大小
-- `buildTree(data, options)`: 构建树形结构
-- `flattenTree(tree, options)`: 扁平化树形结构
-- `getTreeNodePath(tree, value, options)`: 获取树节点路径
+3. **notification** - 通知相关功能
+   - 发送通知
+   - 获取通知列表
+   - 标记通知已读
 
-使用示例：
+## 工具类使用说明
 
-```javascript
-import { isEmpty, formatDate } from '@/utils/common';
+项目提供了常用的工具类（src/utils/common.js），包含以下功能：
 
-// 检查变量是否为空
-const empty = isEmpty('');  // true
+- 数据验证
+- 对象操作
+- 日期和数字格式化
+- 随机值生成
+- 函数控制（防抖、节流）
+- URL处理
+- 树结构操作
 
-// 格式化日期
-const date = formatDate(new Date(), 'YYYY-MM-DD');  // 2023-04-16
-```
-
-### 2. 网络请求工具 (`request.js`)
-
-封装了微信小程序的网络请求API，提供了更加便捷的请求方法和拦截器功能。
-
-主要函数：
-
-- `request(options)`: 基础请求方法
-- `get(url, data, options)`: GET请求
-- `post(url, data, options)`: POST请求
-- `put(url, data, options)`: PUT请求
-- `del(url, data, options)`: DELETE请求
-- `uploadFile(url, filePath, name, formData, options)`: 上传文件
-- `downloadFile(url, options)`: 下载文件
-- `addRequestInterceptor(interceptor)`: 添加请求拦截器
-- `addResponseInterceptor(interceptor)`: 添加响应拦截器
-
-使用示例：
-
-```javascript
-import { get, post } from '@/utils/request';
-
-// GET请求
-get('/api/user/info').then(res => {
-  console.log(res);
-}).catch(err => {
-  console.error(err);
-});
-
-// POST请求
-post('/api/user/login', {
-  username: 'test',
-  password: '123456'
-}).then(res => {
-  console.log(res);
-}).catch(err => {
-  console.error(err);
-});
-```
-
-### 3. 表单验证工具 (`validate.js`)
-
-提供了常用的表单验证函数，方便表单数据的校验。
-
-主要函数：
-
-- `isPhoneNumber(value)`: 验证手机号码
-- `isEmail(value)`: 验证邮箱
-- `isIdCard(value)`: 验证身份证号码
-- `isUrl(value)`: 验证URL
-- `isPositiveInteger(value)`: 验证正整数
-- `isNumber(value)`: 验证数字
-- `isStrongPassword(value)`: 验证密码强度
-- `validateForm(rules, values)`: 统一表单验证
-
-使用示例：
-
-```javascript
-import validate from '@/utils/validate';
-
-// 验证手机号
-const isValidPhone = validate.isPhoneNumber('13800138000');  // true
-
-// 统一表单验证
-const rules = {
-  username: [
-    { type: 'required', message: '用户名不能为空' }
-  ],
-  phone: [
-    { type: 'required', message: '手机号不能为空' },
-    { type: 'phone', message: '手机号格式不正确' }
-  ]
-};
-
-const values = {
-  username: 'test',
-  phone: '13800138000'
-};
-
-const result = validate.validateForm(rules, values);
-console.log(result.isValid);  // true
-console.log(result.errors);   // {}
-```
-
-### 4. 本地存储工具 (`storage.js`)
-
-封装了微信小程序的本地存储API，提供了更加便捷的存储方法和过期控制功能。
-
-主要函数：
-
-- `set(key, value, expire)`: 设置缓存
-- `get(key, def)`: 获取缓存
-- `remove(key)`: 删除缓存
-- `clear()`: 清空所有缓存
-- `clearWithPrefix(prefix)`: 清空指定前缀的缓存
-- `setSession(key, value)`: 设置会话缓存
-- `getSession(key, def)`: 获取会话缓存
-- `removeSession(key)`: 删除会话缓存
-- `clearSession()`: 清空所有会话缓存
-
-使用示例：
-
-```javascript
-import storage from '@/utils/storage';
-
-// 设置缓存，7天后过期
-storage.set('token', 'abcdef123456');
-
-// 获取缓存
-const token = storage.get('token');
-
-// 设置永不过期的缓存
-storage.set('userId', '123', null);
-
-// 删除缓存
-storage.remove('token');
-```
-
-## 开发指南
-
-1. 克隆代码仓库
-2. 安装依赖
-3. 使用微信开发者工具打开项目
-4. 开始开发
+详细使用方法请参考 [工具类文档](src/utils/README.md)
 
 ## 贡献指南
 
-1. Fork 代码仓库
-2. 创建功能分支
-3. 提交代码
-4. 创建 Pull Request
+如果您想为项目做出贡献，请遵循以下步骤：
 
-## 联系方式
-
-如有问题或建议，请联系项目维护者：
-
-- 邮箱：example@example.com
-- 微信：wxid_example
+1. Fork 本仓库
+2. 创建新的分支 (`git checkout -b feature/your-feature`)
+3. 提交您的更改 (`git commit -m 'Add some feature'`)
+4. 推送到分支 (`git push origin feature/your-feature`)
+5. 提交 Pull Request
 
 ## 许可证
 
-本项目采用 MIT 许可证，详见 LICENSE 文件。
+[ISC](LICENSE)
