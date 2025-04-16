@@ -1,331 +1,383 @@
 // pages/utils-demo/index.js
-const utils = require('../../src/utils/common.js');
+import * as common from '../../src/utils/common.js';
 
 Page({
   data: {
-    testInput: '',
-    testObject: { name: '张三', age: 25 },
-    clonedObject: null,
-    mergedObject: null,
-    formattedDate: '',
-    formattedNumber: '',
-    randomNumber: 0,
-    randomString: '',
-    fileSize: '',
+    results: [],
+    // isEmpty测试数据
+    isEmptyValue: '',
+    isEmptyResult: '',
     
-    // 防抖和节流测试
-    debounceCount: 0,
-    throttleCount: 0,
-    lastTriggerTime: '',
+    // deepClone测试数据
+    deepCloneObject: '{"name":"张三","age":25,"hobbies":["读书","游泳"],"address":{"city":"北京","district":"朝阳区"}}',
+    deepCloneResult: '',
     
-    // 表单验证
-    formData: {
+    // merge测试数据
+    mergeTarget: '{"name":"张三","age":25}',
+    mergeSource: '{"age":30,"gender":"男"}',
+    mergeResult: '',
+    
+    // formatDate测试数据
+    formatDateValue: '',
+    formatDateFormat: 'YYYY-MM-DD HH:mm:ss',
+    formatDateResult: '',
+    
+    // formatNumber测试数据
+    formatNumberValue: 12345.6789,
+    formatNumberDecimals: 2,
+    formatNumberAddCommas: true,
+    formatNumberResult: '',
+    
+    // random测试数据
+    randomMin: 1,
+    randomMax: 100,
+    randomIsInteger: true,
+    randomResult: '',
+    
+    // randomString测试数据
+    randomStringLength: 8,
+    randomStringChars: 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+    randomStringResult: '',
+    
+    // formatFileSize测试数据
+    formatFileSizeBytes: 1048576,
+    formatFileSizeDecimals: 2,
+    formatFileSizeResult: '',
+    
+    // 表单验证测试数据
+    form: {
       username: '',
       email: '',
-      phone: '',
-      age: ''
+      phone: ''
     },
     formErrors: {
       username: '',
       email: '',
-      phone: '',
-      age: ''
+      phone: ''
     },
     
-    // 结果展示
-    results: [],
-    
-    // 树形结构测试数据
+    // 树结构测试数据
     treeData: [
-      { id: 1, parentId: 0, name: '水果' },
-      { id: 2, parentId: 0, name: '蔬菜' },
-      { id: 3, parentId: 1, name: '苹果' },
-      { id: 4, parentId: 1, name: '香蕉' },
-      { id: 5, parentId: 2, name: '胡萝卜' },
-      { id: 6, parentId: 2, name: '白菜' },
-      { id: 7, parentId: 3, name: '红富士' },
-      { id: 8, parentId: 3, name: '青苹果' }
+      { id: 1, name: '北京', pid: 0 },
+      { id: 2, name: '上海', pid: 0 },
+      { id: 3, name: '广州', pid: 0 },
+      { id: 4, name: '朝阳区', pid: 1 },
+      { id: 5, name: '海淀区', pid: 1 },
+      { id: 6, name: '浦东新区', pid: 2 },
+      { id: 7, name: '黄浦区', pid: 2 }
     ],
     treeResult: '',
-    flattenResult: '',
-    nodePath: ''
+    flattenTreeResult: '',
+    treeNodePath: ''
   },
 
-  onLoad: function() {
-    // 页面加载时初始化
-    this.addResult('页面加载', '工具类测试页面初始化完成');
+  onLoad: function(options) {
+    // 页面加载时，初始化一些默认值
+    this.setData({
+      formatDateValue: new Date().toString(),
+      formatDateResult: common.formatDate(new Date(), this.data.formatDateFormat)
+    });
+    
+    // 初始化树结构结果
+    this.testBuildTree();
   },
-  
-  // 基础功能测试
+
+  // isEmpty测试
   testIsEmpty: function() {
-    const value = this.data.testInput;
-    const result = utils.isEmpty(value);
-    this.addResult('isEmpty测试', `输入值: "${value}", 结果: ${result}`);
+    const value = this.data.isEmptyValue;
+    const result = common.isEmpty(value);
+    this.setData({
+      isEmptyResult: result.toString()
+    });
+    this.addResult('isEmpty', `测试值: "${value}", 结果: ${result}`);
   },
-  
+
+  // deepClone测试
   testDeepClone: function() {
-    const original = this.data.testObject;
-    const cloned = utils.deepClone(original);
-    cloned.name = '李四';
-    cloned.age = 30;
-    
-    this.setData({
-      clonedObject: cloned
-    });
-    
-    this.addResult('deepClone测试', `原对象: ${JSON.stringify(original)}, 克隆后: ${JSON.stringify(cloned)}`);
+    try {
+      const obj = JSON.parse(this.data.deepCloneObject);
+      const clone = common.deepClone(obj);
+      // 修改克隆对象的属性
+      clone.name = '李四';
+      clone.age = 30;
+      clone.hobbies.push('跑步');
+      clone.address.district = '海淀区';
+      
+      this.setData({
+        deepCloneResult: JSON.stringify({
+          original: obj,
+          clone: clone
+        }, null, 2)
+      });
+      this.addResult('deepClone', '深拷贝成功，原对象与拷贝对象互不影响');
+    } catch (e) {
+      this.setData({
+        deepCloneResult: '解析JSON失败: ' + e.message
+      });
+      this.addResult('deepClone', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // merge测试
   testMerge: function() {
-    const target = this.data.testObject;
-    const source = { hobby: '读书', gender: '男' };
-    const merged = utils.merge(target, source);
-    
-    this.setData({
-      mergedObject: merged
-    });
-    
-    this.addResult('merge测试', `合并结果: ${JSON.stringify(merged)}`);
+    try {
+      const target = JSON.parse(this.data.mergeTarget);
+      const source = JSON.parse(this.data.mergeSource);
+      const result = common.merge(target, source);
+      
+      this.setData({
+        mergeResult: JSON.stringify(result, null, 2)
+      });
+      this.addResult('merge', `合并结果: ${JSON.stringify(result)}`);
+    } catch (e) {
+      this.setData({
+        mergeResult: '解析JSON失败: ' + e.message
+      });
+      this.addResult('merge', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // formatDate测试
   testFormatDate: function() {
-    const now = new Date();
-    const formatted = utils.formatDate(now, 'YYYY-MM-DD HH:mm:ss');
-    
-    this.setData({
-      formattedDate: formatted
-    });
-    
-    this.addResult('formatDate测试', `当前时间格式化: ${formatted}`);
+    try {
+      const date = new Date(this.data.formatDateValue);
+      const format = this.data.formatDateFormat;
+      const result = common.formatDate(date, format);
+      
+      this.setData({
+        formatDateResult: result
+      });
+      this.addResult('formatDate', `日期: ${date}, 格式: ${format}, 结果: ${result}`);
+    } catch (e) {
+      this.setData({
+        formatDateResult: '格式化日期失败: ' + e.message
+      });
+      this.addResult('formatDate', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // formatNumber测试
   testFormatNumber: function() {
-    const num = 12345.6789;
-    const formatted = utils.formatNumber(num, 2, true);
-    
-    this.setData({
-      formattedNumber: formatted
-    });
-    
-    this.addResult('formatNumber测试', `数字 ${num} 格式化为: ${formatted}`);
+    try {
+      const number = parseFloat(this.data.formatNumberValue);
+      const decimals = parseInt(this.data.formatNumberDecimals);
+      const addCommas = this.data.formatNumberAddCommas;
+      const result = common.formatNumber(number, decimals, addCommas);
+      
+      this.setData({
+        formatNumberResult: result
+      });
+      this.addResult('formatNumber', `数字: ${number}, 小数位: ${decimals}, 添加逗号: ${addCommas}, 结果: ${result}`);
+    } catch (e) {
+      this.setData({
+        formatNumberResult: '格式化数字失败: ' + e.message
+      });
+      this.addResult('formatNumber', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // random测试
   testRandom: function() {
-    const min = 1;
-    const max = 100;
-    const random = utils.random(min, max, true);
-    
-    this.setData({
-      randomNumber: random
-    });
-    
-    this.addResult('random测试', `生成 ${min} 到 ${max} 之间的随机整数: ${random}`);
+    try {
+      const min = parseInt(this.data.randomMin);
+      const max = parseInt(this.data.randomMax);
+      const isInteger = this.data.randomIsInteger;
+      const result = common.random(min, max, isInteger);
+      
+      this.setData({
+        randomResult: result
+      });
+      this.addResult('random', `最小值: ${min}, 最大值: ${max}, 整数: ${isInteger}, 结果: ${result}`);
+    } catch (e) {
+      this.setData({
+        randomResult: '生成随机数失败: ' + e.message
+      });
+      this.addResult('random', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // randomString测试
   testRandomString: function() {
-    const length = 10;
-    const random = utils.randomString(length);
-    
-    this.setData({
-      randomString: random
-    });
-    
-    this.addResult('randomString测试', `生成长度为 ${length} 的随机字符串: ${random}`);
+    try {
+      const length = parseInt(this.data.randomStringLength);
+      const chars = this.data.randomStringChars;
+      const result = common.randomString(length, chars);
+      
+      this.setData({
+        randomStringResult: result
+      });
+      this.addResult('randomString', `长度: ${length}, 字符集: ${chars ? '自定义' : '默认'}, 结果: ${result}`);
+    } catch (e) {
+      this.setData({
+        randomStringResult: '生成随机字符串失败: ' + e.message
+      });
+      this.addResult('randomString', '测试失败: ' + e.message);
+    }
   },
-  
+
+  // formatFileSize测试
   testFormatFileSize: function() {
-    const bytes = 1024 * 1024 * 3.5; // 3.5MB
-    const formatted = utils.formatFileSize(bytes);
-    
-    this.setData({
-      fileSize: formatted
-    });
-    
-    this.addResult('formatFileSize测试', `${bytes} 字节格式化为: ${formatted}`);
-  },
-  
-  // 防抖测试
-  setupDebounce: function() {
-    this.debouncedIncrement = utils.debounce(() => {
-      const count = this.data.debounceCount + 1;
-      const now = new Date();
+    try {
+      const bytes = parseInt(this.data.formatFileSizeBytes);
+      const decimals = parseInt(this.data.formatFileSizeDecimals);
+      const result = common.formatFileSize(bytes, decimals);
       
       this.setData({
-        debounceCount: count,
-        lastTriggerTime: utils.formatDate(now, 'HH:mm:ss.SSS')
+        formatFileSizeResult: result
       });
-      
-      this.addResult('防抖测试', `触发计数: ${count}, 时间: ${this.data.lastTriggerTime}`);
-    }, 1000);
-  },
-  
-  testDebounce: function() {
-    if (!this.debouncedIncrement) {
-      this.setupDebounce();
-    }
-    this.debouncedIncrement();
-  },
-  
-  // 节流测试
-  setupThrottle: function() {
-    this.throttledIncrement = utils.throttle(() => {
-      const count = this.data.throttleCount + 1;
-      const now = new Date();
-      
+      this.addResult('formatFileSize', `字节数: ${bytes}, 小数位: ${decimals}, 结果: ${result}`);
+    } catch (e) {
       this.setData({
-        throttleCount: count,
-        lastTriggerTime: utils.formatDate(now, 'HH:mm:ss.SSS')
+        formatFileSizeResult: '格式化文件大小失败: ' + e.message
       });
-      
-      this.addResult('节流测试', `触发计数: ${count}, 时间: ${this.data.lastTriggerTime}`);
-    }, 1000);
-  },
-  
-  testThrottle: function() {
-    if (!this.throttledIncrement) {
-      this.setupThrottle();
+      this.addResult('formatFileSize', '测试失败: ' + e.message);
     }
-    this.throttledIncrement();
+  },
+
+  // 测试防抖函数
+  clickCount: 0,
+  debounceClick: function() {
+    this.clickCount++;
+    this.handleDebounceClick();
+    this.addResult('点击计数', `点击了 ${this.clickCount} 次`);
   },
   
+  handleDebounceClick: common.debounce(function() {
+    this.addResult('debounce', '防抖函数执行了！只在停止点击后1秒执行一次');
+  }, 1000),
+
+  // 测试节流函数
+  throttleClickCount: 0,
+  throttleClick: function() {
+    this.throttleClickCount++;
+    this.handleThrottleClick();
+    this.addResult('节流点击计数', `点击了 ${this.throttleClickCount} 次`);
+  },
+  
+  handleThrottleClick: common.throttle(function() {
+    this.addResult('throttle', '节流函数执行了！每1秒最多执行一次');
+  }, 1000),
+
   // 表单输入处理
-  inputChange: function(e) {
+  handleInput: function(e) {
     const { field } = e.currentTarget.dataset;
     const { value } = e.detail;
     
     this.setData({
-      [`formData.${field}`]: value,
-      [`formErrors.${field}`]: ''
+      [`form.${field}`]: value
     });
   },
-  
-  submitForm: function() {
+
+  // 表单验证
+  validateForm: function() {
+    const { username, email, phone } = this.data.form;
+    let errors = {
+      username: '',
+      email: '',
+      phone: ''
+    };
     let isValid = true;
-    const formData = this.data.formData;
-    const formErrors = {};
     
     // 用户名验证
-    if (utils.isEmpty(formData.username)) {
-      formErrors.username = '用户名不能为空';
+    if (common.isEmpty(username)) {
+      errors.username = '用户名不能为空';
       isValid = false;
-    } else if (formData.username.length < 3) {
-      formErrors.username = '用户名不能少于3个字符';
+    } else if (username.length < 3) {
+      errors.username = '用户名不能少于3个字符';
       isValid = false;
     }
     
-    // 邮箱验证 (使用简单正则)
-    if (!utils.isEmpty(formData.email) && !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)) {
-      formErrors.email = '邮箱格式不正确';
+    // 邮箱验证
+    if (common.isEmpty(email)) {
+      errors.email = '邮箱不能为空';
+      isValid = false;
+    } else if (!/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(email)) {
+      errors.email = '邮箱格式不正确';
       isValid = false;
     }
     
     // 手机号验证
-    if (!utils.isEmpty(formData.phone) && !/^1[3-9]\d{9}$/.test(formData.phone)) {
-      formErrors.phone = '手机号格式不正确';
+    if (common.isEmpty(phone)) {
+      errors.phone = '手机号不能为空';
+      isValid = false;
+    } else if (!/^1[3-9]\d{9}$/.test(phone)) {
+      errors.phone = '手机号格式不正确';
       isValid = false;
     }
     
-    // 年龄验证
-    if (!utils.isEmpty(formData.age)) {
-      const age = parseInt(formData.age);
-      if (isNaN(age) || age < 1 || age > 120) {
-        formErrors.age = '年龄必须是1-120之间的数字';
-        isValid = false;
-      }
-    }
-    
-    this.setData({ formErrors });
+    this.setData({ formErrors: errors });
     
     if (isValid) {
-      this.addResult('表单验证', `验证通过，提交的数据: ${JSON.stringify(formData)}`);
+      this.addResult('表单验证', '验证通过，数据: ' + JSON.stringify(this.data.form));
     } else {
-      this.addResult('表单验证', '验证失败，请检查表单错误提示');
+      this.addResult('表单验证', '验证失败，请检查表单信息');
     }
     
     return isValid;
   },
-  
-  // 树形结构测试
+
+  // 测试buildTree函数
   testBuildTree: function() {
-    const tree = utils.buildTree(this.data.treeData, {
-      idKey: 'id',
-      parentIdKey: 'parentId',
-      childrenKey: 'children',
-      rootParentId: 0
-    });
+    const data = this.data.treeData;
+    const options = { idKey: 'id', pidKey: 'pid', childrenKey: 'children' };
+    const treeResult = common.buildTree(data, options);
     
     this.setData({
-      treeResult: JSON.stringify(tree, null, 2)
+      treeResult: JSON.stringify(treeResult, null, 2)
     });
+    this.addResult('buildTree', '构建树结构成功');
     
-    this.addResult('buildTree测试', '成功构建树形结构，详细结果请查看树形结构测试区域');
+    // 测试flattenTree
+    this.testFlattenTree(treeResult);
   },
-  
-  testFlattenTree: function() {
-    // 先构建树
-    const tree = utils.buildTree(this.data.treeData, {
-      idKey: 'id',
-      parentIdKey: 'parentId',
-      childrenKey: 'children',
-      rootParentId: 0
-    });
-    
-    // 再展平
-    const flattened = utils.flattenTree(tree, {
-      childrenKey: 'children'
-    });
+
+  // 测试flattenTree函数
+  testFlattenTree: function(tree) {
+    const options = { childrenKey: 'children' };
+    const result = common.flattenTree(tree, options);
     
     this.setData({
-      flattenResult: JSON.stringify(flattened, null, 2)
+      flattenTreeResult: JSON.stringify(result, null, 2)
     });
-    
-    this.addResult('flattenTree测试', '成功展平树形结构，详细结果请查看树形结构测试区域');
+    this.addResult('flattenTree', '展平树结构成功');
   },
-  
+
+  // 测试getTreeNodePath函数
   testGetTreeNodePath: function() {
-    // 先构建树
-    const tree = utils.buildTree(this.data.treeData, {
-      idKey: 'id',
-      parentIdKey: 'parentId',
-      childrenKey: 'children',
-      rootParentId: 0
-    });
-    
-    // 查找路径(例如查找"红富士"的路径)
-    const targetNodeId = 7;
-    const path = utils.getTreeNodePath(tree, targetNodeId, {
-      idKey: 'id',
-      childrenKey: 'children',
-      pathSeparator: ' > '
-    });
+    const tree = JSON.parse(this.data.treeResult);
+    const options = { 
+      idKey: 'id', 
+      childrenKey: 'children' 
+    };
+    // 寻找"朝阳区"的路径
+    const path = common.getTreeNodePath(tree, 4, options);
     
     this.setData({
-      nodePath: path.map(node => node.name).join(' > ')
+      treeNodePath: JSON.stringify(path, null, 2)
     });
-    
-    this.addResult('getTreeNodePath测试', `获取节点(ID=${targetNodeId})路径: ${this.data.nodePath}`);
+    this.addResult('getTreeNodePath', `找到节点路径: ${JSON.stringify(path.map(item => item.name))}`);
   },
-  
-  // 通用方法 - 添加结果
+
+  // 添加结果到列表
   addResult: function(title, content) {
-    const results = [{
+    const results = this.data.results;
+    results.unshift({
+      id: Date.now(),
       title,
       content,
-      time: utils.formatDate(new Date(), 'HH:mm:ss')
-    }, ...this.data.results].slice(0, 20); // 最多保留20条记录
+      time: common.formatDate(new Date(), 'HH:mm:ss')
+    });
+    
+    // 只保留最新的20条记录
+    if (results.length > 20) {
+      results.pop();
+    }
     
     this.setData({ results });
   },
-  
-  // 清空结果
+
+  // 清除结果列表
   clearResults: function() {
     this.setData({ results: [] });
-  },
-  
-  // 输入框输入事件
-  onInput: function(e) {
-    this.setData({
-      testInput: e.detail.value
-    });
   }
 });
