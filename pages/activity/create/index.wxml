@@ -1,192 +1,180 @@
 <!-- pages/activity/create/index.wxml -->
-<view class="activity-create-container">
-  <view class="header">
-    <view class="title">创建新活动</view>
-    <view class="description">创建一个新的活动，与志同道合的朋友一起参与</view>
-  </view>
-
-  <view class="form-container">
-    <!-- 基本信息部分 -->
-    <view class="form-section">
-      <view class="section-title">基本信息</view>
-      
+<view class="container">
+  <view class="form-group">
+    <form bindsubmit="submitForm">
+      <!-- 活动标题 -->
       <view class="form-item">
-        <view class="form-label">活动标题<text class="required">*</text></view>
-        <input class="form-input" placeholder="请输入活动标题（5-30个字符）" maxlength="30" value="{{title}}" bindinput="onTitleInput" />
-        <view class="error-text" wx:if="{{errors.title}}">{{errors.title}}</view>
+        <view class="form-label">活动标题</view>
+        <input 
+          class="form-input" 
+          name="title" 
+          placeholder="请输入活动标题（不超过30字）" 
+          maxlength="30" 
+          value="{{formData.title}}"
+          bindinput="onTitleInput"
+        />
+        <view class="form-tip" wx:if="{{errors.title}}">{{errors.title}}</view>
       </view>
-      
+
+      <!-- 活动类型 -->
       <view class="form-item">
-        <view class="form-label">活动类型<text class="required">*</text></view>
-        <picker mode="selector" range="{{activityTypes}}" bindchange="onTypeChange">
-          <view class="picker-text {{type ? '' : 'placeholder'}}">
-            {{type || '请选择活动类型'}}
+        <view class="form-label">活动类型</view>
+        <picker 
+          mode="selector" 
+          range="{{activityTypes}}" 
+          value="{{typeIndex}}" 
+          bindchange="onTypeChange"
+          name="type"
+        >
+          <view class="form-picker {{formData.type ? '' : 'placeholder'}}">
+            {{formData.type || '请选择活动类型'}}
+            <text class="arrow">></text>
           </view>
         </picker>
-        <view class="error-text" wx:if="{{errors.type}}">{{errors.type}}</view>
+        <view class="form-tip" wx:if="{{errors.type}}">{{errors.type}}</view>
       </view>
-      
+
+      <!-- 活动地点 -->
       <view class="form-item">
-        <view class="form-label">活动描述<text class="required">*</text></view>
-        <view class="textarea-container">
-          <textarea class="form-textarea" placeholder="请详细描述活动内容、亮点、注意事项等（10-500个字符）" maxlength="{{maxDescriptionLength}}" value="{{description}}" bindinput="onDescriptionInput"></textarea>
-          <view class="textarea-counter {{descriptionLength > maxDescriptionLength ? 'error' : ''}}">{{descriptionLength}}/{{maxDescriptionLength}}</view>
+        <view class="form-label">活动地点</view>
+        <view class="location-picker" bindtap="chooseLocation">
+          <view class="{{formData.address ? 'location-text' : 'location-placeholder'}}">
+            {{formData.address || '点击选择活动地点'}}
+          </view>
+          <text class="icon-location">📍</text>
         </view>
-        <view class="error-text" wx:if="{{errors.description}}">{{errors.description}}</view>
+        <view class="form-tip" wx:if="{{errors.address}}">{{errors.address}}</view>
       </view>
-    </view>
-    
-    <!-- 时间地点部分 -->
-    <view class="form-section">
-      <view class="section-title">时间地点</view>
-      
+
+      <!-- 活动时间 -->
       <view class="form-item">
-        <view class="form-label">活动地点<text class="required">*</text></view>
-        <view class="location-input-group">
-          <input class="form-input location-input" placeholder="请输入活动地点" value="{{location}}" bindinput="onLocationInput" />
-          <button class="location-btn" bindtap="chooseLocation">选择位置</button>
-        </view>
-        <view class="address-text" wx:if="{{address}}">{{address}}</view>
-        <view class="error-text" wx:if="{{errors.location}}">{{errors.location}}</view>
-      </view>
-      
-      <view class="form-item time-item">
-        <view class="form-label">开始时间<text class="required">*</text></view>
-        <view class="time-picker" bindtap="showTimePicker" data-type="start">
-          <view class="picker-text {{startTime ? '' : 'placeholder'}}">
-            {{startTime || '请选择开始时间'}}
+        <view class="form-label">活动开始时间</view>
+        <view class="time-picker-trigger" bindtap="showStartTimePicker">
+          <view class="{{formData.startTime ? 'time-text' : 'time-placeholder'}}">
+            {{formData.startTime || '请选择活动开始时间'}}
           </view>
+          <text class="icon-calendar">📅</text>
         </view>
-        <view class="error-text" wx:if="{{errors.startTime}}">{{errors.startTime}}</view>
+        <view class="form-tip" wx:if="{{errors.startTime}}">{{errors.startTime}}</view>
       </view>
-      
-      <view class="form-item time-item">
-        <view class="form-label">结束时间<text class="required">*</text></view>
-        <view class="time-picker" bindtap="showTimePicker" data-type="end">
-          <view class="picker-text {{endTime ? '' : 'placeholder'}}">
-            {{endTime || '请选择结束时间'}}
-          </view>
-        </view>
-        <view class="error-text" wx:if="{{errors.endTime}}">{{errors.endTime}}</view>
-      </view>
-    </view>
-    
-    <!-- 参与人数部分 -->
-    <view class="form-section">
-      <view class="section-title">参与人数</view>
-      
-      <view class="form-item slider-item">
-        <view class="form-label">最少参与人数</view>
-        <view class="slider-container">
-          <slider min="2" max="50" value="{{minParticipants}}" show-value block-size="24" activeColor="#07c160" bindchange="onMinParticipantsChange" />
-        </view>
-      </view>
-      
-      <view class="form-item slider-item">
-        <view class="form-label">最多参与人数</view>
-        <view class="slider-container">
-          <slider min="{{minParticipants}}" max="100" value="{{maxParticipants}}" show-value block-size="24" activeColor="#07c160" bindchange="onMaxParticipantsChange" />
-        </view>
-      </view>
-    </view>
-    
-    <!-- 标签部分 -->
-    <view class="form-section">
-      <view class="section-title">活动标签</view>
-      
+
       <view class="form-item">
-        <view class="form-label">添加标签（最多5个）</view>
-        <view class="tag-input-group">
-          <input class="form-input tag-input" placeholder="输入标签后点击添加" value="{{tagInput}}" bindinput="onTagInput" />
-          <button class="tag-btn" bindtap="addTag">添加</button>
+        <view class="form-label">活动结束时间</view>
+        <view class="time-picker-trigger" bindtap="showEndTimePicker">
+          <view class="{{formData.endTime ? 'time-text' : 'time-placeholder'}}">
+            {{formData.endTime || '请选择活动结束时间'}}
+          </view>
+          <text class="icon-calendar">📅</text>
         </view>
+        <view class="form-tip" wx:if="{{errors.endTime}}">{{errors.endTime}}</view>
       </view>
-      
-      <view class="tags-container" wx:if="{{tags.length > 0}}">
-        <view class="tag-item" wx:for="{{tags}}" wx:key="index">
-          <text class="tag-text">{{item}}</text>
-          <text class="tag-remove" bindtap="removeTag" data-index="{{index}}">×</text>
-        </view>
-      </view>
-    </view>
-    
-    <!-- 图片上传部分 -->
-    <view class="form-section">
-      <view class="section-title">活动图片</view>
-      
+
+      <!-- 人数限制 -->
       <view class="form-item">
-        <view class="form-label">封面图片<text class="required">*</text></view>
-        <view class="cover-upload-container">
-          <view class="cover-upload-box" bindtap="chooseCoverImage" wx:if="{{!coverImage}}">
-            <view class="upload-icon">+</view>
-            <view class="upload-text">上传封面图片</view>
-          </view>
-          <view class="cover-preview" wx:else>
-            <image src="{{coverImage}}" mode="aspectFill" class="cover-image"></image>
-            <view class="image-remove" bindtap="removeCoverImage">×</view>
-          </view>
-        </view>
-        <view class="error-text" wx:if="{{errors.coverImage}}">{{errors.coverImage}}</view>
+        <view class="form-label">人数限制</view>
+        <input 
+          class="form-input" 
+          name="maxParticipants" 
+          type="number" 
+          placeholder="请输入人数限制（不填则不限制）" 
+          value="{{formData.maxParticipants}}"
+          bindinput="onMaxParticipantsInput"
+        />
+        <view class="form-tip" wx:if="{{errors.maxParticipants}}">{{errors.maxParticipants}}</view>
       </view>
-      
+
+      <!-- 报名截止时间 -->
       <view class="form-item">
-        <view class="form-label">活动图片（最多9张）</view>
-        <view class="images-container">
-          <view class="image-upload-box" bindtap="chooseActivityImages" wx:if="{{activityImages.length < maxImageCount}}">
-            <view class="upload-icon">+</view>
-            <view class="upload-text">上传图片</view>
+        <view class="form-label">报名截止时间</view>
+        <view class="time-picker-trigger" bindtap="showRegistrationDeadlinePicker">
+          <view class="{{formData.registrationDeadline ? 'time-text' : 'time-placeholder'}}">
+            {{formData.registrationDeadline || '请选择报名截止时间'}}
           </view>
-          <view class="image-preview" wx:for="{{activityImages}}" wx:key="index">
-            <image src="{{item}}" mode="aspectFill" class="activity-image"></image>
-            <view class="image-remove" bindtap="removeActivityImage" data-index="{{index}}">×</view>
+          <text class="icon-calendar">📅</text>
+        </view>
+        <view class="form-tip" wx:if="{{errors.registrationDeadline}}">{{errors.registrationDeadline}}</view>
+      </view>
+
+      <!-- 活动详情 -->
+      <view class="form-item">
+        <view class="form-label">活动详情</view>
+        <textarea 
+          class="form-textarea" 
+          name="description" 
+          placeholder="请输入活动详情，如活动流程、注意事项等（不超过500字）" 
+          maxlength="500" 
+          value="{{formData.description}}"
+          bindinput="onDescriptionInput"
+        ></textarea>
+        <view class="textarea-counter">{{descriptionLength}}/500</view>
+        <view class="form-tip" wx:if="{{errors.description}}">{{errors.description}}</view>
+      </view>
+
+      <!-- 上传活动封面 -->
+      <view class="form-item">
+        <view class="form-label">活动封面</view>
+        <view class="upload-container">
+          <view class="upload-preview" wx:if="{{formData.coverImage}}">
+            <image src="{{formData.coverImage}}" mode="aspectFill"></image>
+            <view class="upload-delete" bindtap="deleteCoverImage">×</view>
+          </view>
+          <view class="upload-button" bindtap="uploadCoverImage" wx:else>
+            <text class="upload-icon">+</text>
+            <view>上传封面</view>
           </view>
         </view>
+        <view class="form-tip" wx:if="{{errors.coverImage}}">{{errors.coverImage}}</view>
       </view>
-    </view>
-    
-    <!-- 设置部分 -->
-    <view class="form-section">
-      <view class="section-title">活动设置</view>
-      
-      <view class="form-item switch-item">
-        <view class="switch-label">仅对好友可见</view>
-        <switch checked="{{isPrivate}}" bindchange="togglePrivate" color="#07c160" />
+
+      <!-- 提交按钮 -->
+      <view class="form-submit">
+        <button class="submit-button" form-type="submit">创建活动</button>
       </view>
-      
-      <view class="form-item switch-item">
-        <view class="switch-label">加入需要审核</view>
-        <switch checked="{{needsReview}}" bindchange="toggleReview" color="#07c160" />
-      </view>
-    </view>
-  </view>
-  
-  <view class="form-actions">
-    <button class="cancel-btn" bindtap="onCancel">取消</button>
-    <button class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submitForm" disabled="{{submitting}}">
-      {{submitting ? '创建中...' : '创建活动'}}
-    </button>
+    </form>
   </view>
 </view>
 
-<!-- 时间选择器弹窗 -->
-<view class="picker-modal" wx:if="{{showStartPicker || showEndPicker}}">
-  <view class="picker-mask" bindtap="cancelDatePicker"></view>
-  <view class="picker-content">
-    <view class="picker-header">
-      <view class="picker-title">{{pickerTitle}}</view>
-      <view class="picker-close" bindtap="cancelDatePicker">×</view>
+<!-- 时间选择器组件 -->
+<time-picker
+  visible="{{startTimePickerVisible}}"
+  title="选择活动开始时间"
+  bind:confirm="onStartTimeConfirm"
+  bind:cancel="onTimePickerCancel"
+  bind:close="onTimePickerClose"
+  minDate="{{minDate}}"
+  showDate="{{true}}"
+  showTime="{{true}}"
+></time-picker>
+
+<time-picker
+  visible="{{endTimePickerVisible}}"
+  title="选择活动结束时间"
+  bind:confirm="onEndTimeConfirm"
+  bind:cancel="onTimePickerCancel"
+  bind:close="onTimePickerClose"
+  minDate="{{minDate}}"
+  showDate="{{true}}"
+  showTime="{{true}}"
+></time-picker>
+
+<time-picker
+  visible="{{registrationDeadlinePickerVisible}}"
+  title="选择报名截止时间"
+  bind:confirm="onRegistrationDeadlineConfirm"
+  bind:cancel="onTimePickerCancel"
+  bind:close="onTimePickerClose"
+  minDate="{{minDate}}"
+  maxDate="{{maxRegistrationDate}}"
+  showDate="{{true}}"
+  showTime="{{true}}"
+></time-picker>
+
+<!-- 自定义导航栏 -->
+<view class="custom-nav" style="height: {{navBarHeight}}px;">
+  <view class="nav-content" style="top: {{statusBarHeight}}px;">
+    <view class="nav-back" bindtap="navigateBack">
+      <view class="back-icon">←</view>
     </view>
-    <picker-view class="time-picker-view" value="{{pickerValue}}" bindchange="onPickerChange">
-      <picker-view-column>
-        <!-- 日期选项 -->
-      </picker-view-column>
-      <picker-view-column>
-        <!-- 时间选项 -->
-      </picker-view-column>
-    </picker-view>
-    <view class="picker-actions">
-      <button class="picker-cancel" bindtap="cancelDatePicker">取消</button>
-      <button class="picker-confirm" bindtap="confirmDatePicker">确认</button>
-    </view>
+    <view class="nav-title">创建活动</view>
   </view>
 </view>
