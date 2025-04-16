@@ -100,7 +100,36 @@ Page({
       this.setData({
         refreshing: false
       });
+      wx.stopPullDownRefresh();
+    }).catch(() => {
+      this.setData({
+        refreshing: false
+      });
+      wx.stopPullDownRefresh();
     });
+  },
+  
+  /**
+   * 页面上拉触底事件处理函数
+   */
+  onReachBottom: function () {
+    // 如果还有更多数据且不在加载中，加载下一页
+    if (this.data.hasMore && !this.data.loading) {
+      this.loadMoreActivities();
+    }
+  },
+  
+  /**
+   * 加载更多活动
+   */
+  loadMoreActivities: function() {
+    // 增加页码
+    this.setData({
+      page: this.data.page + 1
+    });
+    
+    // 加载数据
+    this.loadActivities();
   },
   
   /**
@@ -111,6 +140,38 @@ Page({
     this.setData({
       isLogin,
       userInfo: isLogin ? wx.getStorageSync('userInfo') : null
+    });
+  },
+  
+  /**
+   * 获取用户信息
+   */
+  fetchUserInfo: function() {
+    if (!this.data.isLogin) return;
+    
+    wx.cloud.callFunction({
+      name: 'user',
+      data: {
+        action: 'getUserInfo'
+      }
+    }).then(res => {
+      if (res.result && res.result.code === 0) {
+        const userInfo = res.result.data;
+        
+        // 更新存储的用户信息
+        wx.setStorageSync('userInfo', userInfo);
+        
+        // 更新页面数据
+        this.setData({
+          userInfo
+        });
+        
+        // 更新全局数据
+        app.globalData.userInfo = userInfo;
+        app.globalData.userId = userInfo._id || userInfo.userId;
+      }
+    }).catch(err => {
+      console.error('获取用户信息失败:', err);
     });
   },
   
@@ -137,9 +198,11 @@ Page({
     });
   },
 
-  // 加载活动
+  /**
+   * 加载活动
+   */
   loadActivities: function() {
-    if (this.data.loading || !this.data.hasMore) return;
+    if (this.data.loading || !this.data.hasMore) return Promise.resolve();
 
     this.setData({ loading: true });
 
@@ -156,7 +219,9 @@ Page({
     });
   },
 
-  // 加载推荐活动
+  /**
+   * 加载推荐活动
+   */
   loadRecommendedActivities: function() {
     // 构建查询参数
     const params = {
@@ -192,11 +257,249 @@ Page({
       });
   },
 
-  // 处理返回的活动数据
+  /**
+   * 处理返回的活动数据，实现瀑布流布局
+   * @param {Array} activities 活动数组
+   */
   processActivities: function(activities) {
     if (!activities || activities.length === 0) {
       this.setData({ hasMore: false });
       return;
+    }
+    
+    let { leftActivities, rightActivities, totalCount } = this.data;
+    let leftHeight = 0;
+    let rightHeight = 0;
+    
+    // 如果是第一页，重置列表
+    if (this.data.page === 1) {
+      leftActivities = [];
+      rightActivities = [];
+      leftHeight = 0;
+      rightHeight = 0;
+    }
+    
+    // 处理每个活动数据
+    activities.forEach(activity => {
+      // 根据活动类型计算卡片高度（这里简化处理，实际应该根据内容量计算）
+      const isLarge = activity.type === 'offline' || activity.images?.length > 2;
+      const cardHeight = isLarge ? 450 : 380; // 模拟不同卡片的高度
+      
+      // 处理活动数据，添加额外属性
+      const processedActivity = {
+        ...activity,
+        coverUrl: activityService.processActivityCover(activity.coverUrl),
+        tag: activity.isHot ? '热门' : (activity.isRecommend ? '推荐' : '新发布'),
+        coverType: isLarge ? 'cover-large' : 'cover-normal',
+        cardHeight
+      };
+      
+      // 将活动添加到高度较低的一列
+      if (leftHeight <= rightHeight) {
+        leftActivities.push(processedActivity);
+        leftHeight += cardHeight;
+      } else {
+        rightActivities.push(processedActivity);
+        rightHeight += cardHeight;
+      }
+    });
+    
+    // 更新页面数据
+    this.setData({
+      leftActivities,
+      rightActivities,
+      totalCount: totalCount + activities.length,
+      hasMore: activities.length >= this.data.pageSize
+    });
+  },
+  
+  /**
+   * 获取热门活动
+   */
+  fetchHotActivities: function() {
+    activityService.getHotActivities({ pageSize: 6 })
+      .then(res => {
+        if (res && res.code === 0) {
+          this.setData({
+            hotActivities: res.data.list || []
+          });
+        } else {
+          console.error('获取热门活动失败:', res);
+        }
+      })
+      .catch(err => {
+        console.error('获取热门活动出错:', err);
+      });
+  },
+  
+  /**
+   * 获取社区活动
+   */
+  fetchCommunityActivities: function() {
+    activityService.getCommunityActivities({ pageSize: 6 })
+      .then(res => {
+        if (res && res.code === 0) {
+          this.setData({
+            communityActivities: res.data.list || []
+          });
+        } else {
+          console.error('获取社区活动失败:', res);
+        }
+      })
+      .catch(err => {
+        console.error('获取社区活动出错:', err);
+      });
+  },
+  
+  /**
+   * 加载轮播图数据
+   */
+  loadBannerData: function() {
+    activityService.getBanners()
+      .then(res => {
+        if (res && res.code === 0) {
+          this.setData({
+            bannerList: res.data || []
+          });
+        } else {
+          console.error('获取轮播图数据失败:', res);
+        }
+      })
+      .catch(err => {
+        console.error('获取轮播图数据出错:', err);
+      });
+  },
+  
+  /**
+   * 轮播图切换事件
+   */
+  onBannerChange: function(e) {
+    this.setData({
+      currentBannerIndex: e.detail.current
+    });
+  },
+  
+  /**
+   * 点击轮播图
+   */
+  onBannerTap: function(e) {
+    const { id } = e.currentTarget.dataset;
+    if (id) {
+      // 如果是活动ID，跳转到活动详情
+      routerService.openActivityDetail(id);
+    }
+  },
+  
+  /**
+   * 切换导航类型
+   */
+  switchNavType: function(e) {
+    const { type } = e.currentTarget.dataset;
+    console.log('切换导航类型:', type);
+    
+    // 根据类型跳转到相应页面
+    if (type === 'hot') {
+      // 热门活动
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'hot' });
+    } else if (type === 'recommend') {
+      // 推荐活动
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'recommend' });
+    } else if (type === 'nearby') {
+      // 附近活动
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'nearby' });
+    } else if (type === 'soon') {
+      // 即将开始
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'soon' });
+    }
+  },
+  
+  /**
+   * 查看更多活动
+   */
+  viewMoreActivities: function(e) {
+    const { type } = e.currentTarget.dataset;
+    console.log('查看更多:', type);
+    
+    // 根据类型跳转到相应页面
+    if (type === 'hot') {
+      // 热门活动
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'hot' });
+    } else if (type === 'community') {
+      // 社区活动
+      routerService.navigateTo('/packageActivity/pages/activityList/activityList', { type: 'community' });
+    }
+  },
+  
+  /**
+   * 跳转到活动详情
+   */
+  navigateToActivityDetail: function(e) {
+    const { id } = e.currentTarget.dataset;
+    routerService.openActivityDetail(id);
+  },
+  
+  /**
+   * 前往消息页面
+   */
+  navigateToMessages: function() {
+    routerService.openMessages();
+  },
+  
+  /**
+   * 切换底部标签
+   */
+  switchTab: function(e) {
+    const { index } = e.currentTarget.dataset;
+    routerService.switchTab(parseInt(index, 10));
+  },
+  
+  /**
+   * 显示发布选项
+   */
+  showPublishOptions: function() {
+    // 检查登录状态
+    if (!this.data.isLogin) {
+      return checkAndTipLogin(() => {
+        this.showPublishOptions();
+      });
+    }
+    
+    wx.showActionSheet({
+      itemList: ['发布活动'],
+      success: (res) => {
+        if (res.tapIndex === 0) {
+          // 发布活动
+          routerService.openActivityCreate();
+        }
+      }
+    });
+  },
+  
+  /**
+   * 图片加载错误处理
+   */
+  onImageError: function(e) {
+    const { index } = e.currentTarget.dataset;
+    console.log('图片加载错误:', index);
+    
+    // 解析索引，格式例如 "hot-0"
+    const [type, idx] = index.split('-');
+    const i = parseInt(idx, 10);
+    
+    if (type === 'hot' && this.data.hotActivities[i]) {
+      // 更新热门活动列表中的图片路径为默认图片
+      const newHotActivities = [...this.data.hotActivities];
+      newHotActivities[i].coverUrl = '/assets/images/default-activity-cover.jpg';
+      this.setData({
+        hotActivities: newHotActivities
+      });
+    } else if (type === 'community' && this.data.communityActivities[i]) {
+      // 更新社区活动列表中的图片路径为默认图片
+      const newCommunityActivities = [...this.data.communityActivities];
+      newCommunityActivities[i].coverUrl = '/assets/images/default-activity-cover.jpg';
+      this.setData({
+        communityActivities: newCommunityActivities
+      });
     }
   }
 });
