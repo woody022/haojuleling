@@ -1,1 +1,157 @@
-<!--pages/index/index.wxml-->\n<view class=\"container\">\n  <!-- 顶部搜索栏 -->\n  <view class=\"search-bar\">\n    <navigator url=\"/pages/activity/activity?tab=search\" hover-class=\"none\" class=\"search-box\">\n      <image class=\"search-icon\" src=\"/assets/images/icons/search.png\"></image>\n      <text class=\"search-placeholder\">搜索活动、组织、地点</text>\n    </navigator>\n  </view>\n  \n  <!-- 轮播图 -->\n  <view class=\"banner-section\" wx:if=\"{{banners.length > 0}}\">\n    <swiper class=\"banner\" indicator-dots=\"{{true}}\" autoplay=\"{{true}}\" interval=\"{{3000}}\" duration=\"{{500}}\" circular=\"{{true}}\" indicator-color=\"rgba(255, 255, 255, 0.6)\" indicator-active-color=\"#3B82F6\">\n      <block wx:for=\"{{banners}}\" wx:key=\"_id\">\n        <swiper-item bindtap=\"bannerTap\" data-index=\"{{index}}\">\n          <image src=\"{{item.imageUrl}}\" class=\"banner-image\" mode=\"aspectFill\"></image>\n        </swiper-item>\n      </block>\n    </swiper>\n  </view>\n  \n  <!-- 功能入口 -->\n  <view class=\"feature-section\">\n    <view class=\"feature-grid\">\n      <navigator url=\"/packageActivity/pages/activityList/activityList\" class=\"feature-item\">\n        <image class=\"feature-icon\" src=\"/assets/images/icons/activity.png\"></image>\n        <text class=\"feature-text\">全部活动</text>\n      </navigator>\n      <navigator url=\"/packageActivity/pages/activityList/activityList?type=nearby\" class=\"feature-item\">\n        <image class=\"feature-icon\" src=\"/assets/images/icons/nearby.png\"></image>\n        <text class=\"feature-text\">附近活动</text>\n      </navigator>\n      <navigator url=\"/packageActivity/pages/activityCreate/activityCreate\" class=\"feature-item\">\n        <image class=\"feature-icon\" src=\"/assets/images/icons/create.png\"></image>\n        <text class=\"feature-text\">发布活动</text>\n      </navigator>\n      <navigator url=\"/packageActivity/pages/myActivities/myActivities\" class=\"feature-item\">\n        <image class=\"feature-icon\" src=\"/assets/images/icons/my-activity.png\"></image>\n        <text class=\"feature-text\">我的活动</text>\n      </navigator>\n    </view>\n  </view>\n  \n  <!-- 活动分类 -->\n  <view class=\"category-section\" wx:if=\"{{categories.length > 0}}\">\n    <view class=\"section-header\">\n      <text class=\"section-title\">活动分类</text>\n    </view>\n    <scroll-view scroll-x class=\"category-scroll\">\n      <view class=\"category-list\">\n        <view class=\"category-item\" wx:for=\"{{categories}}\" wx:key=\"_id\" bindtap=\"viewCategoryActivities\" data-id=\"{{item._id}}\" data-name=\"{{item.name}}\">\n          <image class=\"category-icon\" src=\"{{item.icon}}\"></image>\n          <text class=\"category-name\">{{item.name}}</text>\n        </view>\n      </view>\n    </scroll-view>\n  </view>\n  \n  <!-- 推荐活动 -->\n  <view class=\"activity-section\">\n    <view class=\"section-header\">\n      <text class=\"section-title\">推荐活动</text>\n      <text class=\"section-more\" bindtap=\"viewMoreActivities\" data-type=\"recommend\">查看更多</text>\n    </view>\n    \n    <view class=\"activity-list\" wx:if=\"{{!loading && recommendActivities.length > 0}}\">\n      <view class=\"activity-card\" wx:for=\"{{recommendActivities}}\" wx:key=\"_id\" bindtap=\"navigateToDetail\" data-id=\"{{item._id}}\">\n        <image class=\"activity-image\" src=\"{{item.coverUrl}}\" mode=\"aspectFill\"></image>\n        <view class=\"activity-info\">\n          <text class=\"activity-title\">{{item.title}}</text>\n          <view class=\"activity-meta\">\n            <view class=\"activity-time\">\n              <image class=\"meta-icon\" src=\"/assets/images/icons/time.png\"></image>\n              <text class=\"meta-text\">{{item.startTime}}</text>\n            </view>\n            <view class=\"activity-location\">\n              <image class=\"meta-icon\" src=\"/assets/images/icons/location.png\"></image>\n              <text class=\"meta-text ellipsis\">{{item.address}}</text>\n            </view>\n          </view>\n          <view class=\"activity-stats\">\n            <text class=\"activity-participants\">{{item.participantsCount || 0}}人参与</text>\n            <text class=\"activity-category\">{{item.categoryName}}</text>\n          </view>\n        </view>\n      </view>\n    </view>\n    \n    <view class=\"empty-tip\" wx:if=\"{{!loading && recommendActivities.length === 0}}\">\n      <image class=\"empty-icon\" src=\"/assets/images/icons/empty.png\"></image>\n      <text class=\"empty-text\">暂无推荐活动</text>\n    </view>\n    \n    <view class=\"loading-container\" wx:if=\"{{loading}}\">\n      <view class=\"spinner\"></view>\n    </view>\n  </view>\n  \n  <!-- 附近活动 -->\n  <view class=\"activity-section\" wx:if=\"{{locationAuth}}\">\n    <view class=\"section-header\">\n      <text class=\"section-title\">附近活动</text>\n      <text class=\"section-more\" bindtap=\"viewMoreActivities\" data-type=\"nearby\">查看更多</text>\n    </view>\n    \n    <view class=\"activity-list\" wx:if=\"{{nearbyActivities.length > 0}}\">\n      <view class=\"activity-card\" wx:for=\"{{nearbyActivities}}\" wx:key=\"_id\" bindtap=\"navigateToDetail\" data-id=\"{{item._id}}\">\n        <image class=\"activity-image\" src=\"{{item.coverUrl}}\" mode=\"aspectFill\"></image>\n        <view class=\"activity-info\">\n          <text class=\"activity-title\">{{item.title}}</text>\n          <view class=\"activity-meta\">\n            <view class=\"activity-time\">\n              <image class=\"meta-icon\" src=\"/assets/images/icons/time.png\"></image>\n              <text class=\"meta-text\">{{item.startTime}}</text>\n            </view>\n            <view class=\"activity-location\">\n              <image class=\"meta-icon\" src=\"/assets/images/icons/location.png\"></image>\n              <text class=\"meta-text ellipsis\">{{item.address}}</text>\n            </view>\n          </view>\n          <view class=\"activity-stats\">\n            <text class=\"activity-participants\">{{item.participantsCount || 0}}人参与</text>\n            <text class=\"activity-distance\">{{item.distance}}km</text>\n          </view>\n        </view>\n      </view>\n    </view>\n    \n    <view class=\"empty-tip\" wx:if=\"{{nearbyActivities.length === 0}}\">\n      <image class=\"empty-icon\" src=\"/assets/images/icons/empty.png\"></image>\n      <text class=\"empty-text\">附近暂无活动</text>\n    </view>\n  </view>\n  \n  <!-- 位置权限提示 -->\n  <view class=\"location-tip\" wx:if=\"{{!locationAuth}}\">\n    <image class=\"location-icon\" src=\"/assets/images/icons/location-off.png\"></image>\n    <text class=\"location-text\">开启位置权限，查看附近活动</text>\n    <button class=\"location-btn\" bindtap=\"requestLocationAuth\">开启</button>\n  </view>\n  \n  <!-- 底部提示 -->\n  <view class=\"footer-tip\">\n    <text class=\"footer-text\">{{motto}}</text>\n  </view>\n  \n  <!-- 底部安全区域 -->\n  <view class=\"safe-bottom-area\"></view>\n</view>
+<!-- 读者艺术小程序首页 index.wxml -->
+<view class="reader-art-container">
+  <!-- 顶部用户信息区 -->
+  <view class="user-info-area">
+    <view class="user-info">
+      <view class="avatar"></view>
+      <view class="user-text">
+        <text class="welcome-text">欢迎回来</text>
+        <text class="profile-link">点击查看个人主页</text>
+      </view>
+    </view>
+    <view class="message-btn" bindtap="navigateToMessages">
+      <text>消息</text>
+      <view class="message-dot" wx:if="{{userInfo.unreadMessageCount > 0}}"></view>
+    </view>
+  </view>
+
+  <!-- 顶部背景区域 -->
+  <view class="banner-bg">
+    <swiper class="banner-swiper" 
+      indicator-dots="{{false}}"
+      autoplay="{{true}}" 
+      interval="{{3000}}" 
+      duration="{{500}}"
+      circular="{{true}}"
+      previous-margin="20rpx"
+      next-margin="20rpx"
+      current="{{currentBannerIndex}}"
+      bindchange="onBannerChange">
+      <block wx:for="{{bannerList}}" wx:key="id">
+        <swiper-item bind:tap="onBannerTap" data-id="{{item.id}}">
+          <view class="banner-item" style="background: {{item.gradientColor}}">
+            <!-- 左侧内容区域 -->
+            <view class="banner-info">
+              <view class="banner-category">{{item.category}}</view>
+              <view class="banner-title">{{item.title}}</view>
+              <view class="banner-price">{{item.price}}</view>
+            </view>
+            <!-- 右侧图片区域 -->
+            <view class="banner-image-container">
+              <view class="banner-image-wrapper">
+                <image class="banner-image" src="{{item.imageUrl}}" mode="aspectFill"></image>
+              </view>
+              <!-- 图片下方的滑块指示器 -->
+              <view class="banner-image-slider">
+                <block wx:for="{{bannerList}}" wx:for-item="sliderItem" wx:for-index="sliderIndex" wx:key="id">
+                  <view class="slider-dot {{currentBannerIndex === sliderIndex ? 'active' : ''}}"></view>
+                </block>
+              </view>
+            </view>
+          </view>
+        </swiper-item>
+      </block>
+    </swiper>
+  </view>
+
+  <!-- 功能导航栏 -->
+  <view class="nav-bar">
+    <view class="nav-item" bindtap="switchNavType" data-type="hot">
+      <text>最新</text>
+    </view>
+    <view class="nav-item" bindtap="switchNavType" data-type="recommend">
+      <text>推荐</text>
+    </view>
+    <view class="nav-item" bindtap="switchNavType" data-type="nearby">
+      <text>附近</text>
+    </view>
+    <view class="nav-item" bindtap="switchNavType" data-type="soon">
+      <text>即将开始</text>
+    </view>
+  </view>
+
+  <!-- 分隔线 -->
+  <view class="divider"></view>
+
+  <!-- 热门活动区 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">热门活动</text>
+      <text class="view-more" bindtap="viewMoreActivities" data-type="hot">查看更多</text>
+    </view>
+    
+    <scroll-view class="activity-list" scroll-x="true" enable-flex="true">
+      <block wx:for="{{hotActivities}}" wx:key="id">
+        <view class="activity-card" bindtap="navigateToActivityDetail" data-id="{{item.id}}">
+          <view class="activity-cover {{item.coverType}}">
+            <image class="activity-cover-image" src="{{item.coverUrl}}" mode="aspectFill" lazy-load="true" binderror="onImageError" data-index="hot-{{index}}"></image>
+            <view class="activity-info-overlay">
+              <text class="activity-title">{{item.title}}</text>
+              <view class="enrollment-info">
+                <text class="enrolled-text">已报名</text>
+                <text class="enrolled-count">{{item.enrollCount}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="activity-bottom">
+            <text class="organizer">{{item.organizer}}</text>
+            <view class="tag {{item.tag === '热门' ? 'hot-tag' : (item.tag === '推荐' ? 'recommend-tag' : 'new-tag')}}">
+              <text>{{item.tag}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 社区活动区 -->
+  <view class="section">
+    <view class="section-header">
+      <text class="section-title">社区活动</text>
+      <text class="view-more" bindtap="viewMoreActivities" data-type="community">查看更多</text>
+    </view>
+    
+    <scroll-view class="activity-list" scroll-x="true" enable-flex="true">
+      <block wx:for="{{communityActivities}}" wx:key="id">
+        <view class="activity-card" bindtap="navigateToActivityDetail" data-id="{{item.id}}">
+          <view class="activity-cover {{item.coverType}}">
+            <image class="activity-cover-image" src="{{item.coverUrl}}" mode="aspectFill" lazy-load="true" binderror="onImageError" data-index="community-{{index}}"></image>
+            <view class="activity-info-overlay">
+              <text class="activity-title">{{item.title}}</text>
+              <view class="enrollment-info">
+                <text class="enrolled-text">已报名</text>
+                <text class="enrolled-count">{{item.enrollCount}}</text>
+              </view>
+            </view>
+          </view>
+          <view class="activity-bottom">
+            <text class="organizer">{{item.organizer}}</text>
+            <view class="tag {{item.tag === '热门' ? 'hot-tag' : (item.tag === '推荐' ? 'recommend-tag' : 'new-tag')}}">
+              <text>{{item.tag}}</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 底部导航栏 -->
+  <view class="tab-bar">
+    <view class="tab-item tab-active">
+      <text>首页</text>
+      <view class="active-indicator"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-index="1">
+      <text>活动</text>
+    </view>
+    <view class="tab-item tab-center" bindtap="showPublishOptions">
+      <view class="plus-btn"></view>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-index="3">
+      <text>社区</text>
+    </view>
+    <view class="tab-item" bindtap="switchTab" data-index="4">
+      <text>我的</text>
+    </view>
+  </view>
+</view>
