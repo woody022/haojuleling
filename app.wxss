@@ -1,1 +1,502 @@
-/**\n * 好聚乐龄项目全局样式\n * 统一引入各样式模块，便于全局应用\n */\n\n/* 主题变量 */\n@import \"/common/styles/theme.wxss\";\n\n/* 布局系统 */\n@import \"/common/styles/layout.wxss\";\n\n/* 排版系统 */\n@import \"/common/styles/typography.wxss\";\n\n/* 表单元素 */\n@import \"/common/styles/form.wxss\";\n\n/* UI组件 */\n@import \"/common/styles/ui.wxss\";\n\n/* 自定义组件 */\n@import \"/common/styles/components.wxss\";\n\n/* 活动相关组件 */\n@import \"/common/styles/activity.wxss\";\n\n/**\n * 全局基础样式\n */\npage {\n  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica,\n    Segoe UI, Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei',\n    sans-serif;\n  font-size: 28rpx;\n  color: var(--text-primary);\n  background-color: var(--bg-light);\n  line-height: 1.6;\n  box-sizing: border-box;\n}\n\n/* 视图容器样式 */\nview, text, navigator, button, input, textarea, image {\n  box-sizing: border-box;\n}\n\n/* 隐藏滚动条但保持功能 */\n::-webkit-scrollbar {\n  width: 0;\n  height: 0;\n  color: transparent;\n}\n\n/* 强制换行 */\n.wrap {\n  word-break: break-all;\n  white-space: normal;\n}\n\n/* 单行省略 */\n.ellipsis {\n  overflow: hidden;\n  white-space: nowrap;\n  text-overflow: ellipsis;\n}\n\n/* 多行省略 */\n.ellipsis-2 {\n  display: -webkit-box;\n  -webkit-box-orient: vertical;\n  -webkit-line-clamp: 2;\n  overflow: hidden;\n}\n\n.ellipsis-3 {\n  display: -webkit-box;\n  -webkit-box-orient: vertical;\n  -webkit-line-clamp: 3;\n  overflow: hidden;\n}\n\n/* 清除浮动 */\n.clearfix:after {\n  content: \"\";\n  display: block;\n  clear: both;\n}\n\n/* 安全区域适配 */\n.safe-bottom {\n  padding-bottom: env(safe-area-inset-bottom);\n}\n\n.safe-top {\n  padding-top: env(safe-area-inset-top);\n}\n\n/* 禁用点击 */\n.disabled {\n  opacity: 0.5;\n  pointer-events: none;\n}\n\n/* 隐藏元素 */\n.hidden {\n  display: none !important;\n}\n\n/* 内容为空的提示 */\n.empty-tip {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 60rpx 30rpx;\n  color: var(--text-secondary);\n  text-align: center;\n}\n\n.empty-icon {\n  width: 160rpx;\n  height: 160rpx;\n  margin-bottom: 20rpx;\n  opacity: 0.5;\n}\n\n.empty-text {\n  font-size: 28rpx;\n}\n\n/* 加载提示 */\n.loading-container {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 40rpx;\n}\n\n.spinner {\n  width: 60rpx;\n  height: 60rpx;\n  border-radius: 50%;\n  border: 6rpx solid var(--border-light);\n  border-top-color: var(--primary);\n  animation: spin 1s infinite linear;\n}\n\n@keyframes spin {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n\n/**\n * 小程序主样式入口文件\n */\n\n/* 基础页面容器 */\n.container {\n  min-height: 100vh;\n  background-color: var(--background);\n  color: var(--text-dark);\n}\n\n/* 内容安全区域 */\n.safe-area-container {\n  padding-bottom: env(safe-area-inset-bottom);\n}\n\n/* 基础页面底部占位，防止内容被底部导航栏遮挡 */\n.bottom-placeholder {\n  height: 100rpx;\n}\n\n/* 底部TabBar有额外高度时 */\n.bottom-placeholder-with-tab {\n  height: calc(100rpx + env(safe-area-inset-bottom));\n}\n\n/* 全局按钮样式 */\n.btn {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  padding: 20rpx 40rpx;\n  border-radius: 8rpx;\n  font-size: 28rpx;\n  line-height: 1.5;\n  transition: all 0.3s;\n  border: none;\n}\n\n.btn-primary {\n  background-color: var(--primary);\n  color: #fff;\n}\n\n.btn-secondary {\n  background-color: var(--secondary);\n  color: #fff;\n}\n\n.btn-outline {\n  background-color: transparent;\n  border: 2rpx solid var(--primary);\n  color: var(--primary);\n}\n\n.btn-disabled {\n  background-color: var(--disabled);\n  color: var(--text-disabled);\n  cursor: not-allowed;\n}\n\n/* 卡片样式 */\n.card {\n  background-color: #fff;\n  border-radius: 16rpx;\n  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.05);\n  margin-bottom: 20rpx;\n  overflow: hidden;\n}\n\n.card-header {\n  padding: 24rpx 30rpx;\n  border-bottom: 2rpx solid var(--border-light);\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n.card-body {\n  padding: 30rpx;\n}\n\n.card-footer {\n  padding: 24rpx 30rpx;\n  border-top: 2rpx solid var(--border-light);\n  display: flex;\n  align-items: center;\n  justify-content: space-between;\n}\n\n/* 表单样式 */\n.form-group {\n  margin-bottom: 30rpx;\n}\n\n.form-label {\n  display: block;\n  margin-bottom: 16rpx;\n  font-size: 28rpx;\n  color: var(--text-secondary);\n}\n\n.form-input {\n  width: 100%;\n  height: 80rpx;\n  padding: 0 24rpx;\n  border: 2rpx solid var(--border-base);\n  border-radius: 8rpx;\n  font-size: 28rpx;\n  background-color: #fff;\n}\n\n.form-textarea {\n  width: 100%;\n  padding: 20rpx 24rpx;\n  border: 2rpx solid var(--border-base);\n  border-radius: 8rpx;\n  font-size: 28rpx;\n  background-color: #fff;\n  min-height: 200rpx;\n}\n\n/* 长按钮，适合移动端底部固定操作 */\n.btn-long {\n  width: 100%;\n  height: 90rpx;\n  font-size: 32rpx;\n  border-radius: 45rpx;\n}\n\n/* 图标按钮 */\n.btn-icon {\n  display: inline-flex;\n  align-items: center;\n  justify-content: center;\n  width: 80rpx;\n  height: 80rpx;\n  border-radius: 50%;\n  background-color: var(--bg-gray);\n  color: var(--text-secondary);\n}\n\n/* 标签样式 */\n.tag {\n  display: inline-flex;\n  align-items: center;\n  padding: 8rpx 16rpx;\n  border-radius: 6rpx;\n  font-size: 24rpx;\n  line-height: 1.2;\n  margin-right: 16rpx;\n  margin-bottom: 16rpx;\n}\n\n.tag-primary {\n  background-color: var(--primary-light);\n  color: var(--primary);\n}\n\n.tag-success {\n  background-color: var(--success-light);\n  color: var(--success);\n}\n\n.tag-warning {\n  background-color: var(--warning-light);\n  color: var(--warning);\n}\n\n.tag-danger {\n  background-color: var(--danger-light);\n  color: var(--danger);\n}\n\n/* 列表样式 */\n.list-item {\n  display: flex;\n  align-items: center;\n  padding: 30rpx;\n  border-bottom: 2rpx solid var(--border-light);\n  background-color: #fff;\n}\n\n.list-item:last-child {\n  border-bottom: none;\n}\n\n.list-item-content {\n  flex: 1;\n}\n\n.list-item-title {\n  font-size: 30rpx;\n  color: var(--text-primary);\n  margin-bottom: 8rpx;\n}\n\n.list-item-desc {\n  font-size: 26rpx;\n  color: var(--text-secondary);\n}\n\n.list-item-avatar {\n  width: 80rpx;\n  height: 80rpx;\n  border-radius: 50%;\n  margin-right: 20rpx;\n}\n\n/* 老年人友好的大字体模式 */\n.large-text {\n  font-size: 120%;\n  line-height: 1.7;\n}
+/**app.wxss**/
+
+/* 基础样式变量 */
+page {
+  --primary-color: #3B82F6;
+  --primary-color-light: #60A5FA;
+  --primary-color-dark: #2563EB;
+  --secondary-color: #10B981;
+  --accent-color: #F59E0B;
+  --warning-color: #F97316;
+  --danger-color: #EF4444;
+  --success-color: #10B981;
+  --text-color: #333333;
+  --text-color-light: #666666;
+  --text-color-lighter: #999999;
+  --background-color: #F8F8F8;
+  --card-background: #FFFFFF;
+  --border-color: #EEEEEE;
+  --border-radius: 12rpx;
+  --font-size-large: 36rpx;
+  --font-size-normal: 30rpx;
+  --font-size-small: 24rpx;
+  --font-size-mini: 20rpx;
+  --line-height: 1.5;
+  --spacing-mini: 8rpx;
+  --spacing-small: 16rpx;
+  --spacing-normal: 24rpx;
+  --spacing-large: 32rpx;
+  --safe-area-inset-bottom: env(safe-area-inset-bottom);
+  
+  /* 适老化相关变量 */
+  --elderly-font-size-large: 42rpx;
+  --elderly-font-size-normal: 36rpx;
+  --elderly-font-size-small: 30rpx;
+  --elderly-font-size-mini: 26rpx;
+  --elderly-line-height: 1.8;
+  --elderly-spacing: 1.2;
+  
+  /* 系统字体 */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: var(--font-size-normal);
+  line-height: var(--line-height);
+  color: var(--text-color);
+  background-color: var(--background-color);
+  box-sizing: border-box;
+}
+
+/* 适老化模式 */
+page.elderly-mode {
+  font-size: var(--elderly-font-size-normal);
+  line-height: var(--elderly-line-height);
+  letter-spacing: var(--elderly-spacing);
+}
+
+/* 洒焰模式 */
+page.high-contrast {
+  --background-color: #000000;
+  --card-background: #222222;
+  --text-color: #FFFFFF;
+  --text-color-light: #DDDDDD;
+  --text-color-lighter: #BBBBBB;
+  --border-color: #444444;
+  
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* 容器 */
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding-bottom: calc(100rpx + var(--safe-area-inset-bottom));
+}
+
+/* 解决圆角问题 */
+.border-radius-fix {
+  overflow: hidden;
+  position: relative;
+}
+
+/* 基础文本样式 */
+.text-primary {
+  color: var(--primary-color);
+}
+
+.text-secondary {
+  color: var(--secondary-color);
+}
+
+.text-accent {
+  color: var(--accent-color);
+}
+
+.text-success {
+  color: var(--success-color);
+}
+
+.text-warning {
+  color: var(--warning-color);
+}
+
+.text-danger {
+  color: var(--danger-color);
+}
+
+.text-light {
+  color: var(--text-color-light);
+}
+
+.text-lighter {
+  color: var(--text-color-lighter);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.text-small {
+  font-size: var(--font-size-small);
+}
+
+.text-large {
+  font-size: var(--font-size-large);
+}
+
+/* 基础布局 */
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.align-start {
+  align-items: flex-start;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.align-end {
+  align-items: flex-end;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--card-background);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-normal);
+  margin-bottom: var(--spacing-normal);
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+/* 表单元素 */
+.input {
+  width: 100%;
+  height: 80rpx;
+  border: 2rpx solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 0 var(--spacing-normal);
+  font-size: var(--font-size-normal);
+  color: var(--text-color);
+  background-color: var(--card-background);
+  box-sizing: border-box;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 200rpx;
+  border: 2rpx solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-small);
+  font-size: var(--font-size-normal);
+  color: var(--text-color);
+  background-color: var(--card-background);
+  box-sizing: border-box;
+  line-height: 1.4;
+}
+
+/* 按钮样式 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 40rpx;
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-normal);
+  font-weight: 500;
+  text-align: center;
+  border: none;
+  background-color: var(--primary-color);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.btn:active {
+  opacity: 0.8;
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-secondary {
+  background-color: var(--secondary-color);
+  color: white;
+}
+
+.btn-accent {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.btn-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-outline {
+  background-color: transparent;
+  border: 2rpx solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.btn-block {
+  display: flex;
+  width: 100%;
+}
+
+.btn-large {
+  padding: 24rpx 48rpx;
+  font-size: var(--font-size-large);
+}
+
+.btn-small {
+  padding: 16rpx 32rpx;
+  font-size: var(--font-size-small);
+}
+
+.btn-mini {
+  padding: 10rpx 20rpx;
+  font-size: var(--font-size-mini);
+  border-radius: calc(var(--border-radius) / 2);
+}
+
+.btn-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-disabled:active {
+  opacity: 0.5;
+  transform: none;
+}
+
+/* 常用边距 */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-mini); }
+.m-2 { margin: var(--spacing-small); }
+.m-3 { margin: var(--spacing-normal); }
+.m-4 { margin: var(--spacing-large); }
+
+.mx-0 { margin-left: 0; margin-right: 0; }
+.mx-1 { margin-left: var(--spacing-mini); margin-right: var(--spacing-mini); }
+.mx-2 { margin-left: var(--spacing-small); margin-right: var(--spacing-small); }
+.mx-3 { margin-left: var(--spacing-normal); margin-right: var(--spacing-normal); }
+.mx-4 { margin-left: var(--spacing-large); margin-right: var(--spacing-large); }
+
+.my-0 { margin-top: 0; margin-bottom: 0; }
+.my-1 { margin-top: var(--spacing-mini); margin-bottom: var(--spacing-mini); }
+.my-2 { margin-top: var(--spacing-small); margin-bottom: var(--spacing-small); }
+.my-3 { margin-top: var(--spacing-normal); margin-bottom: var(--spacing-normal); }
+.my-4 { margin-top: var(--spacing-large); margin-bottom: var(--spacing-large); }
+
+.mt-0 { margin-top: 0; }
+.mt-1 { margin-top: var(--spacing-mini); }
+.mt-2 { margin-top: var(--spacing-small); }
+.mt-3 { margin-top: var(--spacing-normal); }
+.mt-4 { margin-top: var(--spacing-large); }
+
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: var(--spacing-mini); }
+.mb-2 { margin-bottom: var(--spacing-small); }
+.mb-3 { margin-bottom: var(--spacing-normal); }
+.mb-4 { margin-bottom: var(--spacing-large); }
+
+.ml-0 { margin-left: 0; }
+.ml-1 { margin-left: var(--spacing-mini); }
+.ml-2 { margin-left: var(--spacing-small); }
+.ml-3 { margin-left: var(--spacing-normal); }
+.ml-4 { margin-left: var(--spacing-large); }
+
+.mr-0 { margin-right: 0; }
+.mr-1 { margin-right: var(--spacing-mini); }
+.mr-2 { margin-right: var(--spacing-small); }
+.mr-3 { margin-right: var(--spacing-normal); }
+.mr-4 { margin-right: var(--spacing-large); }
+
+.p-0 { padding: 0; }
+.p-1 { padding: var(--spacing-mini); }
+.p-2 { padding: var(--spacing-small); }
+.p-3 { padding: var(--spacing-normal); }
+.p-4 { padding: var(--spacing-large); }
+
+.px-0 { padding-left: 0; padding-right: 0; }
+.px-1 { padding-left: var(--spacing-mini); padding-right: var(--spacing-mini); }
+.px-2 { padding-left: var(--spacing-small); padding-right: var(--spacing-small); }
+.px-3 { padding-left: var(--spacing-normal); padding-right: var(--spacing-normal); }
+.px-4 { padding-left: var(--spacing-large); padding-right: var(--spacing-large); }
+
+.py-0 { padding-top: 0; padding-bottom: 0; }
+.py-1 { padding-top: var(--spacing-mini); padding-bottom: var(--spacing-mini); }
+.py-2 { padding-top: var(--spacing-small); padding-bottom: var(--spacing-small); }
+.py-3 { padding-top: var(--spacing-normal); padding-bottom: var(--spacing-normal); }
+.py-4 { padding-top: var(--spacing-large); padding-bottom: var(--spacing-large); }
+
+.pt-0 { padding-top: 0; }
+.pt-1 { padding-top: var(--spacing-mini); }
+.pt-2 { padding-top: var(--spacing-small); }
+.pt-3 { padding-top: var(--spacing-normal); }
+.pt-4 { padding-top: var(--spacing-large); }
+
+.pb-0 { padding-bottom: 0; }
+.pb-1 { padding-bottom: var(--spacing-mini); }
+.pb-2 { padding-bottom: var(--spacing-small); }
+.pb-3 { padding-bottom: var(--spacing-normal); }
+.pb-4 { padding-bottom: var(--spacing-large); }
+
+.pl-0 { padding-left: 0; }
+.pl-1 { padding-left: var(--spacing-mini); }
+.pl-2 { padding-left: var(--spacing-small); }
+.pl-3 { padding-left: var(--spacing-normal); }
+.pl-4 { padding-left: var(--spacing-large); }
+
+.pr-0 { padding-right: 0; }
+.pr-1 { padding-right: var(--spacing-mini); }
+.pr-2 { padding-right: var(--spacing-small); }
+.pr-3 { padding-right: var(--spacing-normal); }
+.pr-4 { padding-right: var(--spacing-large); }
+
+/* 基础边框 */
+.border {
+  border: 2rpx solid var(--border-color);
+}
+.border-top {
+  border-top: 2rpx solid var(--border-color);
+}
+.border-bottom {
+  border-bottom: 2rpx solid var(--border-color);
+}
+.border-left {
+  border-left: 2rpx solid var(--border-color);
+}
+.border-right {
+  border-right: 2rpx solid var(--border-color);
+}
+
+/* 隐藏样式 */
+.hidden {
+  display: none !important;
+}
+
+.invisible {
+  visibility: hidden;
+}
+
+/* 文本省略号 */
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ellipsis-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.ellipsis-3 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+/* 弹性空间 */
+.spacer {
+  flex-grow: 1;
+}
+
+/* 加载中容器 */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 0;
+}
+
+/* 分隔线 */
+.divider {
+  height: 2rpx;
+  background-color: var(--border-color);
+  width: 100%;
+  margin: var(--spacing-small) 0;
+}
+
+/* 页面底部安全距离 */
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+/* 不可点击区域 */
+.no-tap {
+  pointer-events: none;
+}
+
+/* 可点击区域 */
+.can-tap {
+  position: relative;
+}
+
+.can-tap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+}
+
+/* 插入底部占位空间 */
+.tabbar-placeholder {
+  height: calc(100rpx + var(--safe-area-inset-bottom));
+}
