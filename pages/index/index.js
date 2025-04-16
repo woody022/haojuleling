@@ -141,15 +141,23 @@ Page({
       isLogin,
       userInfo: isLogin ? wx.getStorageSync('userInfo') : null
     });
+    
+    // 同步到全局数据
+    if (app.globalData) {
+      app.globalData.isLogin = isLogin;
+      if (isLogin && !app.globalData.userInfo) {
+        app.globalData.userInfo = wx.getStorageSync('userInfo');
+      }
+    }
   },
   
   /**
    * 获取用户信息
    */
   fetchUserInfo: function() {
-    if (!this.data.isLogin) return;
+    if (!this.data.isLogin) return Promise.resolve(null);
     
-    wx.cloud.callFunction({
+    return wx.cloud.callFunction({
       name: 'user',
       data: {
         action: 'getUserInfo'
@@ -169,9 +177,13 @@ Page({
         // 更新全局数据
         app.globalData.userInfo = userInfo;
         app.globalData.userId = userInfo._id || userInfo.userId;
+        
+        return userInfo;
       }
+      return null;
     }).catch(err => {
       console.error('获取用户信息失败:', err);
+      return null;
     });
   },
   
@@ -179,22 +191,26 @@ Page({
    * 获取未读消息数量
    */
   getUnreadCount: function() {
-    if (!this.data.isLogin) return;
+    if (!this.data.isLogin) return Promise.resolve(0);
     
     // 从云函数获取未读消息数量
-    wx.cloud.callFunction({
+    return wx.cloud.callFunction({
       name: 'notification',
       data: {
         action: 'getUnreadCount'
       }
     }).then(res => {
       if (res.result && res.result.count !== undefined) {
+        const unreadCount = res.result.count || 0;
         this.setData({
-          unreadCount: res.result.count || 0
+          unreadCount
         });
+        return unreadCount;
       }
+      return 0;
     }).catch(err => {
       console.error('获取未读消息数量失败', err);
+      return 0;
     });
   },
 
@@ -243,12 +259,14 @@ Page({
           
           // 处理活动数据
           this.processActivities(activities);
+          return activities;
         } else {
           console.error('获取推荐活动失败:', res);
           wx.showToast({
             title: res?.message || '获取推荐活动失败',
             icon: 'none'
           });
+          return [];
         }
       })
       .catch(err => {
@@ -281,8 +299,13 @@ Page({
     
     // 处理每个活动数据
     activities.forEach(activity => {
+      // 确保活动对象包含所有必要字段
+      if (!activity.id && activity._id) {
+        activity.id = activity._id;
+      }
+      
       // 根据活动类型计算卡片高度（这里简化处理，实际应该根据内容量计算）
-      const isLarge = activity.type === 'offline' || activity.images?.length > 2;
+      const isLarge = activity.type === 'offline' || (activity.images && activity.images.length > 2);
       const cardHeight = isLarge ? 450 : 380; // 模拟不同卡片的高度
       
       // 处理活动数据，添加额外属性
@@ -291,7 +314,11 @@ Page({
         coverUrl: activityService.processActivityCover(activity.coverUrl),
         tag: activity.isHot ? '热门' : (activity.isRecommend ? '推荐' : '新发布'),
         coverType: isLarge ? 'cover-large' : 'cover-normal',
-        cardHeight
+        cardHeight,
+        // 确保enrollCount有值
+        enrollCount: activity.enrollCount || 0,
+        // 确保organizer有值
+        organizer: activity.organizer || (activity.creator ? activity.creator.nickName : '主办方')
       };
       
       // 将活动添加到高度较低的一列
@@ -317,18 +344,33 @@ Page({
    * 获取热门活动
    */
   fetchHotActivities: function() {
-    activityService.getHotActivities({ pageSize: 6 })
+    return activityService.getHotActivities({ pageSize: 6 })
       .then(res => {
         if (res && res.code === 0) {
-          this.setData({
-            hotActivities: res.data.list || []
+          // 确保数据中包含必要字段
+          const activities = (res.data.list || []).map(item => {
+            if (!item.id && item._id) {
+              item.id = item._id;
+            }
+            return {
+              ...item,
+              enrollCount: item.enrollCount || 0,
+              organizer: item.organizer || (item.creator ? item.creator.nickName : '主办方')
+            };
           });
+          
+          this.setData({
+            hotActivities: activities
+          });
+          return activities;
         } else {
           console.error('获取热门活动失败:', res);
+          return [];
         }
       })
       .catch(err => {
         console.error('获取热门活动出错:', err);
+        return [];
       });
   },
   
@@ -336,18 +378,33 @@ Page({
    * 获取社区活动
    */
   fetchCommunityActivities: function() {
-    activityService.getCommunityActivities({ pageSize: 6 })
+    return activityService.getCommunityActivities({ pageSize: 6 })
       .then(res => {
         if (res && res.code === 0) {
-          this.setData({
-            communityActivities: res.data.list || []
+          // 确保数据中包含必要字段
+          const activities = (res.data.list || []).map(item => {
+            if (!item.id && item._id) {
+              item.id = item._id;
+            }
+            return {
+              ...item,
+              enrollCount: item.enrollCount || 0,
+              organizer: item.organizer || (item.creator ? item.creator.nickName : '主办方')
+            };
           });
+          
+          this.setData({
+            communityActivities: activities
+          });
+          return activities;
         } else {
           console.error('获取社区活动失败:', res);
+          return [];
         }
       })
       .catch(err => {
         console.error('获取社区活动出错:', err);
+        return [];
       });
   },
   
@@ -355,18 +412,32 @@ Page({
    * 加载轮播图数据
    */
   loadBannerData: function() {
-    activityService.getBanners()
+    return activityService.getBanners()
       .then(res => {
         if (res && res.code === 0) {
-          this.setData({
-            bannerList: res.data || []
+          // 确保轮播图数据有完整的字段
+          const banners = (res.data || []).map(banner => {
+            return {
+              ...banner,
+              // 设置默认值，避免未定义错误
+              category: banner.category || '活动',
+              title: banner.title || '精彩活动',
+              price: banner.price || '免费'
+            };
           });
+          
+          this.setData({
+            bannerList: banners
+          });
+          return banners;
         } else {
           console.error('获取轮播图数据失败:', res);
+          return [];
         }
       })
       .catch(err => {
         console.error('获取轮播图数据出错:', err);
+        return [];
       });
   },
   
@@ -435,6 +506,10 @@ Page({
    */
   navigateToActivityDetail: function(e) {
     const { id } = e.currentTarget.dataset;
+    if (!id) {
+      console.error('缺少活动ID');
+      return;
+    }
     routerService.openActivityDetail(id);
   },
   
@@ -442,6 +517,11 @@ Page({
    * 前往消息页面
    */
   navigateToMessages: function() {
+    if (!this.data.isLogin) {
+      return checkAndTipLogin(() => {
+        routerService.openMessages();
+      });
+    }
     routerService.openMessages();
   },
   
