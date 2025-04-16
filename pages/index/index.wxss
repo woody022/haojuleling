@@ -1,1 +1,273 @@
-/**index.wxss**/\n.container {\n  padding-bottom: 40rpx;\n  background-color: #F6F8FB;\n}\n\n/* 搜索栏 */\n.search-bar {\n  padding: 20rpx 30rpx;\n  background-color: #3B82F6;\n}\n\n.search-box {\n  display: flex;\n  align-items: center;\n  height: 72rpx;\n  background-color: #FFFFFF;\n  border-radius: 36rpx;\n  padding: 0 24rpx;\n}\n\n.search-icon {\n  width: 36rpx;\n  height: 36rpx;\n  margin-right: 16rpx;\n}\n\n.search-placeholder {\n  font-size: 28rpx;\n  color: #999999;\n}\n\n/* 轮播图 */\n.banner-section {\n  width: 100%;\n  height: 320rpx;\n}\n\n.banner {\n  width: 100%;\n  height: 320rpx;\n}\n\n.banner-image {\n  width: 100%;\n  height: 100%;\n  border-radius: 0;\n}\n\n/* 功能入口 */\n.feature-section {\n  padding: 30rpx 20rpx;\n  background-color: #FFFFFF;\n  border-radius: 20rpx;\n  margin: 20rpx 30rpx;\n  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);\n}\n\n.feature-grid {\n  display: flex;\n  justify-content: space-around;\n}\n\n.feature-item {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  width: 140rpx;\n}\n\n.feature-icon {\n  width: 80rpx;\n  height: 80rpx;\n  margin-bottom: 12rpx;\n}\n\n.feature-text {\n  font-size: 26rpx;\n  color: #333333;\n}\n\n/* 分类滚动区 */\n.category-section {\n  padding: 30rpx 0 10rpx;\n  background-color: #FFFFFF;\n  margin: 20rpx 0;\n}\n\n.section-header {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n  padding: 0 30rpx 20rpx;\n}\n\n.section-title {\n  font-size: 32rpx;\n  font-weight: bold;\n  color: #333333;\n}\n\n.section-more {\n  font-size: 26rpx;\n  color: #3B82F6;\n}\n\n.category-scroll {\n  white-space: nowrap;\n  padding: 0 15rpx;\n}\n\n.category-list {\n  display: inline-flex;\n  padding: 0 15rpx;\n}\n\n.category-item {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  margin: 0 20rpx;\n  width: 120rpx;\n}\n\n.category-icon {\n  width: 80rpx;\n  height: 80rpx;\n  border-radius: 40rpx;\n  margin-bottom: 12rpx;\n  background-color: #F2F5FC;\n}\n\n.category-name {\n  font-size: 24rpx;\n  color: #666666;\n}\n\n/* 活动列表 */\n.activity-section {\n  margin: 20rpx 0;\n  padding: 30rpx 0;\n  background-color: #FFFFFF;\n}\n\n.activity-list {\n  padding: 0 30rpx;\n}\n\n.activity-card {\n  display: flex;\n  margin-bottom: 30rpx;\n  background-color: #F8FAFD;\n  border-radius: 12rpx;\n  overflow: hidden;\n  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);\n}\n\n.activity-image {\n  width: 200rpx;\n  height: 200rpx;\n  flex-shrink: 0;\n}\n\n.activity-info {\n  flex: 1;\n  padding: 20rpx;\n  display: flex;\n  flex-direction: column;\n  justify-content: space-between;\n}\n\n.activity-title {\n  font-size: 30rpx;\n  font-weight: bold;\n  color: #333333;\n  margin-bottom: 12rpx;\n  display: -webkit-box;\n  -webkit-box-orient: vertical;\n  -webkit-line-clamp: 2;\n  overflow: hidden;\n}\n\n.activity-meta {\n  margin-bottom: 12rpx;\n}\n\n.activity-time, .activity-location {\n  display: flex;\n  align-items: center;\n  margin-bottom: 8rpx;\n}\n\n.meta-icon {\n  width: 24rpx;\n  height: 24rpx;\n  margin-right: 8rpx;\n}\n\n.meta-text {\n  font-size: 24rpx;\n  color: #666666;\n  max-width: 320rpx;\n}\n\n.activity-stats {\n  display: flex;\n  justify-content: space-between;\n  align-items: center;\n}\n\n.activity-participants {\n  font-size: 24rpx;\n  color: #3B82F6;\n}\n\n.activity-category, .activity-distance {\n  font-size: 22rpx;\n  color: #999999;\n  background-color: #F0F4FF;\n  padding: 4rpx 12rpx;\n  border-radius: 6rpx;\n}\n\n/* 位置提示 */\n.location-tip {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  padding: 30rpx;\n  margin: 20rpx 30rpx;\n  background-color: #F0F4FF;\n  border-radius: 12rpx;\n}\n\n.location-icon {\n  width: 48rpx;\n  height: 48rpx;\n  margin-right: 16rpx;\n}\n\n.location-text {\n  font-size: 28rpx;\n  color: #666666;\n  margin-right: 20rpx;\n}\n\n.location-btn {\n  font-size: 26rpx;\n  color: #FFFFFF;\n  background-color: #3B82F6;\n  border-radius: 30rpx;\n  padding: 6rpx 20rpx;\n  line-height: 1.5;\n  margin: 0;\n}\n\n/* 底部提示 */\n.footer-tip {\n  text-align: center;\n  padding: 30rpx 0;\n}\n\n.footer-text {\n  font-size: 28rpx;\n  color: #999999;\n}\n\n/* 底部安全区域 */\n.safe-bottom-area {\n  padding-bottom: env(safe-area-inset-bottom);\n}\n\n/* 空内容提示 */\n.empty-tip {\n  display: flex;\n  flex-direction: column;\n  align-items: center;\n  justify-content: center;\n  padding: 60rpx 30rpx;\n  color: #999999;\n  text-align: center;\n}\n\n.empty-icon {\n  width: 160rpx;\n  height: 160rpx;\n  margin-bottom: 20rpx;\n  opacity: 0.5;\n}\n\n.empty-text {\n  font-size: 28rpx;\n}\n\n/* 加载中 */\n.loading-container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  padding: 40rpx 0;\n}\n\n.spinner {\n  width: 60rpx;\n  height: 60rpx;\n  border-radius: 50%;\n  border: 6rpx solid rgba(59, 130, 246, 0.1);\n  border-top-color: #3B82F6;\n  animation: spin 1s infinite linear;\n}\n\n@keyframes spin {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}
+/**
+ * 小红书风格首页样式 - 图片展示优化版 - 蓝色主题 - 适老化设计
+ */
+
+/* 读者艺术小程序首页 index.wxss */
+
+/* 全局样式设置 */
+page {
+  background-color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.reader-art-container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding-bottom: calc(120rpx + constant(safe-area-inset-bottom)); /* iOS 11.2及以下 */
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom)); /* iOS 11.2以上 */
+}
+
+/* 顶部用户信息区 */
+.user-info-area {
+  width: 100%;
+  height: 80rpx;
+  padding: 0 40rpx;
+  box-sizing: border-box;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background-color: #e6e6e6;
+}
+
+.user-text {
+  margin-left: 16rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.welcome-text {
+  font-size: 20rpx;
+  font-weight: 600;
+  color: #333333;
+}
+
+.profile-link {
+  font-size: 16rpx;
+  color: #808080;
+  margin-top: 4rpx;
+}
+
+.message-btn {
+  display: flex;
+  align-items: center;
+  background-color: #f2f2f7;
+  border-radius: 18rpx;
+  padding: 6rpx 20rpx;
+  position: relative;
+}
+
+.message-btn text {
+  font-size: 18rpx;
+  font-weight: 500;
+  color: #333333;
+}
+
+.message-dot {
+  width: 8rpx;
+  height: 8rpx;
+  border-radius: 50%;
+  background-color: #ff3333;
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+}
+
+/* 顶部banner背景区 */
+.banner-bg {
+  width: 100%;
+  padding: 20rpx 0;
+  background-color: #f8f8f8;
+  position: relative;
+}
+
+.banner-swiper {
+  width: 100%;
+  height: 340rpx;
+}
+
+.banner-item {
+  width: 92%;
+  height: 100%;
+  margin: 0 auto;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  overflow: hidden;
+}
+
+.banner-info {
+  flex: 1;
+  padding: 40rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.banner-category {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 20rpx;
+  font-weight: 500;
+}
+
+.banner-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 20rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.banner-price {
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.95);
+  font-weight: bold;
+}
+
+/* 右侧图片容器 */
+.banner-image-container {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 28rpx 28rpx 28rpx 0;
+  box-sizing: border-box;
+}
+
+.banner-image-wrapper {
+  width: 100%;
+  height: 85%;
+  overflow: hidden;
+  border-radius: 12rpx;
+  position: relative;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  aspect-ratio: 16/9;
+  transform: scale(1.02); /* 轻微放大以避免边缘可能出现的白线 */
+}
+
+/* 图片下方滑块样式 */
+.banner-image-slider {
+  width: 100%;
+  height: 15%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slider-dot {
+  width: 12rpx;
+  height: 12rpx;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  margin: 0 8rpx;
+  transition: all 0.3s;
+}
+
+.slider-dot.active {
+  width: 28rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 6rpx;
+}
+
+/* 活动卡片样式 */
+.activity-card {
+  width: 300rpx;
+  height: 380rpx;
+  background-color: #ffffff;
+  border-radius: 12rpx;
+  margin-right: 20rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  flex-shrink: 0;
+  transition: transform 0.3s ease;
+}
+
+.activity-card:active {
+  transform: scale(0.98);
+}
+
+.activity-cover {
+  width: 100%;
+  height: 280rpx;
+  position: relative;
+  overflow: hidden;
+}
+
+.activity-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.activity-card:hover .activity-cover-image {
+  transform: scale(1.05);
+}
+
+.activity-info-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20rpx;
+  box-sizing: border-box;
+  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+}
+
+.activity-title {
+  font-size: 24rpx;
+  font-weight: bold;
+  color: #ffffff;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+.enrollment-info {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.enrolled-text {
+  font-size: 20rpx;
+  color: rgba(255,255,255,0.8);
+}
+
+.enrolled-count {
+  font-size: 20rpx;
+  color: #ffffff;
+  font-weight: 500;
+  margin-left: 8rpx;
+}
