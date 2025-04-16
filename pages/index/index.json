@@ -1,6 +1,7 @@
 {
-  "usingComponents": {},
-  "navigationStyle": "custom",
+  "navigationBarTitleText": "好聚乐龄",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
+  "backgroundColor": "#f7f7f7",
+  "backgroundTextStyle": "dark",
+  "usingComponents": {}
 }
