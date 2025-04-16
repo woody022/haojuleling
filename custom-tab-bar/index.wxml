@@ -1,0 +1,29 @@
+<!-- 自定义底部导航栏 -->
+<view class="tab-bar">
+  <view class="tab-bar-border"></view>
+  
+  <!-- 常规标签项 -->
+  <view wx:for="{{list}}" wx:key="index" class="tab-bar-item {{index === 2 ? 'hidden' : ''}}" data-path="{{item.pagePath}}" data-index="{{index}}" bindtap="switchTab">
+    <view class="icon-wrapper">
+      <image class="tab-icon" src="{{selected === index ? item.selectedIconPath : item.iconPath}}"></image>
+      
+      <!-- 消息小红点 -->
+      <view wx:if="{{index === 1 && unreadCount > 0}}" class="badge {{unreadCount > 99 ? 'badge-large' : ''}}">
+        {{unreadCount > 99 ? '99+' : unreadCount}}
+      </view>
+    </view>
+    <view class="tab-text" style="color: {{selected === index ? selectedColor : color}}">
+      {{item.text}}
+    </view>
+  </view>
+  
+  <!-- 中间的发布按钮 -->
+  <view class="tab-bar-item tab-bar-center" data-index="-1" bindtap="switchTab">
+    <view class="tab-center-button">
+      <view class="tab-center-button-inner">
+        <view class="tab-center-button-icon">+</view>
+      </view>
+    </view>
+    <view class="tab-text" style="color: {{color}}">发布</view>
+  </view>
+</view>

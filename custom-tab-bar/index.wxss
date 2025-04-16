@@ -1,0 +1,115 @@
+/* 底部导航栏样式 */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 110rpx; /* 底部导航栏高度 */
+  background: white;
+  display: flex;
+  padding-bottom: calc(env(safe-area-inset-bottom));
+  z-index: 999;
+}
+
+.tab-bar-border {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2rpx;
+  background-color: #f6f6f6;
+  transform: scaleY(0.5);
+}
+
+.tab-bar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.icon-wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tab-icon {
+  width: 54rpx;
+  height: 54rpx;
+}
+
+.tab-text {
+  font-size: 24rpx;
+  margin-top: 6rpx;
+}
+
+/* 隐藏的列（为了留出圆形按钮的位置） */
+.hidden {
+  visibility: hidden;
+}
+
+/* 中间的发布按钮 */
+.tab-bar-center {
+  position: relative;
+}
+
+.tab-center-button {
+  position: absolute;
+  top: -36rpx; /* 向上偏移，使按钮凸出导航栏 */
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.tab-center-button-inner {
+  width: 90rpx;
+  height: 90rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3B82F6, #60A5FA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-center-button-icon {
+  color: white;
+  font-size: 60rpx;
+  font-weight: 200;
+  line-height: 1;
+  margin-top: -8rpx; /* 细微调整 + 符号位置 */
+}
+
+/* 消息数量徽标 */
+.badge {
+  position: absolute;
+  top: -6rpx;
+  right: -6rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  border-radius: 16rpx;
+  background: #EF4444;
+  color: white;
+  font-size: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8rpx;
+  box-sizing: border-box;
+  font-weight: 500;
+  transform: scale(0.9);
+}
+
+/* 大的徽标（数字超过99） */
+.badge-large {
+  width: 44rpx;
+  right: -10rpx;
+}
