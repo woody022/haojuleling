@@ -1,203 +1,223 @@
 <!-- pages/utils-demo/index.wxml -->
 <view class="container">
   <view class="header">
-    <view class="title">工具类功能演示</view>
-    <view class="description">这个页面展示了通用工具类的各种功能使用方法</view>
+    <view class="title">工具类函数演示</view>
+    <view class="description">这里展示了utils/common.js中的一些常用工具函数</view>
   </view>
 
-  <scroll-view scroll-y class="content-scroll">
-    <!-- isEmpty 测试 -->
-    <view class="section">
-      <view class="section-title">isEmpty 空值检测</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" placeholder="输入任意值测试是否为空" model:value="{{isEmptyValue}}" />
-          <button class="btn" bindtap="testIsEmpty">测试</button>
-        </view>
-        <view class="result-box">结果: {{isEmptyResult}}</view>
+  <!-- isEmpty函数 -->
+  <view class="section">
+    <view class="section-title">isEmpty函数</view>
+    <view class="section-desc">判断一个值是否为空（null、undefined、''、[]、{}）</view>
+    
+    <view class="test-item">
+      <view class="input-group">
+        <input type="text" placeholder="输入值测试是否为空" value="{{testData.isEmpty.value}}" bindinput="testIsEmpty"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.isEmpty.result}}</view>
       </view>
     </view>
-
-    <!-- deepClone 测试 -->
-    <view class="section">
-      <view class="section-title">deepClone 深拷贝</view>
-      <view class="test-item">
-        <view class="input-group">
-          <textarea class="textarea" placeholder="输入JSON对象" model:value="{{deepCloneObject}}"></textarea>
-          <button class="btn" bindtap="testDeepClone">测试</button>
-        </view>
-        <view class="result-box">
-          <text>{{deepCloneResult}}</text>
-        </view>
+  </view>
+  
+  <!-- deepClone函数 -->
+  <view class="section">
+    <view class="section-title">deepClone函数</view>
+    <view class="section-desc">深度克隆一个对象</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">原对象：</view>
+        <view class="display-value">{{testData.deepClone.obj.a}}, {{testData.deepClone.obj.b.c}}</view>
+      </view>
+      <view class="display-box">
+        <view class="display-label">克隆结果：</view>
+        <view class="display-value">{{testData.deepClone.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testDeepClone">重新测试</button>
+    </view>
+  </view>
+  
+  <!-- merge函数 -->
+  <view class="section">
+    <view class="section-title">merge函数</view>
+    <view class="section-desc">合并两个对象</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">目标对象：</view>
+        <view class="display-value">{{testData.merge.target}}</view>
+      </view>
+      <view class="display-box">
+        <view class="display-label">源对象：</view>
+        <view class="display-value">{{testData.merge.source}}</view>
+      </view>
+      <view class="display-box">
+        <view class="display-label">合并结果：</view>
+        <view class="display-value">{{testData.merge.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testMerge">测试合并</button>
+    </view>
+  </view>
+  
+  <!-- formatDate函数 -->
+  <view class="section">
+    <view class="section-title">formatDate函数</view>
+    <view class="section-desc">格式化日期</view>
+    
+    <view class="test-item">
+      <view class="input-group">
+        <input type="text" placeholder="输入格式，如：YYYY-MM-DD HH:mm:ss" value="{{testData.formatDate.format}}" bindinput="testFormatDate"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.formatDate.result}}</view>
       </view>
     </view>
-
-    <!-- merge 测试 -->
-    <view class="section">
-      <view class="section-title">merge 对象合并</view>
-      <view class="test-item">
-        <view class="input-group">
-          <textarea class="textarea" placeholder="目标对象 (JSON)" model:value="{{mergeTarget}}"></textarea>
-          <textarea class="textarea" placeholder="源对象 (JSON)" model:value="{{mergeSource}}"></textarea>
-          <button class="btn" bindtap="testMerge">合并</button>
-        </view>
-        <view class="result-box">
-          <text>{{mergeResult}}</text>
-        </view>
+  </view>
+  
+  <!-- formatNumber函数 -->
+  <view class="section">
+    <view class="section-title">formatNumber函数</view>
+    <view class="section-desc">格式化数字（保留小数位数，添加千位分隔符）</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">原数字：</view>
+        <view class="display-value">{{testData.formatNumber.number}}</view>
+      </view>
+      <view class="param-control">
+        <view class="param-label">小数位数：</view>
+        <input class="param-input" type="number" value="{{testData.formatNumber.decimals}}" bindinput="onDecimalsChange"/>
+      </view>
+      <view class="param-control">
+        <view class="param-label">千位分隔符：</view>
+        <switch checked="{{testData.formatNumber.addCommas}}" bindchange="toggleAddCommas"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.formatNumber.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testFormatNumber">重新格式化</button>
+    </view>
+  </view>
+  
+  <!-- random函数 -->
+  <view class="section">
+    <view class="section-title">random函数</view>
+    <view class="section-desc">生成随机数</view>
+    
+    <view class="test-item">
+      <view class="param-control">
+        <view class="param-label">最小值：</view>
+        <input class="param-input" type="number" value="{{testData.random.min}}" bindinput="onMinChange"/>
+      </view>
+      <view class="param-control">
+        <view class="param-label">最大值：</view>
+        <input class="param-input" type="number" value="{{testData.random.max}}" bindinput="onMaxChange"/>
+      </view>
+      <view class="param-control">
+        <view class="param-label">整数：</view>
+        <switch checked="{{testData.random.isInteger}}" bindchange="toggleIsInteger"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.random.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testRandom">生成随机数</button>
+    </view>
+  </view>
+  
+  <!-- getUrlParam函数 -->
+  <view class="section">
+    <view class="section-title">getUrlParam函数</view>
+    <view class="section-desc">获取URL参数</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">URL：</view>
+        <view class="display-value ellipsis">{{testData.getUrlParam.url}}</view>
+      </view>
+      <view class="param-control">
+        <view class="param-label">参数名：</view>
+        <input class="param-input" type="text" value="{{testData.getUrlParam.name}}" bindinput="onParamNameChange"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.getUrlParam.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testGetUrlParam">获取参数</button>
+    </view>
+  </view>
+  
+  <!-- buildUrlParams函数 -->
+  <view class="section">
+    <view class="section-title">buildUrlParams函数</view>
+    <view class="section-desc">构建URL参数字符串</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">参数对象：</view>
+        <view class="display-value">{{testData.buildUrlParams.params}}</view>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.buildUrlParams.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testBuildUrlParams">构建参数</button>
+    </view>
+  </view>
+  
+  <!-- randomString函数 -->
+  <view class="section">
+    <view class="section-title">randomString函数</view>
+    <view class="section-desc">生成随机字符串</view>
+    
+    <view class="test-item">
+      <view class="param-control">
+        <view class="param-label">长度：</view>
+        <input class="param-input" type="number" value="{{testData.randomString.length}}" bindinput="onLengthChange"/>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.randomString.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testRandomString">生成随机字符串</button>
+    </view>
+  </view>
+  
+  <!-- formatFileSize函数 -->
+  <view class="section">
+    <view class="section-title">formatFileSize函数</view>
+    <view class="section-desc">格式化文件大小</view>
+    
+    <view class="test-item">
+      <view class="display-box">
+        <view class="display-label">字节数：</view>
+        <view class="display-value">{{testData.formatFileSize.bytes}}</view>
+      </view>
+      <view class="display-box">
+        <view class="display-label">结果：</view>
+        <view class="display-value">{{testData.formatFileSize.result}}</view>
+      </view>
+      <button class="test-button" bindtap="testFormatFileSize">格式化大小</button>
+    </view>
+  </view>
+  
+  <!-- debounce和throttle函数 -->
+  <view class="section">
+    <view class="section-title">debounce和throttle函数</view>
+    <view class="section-desc">防抖和节流函数演示</view>
+    
+    <view class="test-item">
+      <view class="buttons-row">
+        <button class="test-button" bindtap="testDebounce">测试防抖函数</button>
+        <button class="test-button" bindtap="testThrottle">测试节流函数</button>
+      </view>
+      <view class="display-box">
+        <view class="display-value">点击按钮后查看控制台输出或Toast提示</view>
       </view>
     </view>
-
-    <!-- formatDate 测试 -->
-    <view class="section">
-      <view class="section-title">formatDate 日期格式化</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" placeholder="日期字符串" model:value="{{formatDateValue}}" />
-          <input class="input" placeholder="格式化模板" model:value="{{formatDateFormat}}" />
-          <button class="btn" bindtap="testFormatDate">格式化</button>
-        </view>
-        <view class="result-box">结果: {{formatDateResult}}</view>
-      </view>
-    </view>
-
-    <!-- formatNumber 测试 -->
-    <view class="section">
-      <view class="section-title">formatNumber 数字格式化</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" type="digit" placeholder="数字" model:value="{{formatNumberValue}}" />
-          <input class="input" type="number" placeholder="小数位数" model:value="{{formatNumberDecimals}}" />
-          <switch checked="{{formatNumberAddCommas}}" bindchange="formatNumberAddCommas = $event.detail.value" />添加千位分隔符
-          <button class="btn" bindtap="testFormatNumber">格式化</button>
-        </view>
-        <view class="result-box">结果: {{formatNumberResult}}</view>
-      </view>
-    </view>
-
-    <!-- random 测试 -->
-    <view class="section">
-      <view class="section-title">random 随机数生成</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" type="number" placeholder="最小值" model:value="{{randomMin}}" />
-          <input class="input" type="number" placeholder="最大值" model:value="{{randomMax}}" />
-          <switch checked="{{randomIsInteger}}" bindchange="randomIsInteger = $event.detail.value" />整数
-          <button class="btn" bindtap="testRandom">生成</button>
-        </view>
-        <view class="result-box">结果: {{randomResult}}</view>
-      </view>
-    </view>
-
-    <!-- randomString 测试 -->
-    <view class="section">
-      <view class="section-title">randomString 随机字符串</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" type="number" placeholder="长度" model:value="{{randomStringLength}}" />
-          <input class="input" placeholder="字符集（可选）" model:value="{{randomStringChars}}" />
-          <button class="btn" bindtap="testRandomString">生成</button>
-        </view>
-        <view class="result-box">结果: {{randomStringResult}}</view>
-      </view>
-    </view>
-
-    <!-- formatFileSize 测试 -->
-    <view class="section">
-      <view class="section-title">formatFileSize 文件大小格式化</view>
-      <view class="test-item">
-        <view class="input-group">
-          <input class="input" type="number" placeholder="字节数" model:value="{{formatFileSizeBytes}}" />
-          <input class="input" type="number" placeholder="小数位数" model:value="{{formatFileSizeDecimals}}" />
-          <button class="btn" bindtap="testFormatFileSize">格式化</button>
-        </view>
-        <view class="result-box">结果: {{formatFileSizeResult}}</view>
-      </view>
-    </view>
-
-    <!-- debounce 测试 -->
-    <view class="section">
-      <view class="section-title">debounce 防抖函数</view>
-      <view class="test-item">
-        <view class="input-group">
-          <text class="hint">快速多次点击按钮，防抖函数将在停止点击1秒后执行一次</text>
-          <button class="btn" bindtap="debounceClick">快速点击</button>
-        </view>
-      </view>
-    </view>
-
-    <!-- throttle 测试 -->
-    <view class="section">
-      <view class="section-title">throttle 节流函数</view>
-      <view class="test-item">
-        <view class="input-group">
-          <text class="hint">快速多次点击按钮，节流函数将每1秒最多执行一次</text>
-          <button class="btn" bindtap="throttleClick">快速点击</button>
-        </view>
-      </view>
-    </view>
-
-    <!-- 表单验证测试 -->
-    <view class="section">
-      <view class="section-title">表单验证</view>
-      <view class="test-item">
-        <view class="form">
-          <view class="form-item">
-            <input class="input" placeholder="用户名 (至少3个字符)" data-field="username" bindinput="handleInput" value="{{form.username}}" />
-            <text class="error-text" wx:if="{{formErrors.username}}">{{formErrors.username}}</text>
-          </view>
-          <view class="form-item">
-            <input class="input" placeholder="邮箱" data-field="email" bindinput="handleInput" value="{{form.email}}" />
-            <text class="error-text" wx:if="{{formErrors.email}}">{{formErrors.email}}</text>
-          </view>
-          <view class="form-item">
-            <input class="input" placeholder="手机号" data-field="phone" bindinput="handleInput" value="{{form.phone}}" />
-            <text class="error-text" wx:if="{{formErrors.phone}}">{{formErrors.phone}}</text>
-          </view>
-          <button class="btn" bindtap="validateForm">验证表单</button>
-        </view>
-      </view>
-    </view>
-
-    <!-- 树结构相关测试 -->
-    <view class="section">
-      <view class="section-title">树结构操作</view>
-      <view class="test-item">
-        <view class="input-group">
-          <button class="btn" bindtap="testBuildTree">构建树结构</button>
-          <button class="btn" bindtap="testGetTreeNodePath">查找节点路径</button>
-        </view>
-        <view class="result-title">构建树结果:</view>
-        <view class="result-box">
-          <text>{{treeResult}}</text>
-        </view>
-        <view class="result-title">展平树结果:</view>
-        <view class="result-box">
-          <text>{{flattenTreeResult}}</text>
-        </view>
-        <view class="result-title">节点路径结果:</view>
-        <view class="result-box">
-          <text>{{treeNodePath}}</text>
-        </view>
-      </view>
-    </view>
-
-  </scroll-view>
-
-  <!-- 结果记录列表 -->
-  <view class="result-list-container">
-    <view class="result-list-header">
-      <text class="result-list-title">操作记录</text>
-      <button class="btn-small" bindtap="clearResults">清除</button>
-    </view>
-    <scroll-view scroll-y class="result-list">
-      <view class="no-results" wx:if="{{results.length === 0}}">暂无操作记录</view>
-      <view wx:for="{{results}}" wx:key="id" class="result-item">
-        <view class="result-item-header">
-          <text class="result-item-title">{{item.title}}</text>
-          <text class="result-item-time">{{item.time}}</text>
-        </view>
-        <view class="result-item-content">{{item.content}}</view>
-      </view>
-    </scroll-view>
   </view>
 </view>
