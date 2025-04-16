@@ -1,0 +1,49 @@
+<!-- components/activity-card/index.wxml -->
+<view class="activity-card" bindtap="onCardClick">
+  <view class="card-left">
+    <image class="activity-image" src="{{activity.coverImage}}" mode="aspectFill"></image>
+    <view class="activity-status {{activity.statusClass}}">{{activity.statusText}}</view>
+  </view>
+  
+  <view class="card-right">
+    <view class="activity-title">{{activity.title}}</view>
+    
+    <view class="activity-type" wx:if="{{activity.type}}">
+      <text class="type-text">{{activity.type}}</text>
+    </view>
+    
+    <view class="activity-info">
+      <view class="info-item">
+        <view class="info-icon time-icon">⏱</view>
+        <view class="info-text">{{activity.startTime}}</view>
+      </view>
+      
+      <view class="info-item">
+        <view class="info-icon location-icon">📍</view>
+        <view class="info-text ellipsis">{{activity.address}}</view>
+      </view>
+      
+      <view class="info-item">
+        <view class="info-icon people-icon">👥</view>
+        <view class="info-text">{{activity.participantsCount}}{{activity.maxParticipants ? '/' + activity.maxParticipants : ''}}人</view>
+      </view>
+    </view>
+    
+    <view class="card-footer">
+      <view class="organizer-info" wx:if="{{activity.organizer}}">
+        <image class="organizer-avatar" src="{{activity.organizer.avatar}}"></image>
+        <text class="organizer-name">{{activity.organizer.name}}</text>
+      </view>
+      
+      <view class="action-wrapper">
+        <view class="action-button share-button" catchtap="onShareClick">
+          <view class="action-icon">↗</view>
+        </view>
+        
+        <view class="action-button {{isFavorite ? 'favorite-active' : ''}}" catchtap="onFavoriteClick">
+          <view class="action-icon">❤</view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
