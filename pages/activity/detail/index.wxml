@@ -1,0 +1,204 @@
+<!-- pages/activity/detail/index.wxml -->
+<view class="container">
+  <!-- 活动封面 -->
+  <view class="cover-wrapper">
+    <image class="cover-image" src="{{activityDetail.coverImage}}" mode="aspectFill"></image>
+    <view class="activity-status {{activityDetail.statusClass}}">{{activityDetail.statusText}}</view>
+  </view>
+  
+  <!-- 活动标题信息 -->
+  <view class="activity-info-card">
+    <view class="activity-title">{{activityDetail.title}}</view>
+    <view class="activity-type">{{activityDetail.type}}</view>
+    
+    <!-- 时间信息 -->
+    <view class="info-item">
+      <view class="info-icon time-icon">⏱</view>
+      <view class="info-content">
+        <view class="info-label">活动时间</view>
+        <view class="info-text">{{activityDetail.startTime}} ~ {{activityDetail.endTime}}</view>
+      </view>
+    </view>
+    
+    <!-- 地点信息 -->
+    <view class="info-item" bindtap="openLocation">
+      <view class="info-icon location-icon">📍</view>
+      <view class="info-content">
+        <view class="info-label">活动地点</view>
+        <view class="info-text">{{activityDetail.address}}</view>
+      </view>
+      <view class="info-action">导航</view>
+    </view>
+    
+    <!-- 报名截止时间 -->
+    <view class="info-item">
+      <view class="info-icon deadline-icon">📅</view>
+      <view class="info-content">
+        <view class="info-label">报名截止</view>
+        <view class="info-text">{{activityDetail.registrationDeadline}}</view>
+      </view>
+    </view>
+    
+    <!-- 参与人数 -->
+    <view class="info-item">
+      <view class="info-icon people-icon">👥</view>
+      <view class="info-content">
+        <view class="info-label">报名人数</view>
+        <view class="info-text">{{activityDetail.participantsCount}}{{activityDetail.maxParticipants ? '/' + activityDetail.maxParticipants : ''}}</view>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 组织者信息 -->
+  <view class="organizer-card">
+    <view class="card-title">组织者</view>
+    <view class="organizer-info">
+      <image class="organizer-avatar" src="{{activityDetail.organizer.avatar}}"></image>
+      <view class="organizer-content">
+        <view class="organizer-name">{{activityDetail.organizer.name}}</view>
+        <view class="organizer-desc">{{activityDetail.organizer.description}}</view>
+      </view>
+      <button class="contact-btn" open-type="contact" wx:if="{{activityDetail.organizer.enableContact}}">联系</button>
+    </view>
+  </view>
+  
+  <!-- 活动详情 -->
+  <view class="detail-card">
+    <view class="card-title">活动详情</view>
+    <view class="detail-content">
+      <text>{{activityDetail.description}}</text>
+    </view>
+    <view class="image-list" wx:if="{{activityDetail.imageList && activityDetail.imageList.length > 0}}">
+      <image 
+        wx:for="{{activityDetail.imageList}}" 
+        wx:key="index" 
+        src="{{item}}" 
+        mode="aspectFill" 
+        class="detail-image"
+        data-index="{{index}}"
+        bindtap="previewImage"
+      ></image>
+    </view>
+  </view>
+  
+  <!-- 参与者列表 -->
+  <view class="participants-card" wx:if="{{activityDetail.participants && activityDetail.participants.length > 0}}">
+    <view class="card-title">参与者 ({{activityDetail.participantsCount}})</view>
+    <view class="participants-list">
+      <view 
+        class="participant-item" 
+        wx:for="{{activityDetail.participants}}" 
+        wx:key="id"
+      >
+        <image class="participant-avatar" src="{{item.avatar}}"></image>
+        <text class="participant-name">{{item.name}}</text>
+      </view>
+      <view class="participant-more" wx:if="{{activityDetail.participantsCount > 8}}" bindtap="showAllParticipants">
+        <text>查看全部</text>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 活动评论 -->
+  <view class="comments-card">
+    <view class="card-title">评论 ({{comments.length}})</view>
+    <view class="comments-list">
+      <block wx:if="{{comments.length > 0}}">
+        <view class="comment-item" wx:for="{{comments}}" wx:key="id">
+          <comment-item comment="{{item}}" bind:reply="replyComment" />
+        </view>
+      </block>
+      <view class="no-comment" wx:else>
+        <text>暂无评论，快来发表第一条评论吧</text>
+      </view>
+    </view>
+    
+    <view class="comment-input-area" wx:if="{{isLogin}}">
+      <input 
+        class="comment-input" 
+        placeholder="{{replyTo ? '回复 ' + replyTo : '说点什么...'}}" 
+        value="{{commentContent}}"
+        bindinput="onCommentInput"
+        focus="{{commentFocus}}"
+      />
+      <button class="comment-submit" bindtap="submitComment" disabled="{{!commentContent}}">发送</button>
+    </view>
+    <view class="login-tip" wx:else>
+      <text>请先</text>
+      <text class="login-btn" bindtap="goLogin">登录</text>
+      <text>后再评论</text>
+    </view>
+  </view>
+  
+  <!-- 底部操作栏 -->
+  <view class="action-bar">
+    <view class="action-left">
+      <view class="action-item" bindtap="toggleFavorite">
+        <view class="action-icon {{isFavorite ? 'favorite-active' : ''}}">❤</view>
+        <view class="action-text">{{isFavorite ? '已收藏' : '收藏'}}</view>
+      </view>
+      <view class="action-item" bindtap="showShareOptions">
+        <view class="action-icon">↗</view>
+        <view class="action-text">分享</view>
+      </view>
+      <button class="action-item action-contact" open-type="contact">
+        <view class="action-icon">💬</view>
+        <view class="action-text">客服</view>
+      </button>
+    </view>
+    <view class="action-right">
+      <button 
+        class="signup-btn {{isSignedUp ? 'signed-up' : ''}} {{isSignupDisabled ? 'disabled' : ''}}" 
+        bindtap="toggleSignup"
+        disabled="{{isSignupDisabled}}"
+      >
+        {{signupBtnText}}
+      </button>
+    </view>
+  </view>
+  
+  <!-- 报名成功弹窗 -->
+  <view class="modal {{showSignupSuccess ? 'show' : ''}}" bindtap="hideModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-icon success-icon">✓</view>
+      <view class="modal-title">报名成功</view>
+      <view class="modal-message">您已成功报名参加该活动</view>
+      <view class="modal-tip">活动开始前将通过微信通知您</view>
+      <button class="modal-btn" bindtap="hideModal">我知道了</button>
+    </view>
+  </view>
+  
+  <!-- 取消报名弹窗 -->
+  <view class="modal {{showCancelSignup ? 'show' : ''}}" bindtap="hideModal">
+    <view class="modal-content" catchtap="stopPropagation">
+      <view class="modal-title">确认取消报名?</view>
+      <view class="modal-message">取消报名后，您的名额将被释放</view>
+      <view class="modal-buttons">
+        <button class="modal-btn cancel-btn" bindtap="hideModal">再想想</button>
+        <button class="modal-btn confirm-btn" bindtap="confirmCancelSignup">确认取消</button>
+      </view>
+    </view>
+  </view>
+  
+  <!-- 分享选项弹窗 -->
+  <view class="share-modal {{showShare ? 'show' : ''}}" bindtap="hideShareModal">
+    <view class="share-content" catchtap="stopPropagation">
+      <view class="share-title">分享至</view>
+      <view class="share-options">
+        <button class="share-item" open-type="share">
+          <view class="share-icon wechat-icon">微信</view>
+          <view class="share-text">微信好友</view>
+        </button>
+        <view class="share-item" bindtap="shareToMoments">
+          <view class="share-icon moments-icon">朋友圈</view>
+          <view class="share-text">生成海报</view>
+        </view>
+        <view class="share-item" bindtap="copyLink">
+          <view class="share-icon link-icon">链接</view>
+          <view class="share-text">复制链接</view>
+        </view>
+      </view>
+      <button class="share-cancel" bindtap="hideShareModal">取消</button>
+    </view>
+  </view>
+</view>
