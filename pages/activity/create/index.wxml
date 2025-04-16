@@ -1,0 +1,272 @@
+<!-- pages/activity/create/index.wxml -->
+<view class="container">
+  <view class="header">
+    <view class="title">{{isEditMode ? '编辑活动' : '创建活动'}}</view>
+    <view class="description">填写活动信息，与更多人分享精彩活动</view>
+  </view>
+
+  <view class="form-wrapper">
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <view class="form-item">
+        <view class="form-label required">活动标题</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入活动标题（不超过30字）" 
+          maxlength="30" 
+          value="{{activity.title}}"
+          data-field="title"
+          bindinput="onInputChange"
+        />
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label required">活动类型</view>
+        <picker 
+          mode="selector" 
+          range="{{categories}}" 
+          value="{{categories.indexOf(activity.category)}}"
+          data-field="category"
+          bindchange="onPickerChange"
+        >
+          <view class="form-input picker-input {{activity.category ? '' : 'placeholder'}}">
+            {{activity.category || '请选择活动类型'}}
+            <view class="picker-arrow"></view>
+          </view>
+        </picker>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label required">活动描述</view>
+        <textarea 
+          class="form-textarea" 
+          placeholder="请输入活动详细描述（不超过500字）" 
+          maxlength="500" 
+          value="{{activity.description}}"
+          data-field="description"
+          bindinput="onInputChange"
+        />
+        <view class="textarea-counter">{{activity.description.length}}/500</view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">时间地点</view>
+      
+      <view class="form-item">
+        <view class="form-label required">活动地点</view>
+        <input 
+          class="form-input" 
+          placeholder="请输入详细地址" 
+          value="{{activity.location}}"
+          data-field="location"
+          bindinput="onInputChange"
+        />
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label required">开始时间</view>
+        <view 
+          class="form-input picker-input {{activity.startTimeText ? '' : 'placeholder'}}"
+          data-type="Start"
+          bindtap="showDatePicker"
+        >
+          {{activity.startTimeText || '请选择开始时间'}}
+          <view class="picker-arrow"></view>
+        </view>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label required">结束时间</view>
+        <view 
+          class="form-input picker-input {{activity.endTimeText ? '' : 'placeholder'}}"
+          data-type="End"
+          bindtap="showDatePicker"
+        >
+          {{activity.endTimeText || '请选择结束时间'}}
+          <view class="picker-arrow"></view>
+        </view>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label required">人数上限</view>
+        <input 
+          class="form-input" 
+          type="number" 
+          placeholder="请输入活动人数上限" 
+          value="{{activity.maxParticipants}}"
+          data-field="maxParticipants"
+          bindinput="onInputChange"
+        />
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">活动标签</view>
+      
+      <view class="tags-input-container">
+        <input 
+          class="tags-input" 
+          placeholder="输入标签后点击添加" 
+          value="{{tagInput}}"
+          bindconfirm="addTag"
+          bindinput="onTagInput"
+        />
+        <button class="tag-add-btn" bindtap="addTag">添加</button>
+      </view>
+      
+      <view class="tags-container" wx:if="{{activity.tags.length > 0}}">
+        <view 
+          class="tag-item" 
+          wx:for="{{activity.tags}}" 
+          wx:key="index"
+        >
+          {{item}}
+          <view 
+            class="tag-remove" 
+            data-index="{{index}}" 
+            bindtap="removeTag"
+          >×</view>
+        </view>
+      </view>
+      <view class="tags-placeholder" wx:else>
+        暂无标签，添加标签可让活动更容易被找到
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">活动图片</view>
+      
+      <view class="image-section">
+        <view class="form-label required">封面图片</view>
+        <view class="cover-uploader">
+          <view 
+            class="cover-image {{activity.coverImage ? 'has-image' : ''}}" 
+            bindtap="chooseCoverImage"
+          >
+            <image 
+              wx:if="{{activity.coverImage}}" 
+              src="{{activity.coverImage}}" 
+              mode="aspectFill"
+            />
+            <view class="upload-placeholder" wx:else>
+              <view class="icon-add">+</view>
+              <view class="upload-text">上传封面</view>
+            </view>
+          </view>
+          <view class="cover-tip">封面图片将在活动列表中展示</view>
+        </view>
+      </view>
+      
+      <view class="image-section">
+        <view class="form-label">活动图片</view>
+        <view class="images-container">
+          <view 
+            class="image-item" 
+            wx:for="{{previewImages}}" 
+            wx:key="index"
+          >
+            <image 
+              src="{{item}}" 
+              mode="aspectFill" 
+              data-index="{{index}}"
+              bindtap="previewImage"
+            />
+            <view 
+              class="image-remove" 
+              data-index="{{index}}" 
+              catchtap="removeImage"
+            >×</view>
+          </view>
+          
+          <view 
+            class="image-uploader" 
+            bindtap="chooseImages"
+            wx:if="{{previewImages.length < 9}}"
+          >
+            <view class="icon-add">+</view>
+          </view>
+        </view>
+        <view class="image-tip">最多可上传9张活动相关图片</view>
+      </view>
+    </view>
+
+    <view class="form-section">
+      <view class="section-title">活动设置</view>
+      
+      <view class="form-item switch-item">
+        <view class="switch-label">公开活动</view>
+        <switch 
+          checked="{{activity.isPublic}}" 
+          color="#07c160"
+          data-field="isPublic"
+          bindchange="onSwitchChange"
+        />
+      </view>
+      <view class="switch-tip">
+        公开活动将在首页和搜索中显示，关闭后只有受邀用户可见
+      </view>
+    </view>
+
+    <view class="submit-section">
+      <button 
+        class="submit-btn {{submitting ? 'loading' : ''}}" 
+        bindtap="onSubmit"
+        disabled="{{submitting}}"
+      >
+        {{submitting ? '提交中...' : (isEditMode ? '保存修改' : '创建活动')}}
+      </button>
+    </view>
+  </view>
+</view>
+
+<!-- 日期时间选择器 -->
+<view class="date-picker-container" wx:if="{{datePickerStart.show || datePickerEnd.show}}">
+  <view class="date-picker-mask" bindtap="onDatePickerCancel" data-type="{{datePickerStart.show ? 'Start' : 'End'}}"></view>
+  <view class="date-picker-content">
+    <view class="date-picker-header">
+      <view class="date-picker-title">选择{{datePickerStart.show ? '开始' : '结束'}}时间</view>
+      <view 
+        class="date-picker-close" 
+        bindtap="onDatePickerCancel" 
+        data-type="{{datePickerStart.show ? 'Start' : 'End'}}"
+      >×</view>
+    </view>
+    <picker-view 
+      class="picker-view" 
+      value="{{datePickerCurrent}}" 
+      indicator-style="height: 50px;" 
+      style="width: 100%; height: 300px;"
+    >
+      <!-- 这里需要根据微信小程序的日期时间选择器实现 -->
+      <picker-view-column>
+        <!-- 年份选择 -->
+      </picker-view-column>
+      <picker-view-column>
+        <!-- 月份选择 -->
+      </picker-view-column>
+      <picker-view-column>
+        <!-- 日期选择 -->
+      </picker-view-column>
+      <picker-view-column>
+        <!-- 小时选择 -->
+      </picker-view-column>
+      <picker-view-column>
+        <!-- 分钟选择 -->
+      </picker-view-column>
+    </picker-view>
+    <view class="date-picker-footer">
+      <button 
+        class="date-picker-cancel" 
+        bindtap="onDatePickerCancel" 
+        data-type="{{datePickerStart.show ? 'Start' : 'End'}}"
+      >取消</button>
+      <button 
+        class="date-picker-confirm" 
+        bindtap="onDatePickerConfirm"
+        data-type="{{datePickerStart.show ? 'Start' : 'End'}}"
+      >确定</button>
+    </view>
+  </view>
+</view>
