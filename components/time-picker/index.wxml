@@ -1,0 +1,41 @@
+<!-- components/time-picker/index.wxml -->
+<view class="time-picker-mask {{visible ? 'visible' : ''}}" bindtap="onClose"></view>
+<view class="time-picker-container {{visible ? 'visible' : ''}}">
+  <view class="time-picker-header">
+    <view class="time-picker-title">{{title}}</view>
+    <view class="time-picker-close" bindtap="onClose">×</view>
+  </view>
+  
+  <view class="time-picker-content">
+    <view class="time-picker-section">
+      <view class="time-picker-section-title">日期</view>
+      <picker class="time-picker-date-picker" 
+              mode="selector" 
+              range="{{dateRange}}" 
+              range-key="label" 
+              value="{{dateIndex}}" 
+              bindchange="onDateChange">
+        <view class="time-picker-selected">{{dateRange[dateIndex].label || '请选择日期'}}</view>
+      </picker>
+    </view>
+    
+    <view class="time-picker-divider"></view>
+    
+    <view class="time-picker-section">
+      <view class="time-picker-section-title">时间</view>
+      <picker class="time-picker-time-picker" 
+              mode="selector" 
+              range="{{timeRange}}" 
+              range-key="label" 
+              value="{{timeIndex}}" 
+              bindchange="onTimeChange">
+        <view class="time-picker-selected">{{timeRange[timeIndex].label || '请选择时间'}}</view>
+      </picker>
+    </view>
+  </view>
+  
+  <view class="time-picker-footer">
+    <button class="time-picker-btn time-picker-cancel-btn" bindtap="onClose">取消</button>
+    <button class="time-picker-btn time-picker-confirm-btn" bindtap="onConfirm">确定</button>
+  </view>
+</view>
