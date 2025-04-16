@@ -1,32 +1,35 @@
 // pages/activity/create/index.js
-const app = getApp();
-const util = require('../../../src/utils/common.js');
+const utils = require('../../../src/utils/common.js');
 
 Page({
-  /**
-   * 页面的初始数据
-   */
   data: {
-    isEdit: false,
-    activityId: '',
-    isSubmitting: false,
-    
     // 基本信息
     title: '',
     type: '',
-    typeIndex: 0,
-    typeOptions: ['线下活动', '线上会议', '课程讲座', '其他'],
     description: '',
+    descriptionLength: 0,
+    maxDescriptionLength: 500,
+    
+    // 活动类型选项
+    activityTypes: ['聚餐', '旅行', '运动', '学习', '交友', '其他'],
     
     // 时间地点
+    location: '',
     address: '',
-    longitude: 0,
     latitude: 0,
-    startDate: '',
+    longitude: 0,
     startTime: '',
-    endDate: '',
     endTime: '',
-    maxParticipants: '',
+    
+    // 选择器状态
+    showStartPicker: false,
+    showEndPicker: false,
+    pickerTitle: '',
+    currentPickerType: '',
+    
+    // 参与人数
+    minParticipants: 2,
+    maxParticipants: 20,
     
     // 标签
     tagInput: '',
@@ -35,283 +38,169 @@ Page({
     // 图片
     coverImage: '',
     activityImages: [],
+    maxImageCount: 9,
     
     // 设置
-    isPublic: true,
+    isPrivate: false,
+    needsReview: false,
     
-    // 计数器
-    descriptionCount: 0,
-    maxDescriptionLength: 200,
-    
-    // 日期选择器
-    showDatePicker: false,
-    datePickerType: '', // 'start' 或 'end'
-    datePickerValue: null,
-    currentDate: new Date(),
-    
-    // 错误提示
+    // 表单验证
     errors: {
       title: '',
       type: '',
-      address: '',
+      description: '',
+      location: '',
       startTime: '',
       endTime: '',
-      maxParticipants: '',
       coverImage: ''
-    }
-  },
-
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    // 判断是创建还是编辑
-    if (options.id) {
-      this.setData({
-        isEdit: true,
-        activityId: options.id
-      });
-      this.loadActivityData(options.id);
-    } else {
-      // 设置默认开始和结束时间
-      const now = new Date();
-      const start = new Date(now.getTime() + 3600 * 1000); // 1小时后
-      const end = new Date(now.getTime() + 3600 * 1000 * 3); // 3小时后
-      
-      this.setData({
-        startDate: this.formatDate(start),
-        startTime: this.formatTime(start),
-        endDate: this.formatDate(end),
-        endTime: this.formatTime(end)
-      });
-    }
-  },
-
-  /**
-   * 加载活动数据
-   */
-  loadActivityData: function (activityId) {
-    wx.showLoading({
-      title: '加载中',
-    });
+    },
     
-    // 调用云函数或API获取活动数据
-    // 这里是示例，实际中需要替换为真实API调用
-    setTimeout(() => {
-      // 模拟数据
-      const activityData = {
-        title: '示例活动',
-        type: '线下活动',
-        description: '这是一个示例活动描述...',
-        address: '北京市海淀区清华大学',
-        longitude: 116.32,
-        latitude: 40.00,
-        startTime: new Date(Date.now() + 24 * 3600 * 1000),
-        endTime: new Date(Date.now() + 30 * 3600 * 1000),
-        maxParticipants: 50,
-        tags: ['科技', '教育', '公益'],
-        coverImage: 'temp/cover.jpg',
-        activityImages: ['temp/img1.jpg', 'temp/img2.jpg'],
-        isPublic: true
-      };
-      
-      // 更新类型索引
-      const typeIndex = this.data.typeOptions.findIndex(t => t === activityData.type);
-      
-      this.setData({
-        title: activityData.title,
-        type: activityData.type,
-        typeIndex: typeIndex >= 0 ? typeIndex : 0,
-        description: activityData.description,
-        descriptionCount: activityData.description.length,
-        address: activityData.address,
-        longitude: activityData.longitude,
-        latitude: activityData.latitude,
-        startDate: this.formatDate(activityData.startTime),
-        startTime: this.formatTime(activityData.startTime),
-        endDate: this.formatDate(activityData.endTime),
-        endTime: this.formatTime(activityData.endTime),
-        maxParticipants: String(activityData.maxParticipants),
-        tags: activityData.tags,
-        coverImage: activityData.coverImage,
-        activityImages: activityData.activityImages,
-        isPublic: activityData.isPublic
-      });
-      
-      wx.hideLoading();
-    }, 1000);
+    // 是否正在提交
+    submitting: false
   },
-  
-  /**
-   * 输入标题
-   */
-  onTitleInput: function (e) {
+
+  onLoad: function(options) {
+    // 设置默认时间（当前时间往后推1小时）
+    const now = new Date();
+    const startTime = new Date(now.getTime() + 60 * 60 * 1000);
+    const endTime = new Date(startTime.getTime() + 2 * 60 * 60 * 1000);
+    
+    this.setData({
+      startTime: this.formatDateTime(startTime),
+      endTime: this.formatDateTime(endTime)
+    });
+  },
+
+  // 标题输入事件
+  onTitleInput: function(e) {
     this.setData({
       title: e.detail.value,
       'errors.title': ''
     });
   },
-  
-  /**
-   * 选择活动类型
-   */
-  onTypeChange: function (e) {
-    const typeIndex = e.detail.value;
+
+  // 选择活动类型
+  onTypeChange: function(e) {
     this.setData({
-      typeIndex: typeIndex,
-      type: this.data.typeOptions[typeIndex],
+      type: this.data.activityTypes[e.detail.value],
       'errors.type': ''
     });
   },
-  
-  /**
-   * 输入描述
-   */
-  onDescriptionInput: function (e) {
+
+  // 描述输入事件
+  onDescriptionInput: function(e) {
     const value = e.detail.value;
     const length = value.length;
     
     this.setData({
       description: value,
-      descriptionCount: length
+      descriptionLength: length,
+      'errors.description': ''
     });
   },
-  
-  /**
-   * 输入地址
-   */
-  onAddressInput: function (e) {
+
+  // 地点输入事件
+  onLocationInput: function(e) {
     this.setData({
-      address: e.detail.value,
-      'errors.address': ''
+      location: e.detail.value,
+      'errors.location': ''
     });
   },
-  
-  /**
-   * 选择位置
-   */
-  chooseLocation: function () {
+
+  // 选择位置
+  chooseLocation: function() {
     const that = this;
     wx.chooseLocation({
-      success: function (res) {
+      success: function(res) {
         that.setData({
+          location: res.name,
           address: res.address,
-          longitude: res.longitude,
           latitude: res.latitude,
-          'errors.address': ''
+          longitude: res.longitude,
+          'errors.location': ''
         });
+      },
+      fail: function(err) {
+        console.error('选择位置失败', err);
+        if (err.errMsg.indexOf('auth deny') >= 0) {
+          wx.showModal({
+            title: '提示',
+            content: '请授权位置权限以选择活动地点',
+            showCancel: false,
+            success: function() {
+              wx.openSetting();
+            }
+          });
+        }
       }
     });
   },
-  
-  /**
-   * 显示日期选择器
-   */
-  showDatePicker: function (e) {
+
+  // 显示日期时间选择器
+  showTimePicker: function(e) {
     const type = e.currentTarget.dataset.type;
-    let currentValue;
+    let title = '选择开始时间';
     
-    if (type === 'start') {
-      currentValue = this.getDateTimeValue(this.data.startDate, this.data.startTime);
-    } else {
-      currentValue = this.getDateTimeValue(this.data.endDate, this.data.endTime);
+    if (type === 'end') {
+      title = '选择结束时间';
     }
     
     this.setData({
-      showDatePicker: true,
-      datePickerType: type,
-      datePickerValue: currentValue
+      showStartPicker: type === 'start',
+      showEndPicker: type === 'end',
+      pickerTitle: title,
+      currentPickerType: type
     });
   },
-  
-  /**
-   * 关闭日期选择器
-   */
-  closeDatePicker: function () {
+
+  // 取消选择时间
+  cancelDatePicker: function() {
     this.setData({
-      showDatePicker: false
+      showStartPicker: false,
+      showEndPicker: false
     });
   },
-  
-  /**
-   * 日期选择器 - 改变值
-   */
-  onDatePickerChange: function (e) {
-    this.setData({
-      datePickerValue: e.detail.value
-    });
-  },
-  
-  /**
-   * 日期选择器 - 确认
-   */
-  confirmDatePicker: function () {
-    const date = new Date(this.data.datePickerValue);
+
+  // 确认选择时间
+  confirmDatePicker: function(e) {
+    const type = this.data.currentPickerType;
+    const time = e.detail.value;
     
-    if (this.data.datePickerType === 'start') {
+    if (type === 'start') {
       this.setData({
-        startDate: this.formatDate(date),
-        startTime: this.formatTime(date),
+        startTime: time,
+        showStartPicker: false,
         'errors.startTime': ''
       });
-      
-      // 如果结束时间早于开始时间，则自动调整结束时间
-      const startDateTime = new Date(this.getDateTimeValue(this.data.startDate, this.data.startTime));
-      const endDateTime = new Date(this.getDateTimeValue(this.data.endDate, this.data.endTime));
-      
-      if (endDateTime <= startDateTime) {
-        const newEndTime = new Date(startDateTime.getTime() + 3600 * 1000 * 2); // 开始时间后2小时
-        this.setData({
-          endDate: this.formatDate(newEndTime),
-          endTime: this.formatTime(newEndTime)
-        });
-      }
     } else {
       this.setData({
-        endDate: this.formatDate(date),
-        endTime: this.formatTime(date),
+        endTime: time,
+        showEndPicker: false,
         'errors.endTime': ''
       });
     }
-    
-    this.closeDatePicker();
   },
-  
-  /**
-   * 输入人数限制
-   */
-  onMaxParticipantsInput: function (e) {
-    const value = e.detail.value;
-    
-    // 只允许输入数字
-    if (!/^\d*$/.test(value)) {
-      return;
-    }
-    
-    this.setData({
-      maxParticipants: value,
-      'errors.maxParticipants': ''
-    });
-  },
-  
-  /**
-   * 输入标签
-   */
-  onTagInput: function (e) {
+
+  // 标签输入事件
+  onTagInput: function(e) {
     this.setData({
       tagInput: e.detail.value
     });
   },
-  
-  /**
-   * 添加标签
-   */
-  addTag: function () {
-    const tagInput = this.data.tagInput.trim();
-    if (!tagInput) return;
+
+  // 添加标签
+  addTag: function() {
+    const tag = this.data.tagInput.trim();
     
-    // 检查是否已存在相同标签
-    if (this.data.tags.includes(tagInput)) {
+    if (!tag) {
+      wx.showToast({
+        title: '标签不能为空',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    if (this.data.tags.includes(tag)) {
       wx.showToast({
         title: '该标签已存在',
         icon: 'none'
@@ -319,44 +208,41 @@ Page({
       return;
     }
     
-    // 限制标签数量
-    if (this.data.tags.length >= 10) {
+    if (this.data.tags.length >= 5) {
       wx.showToast({
-        title: '最多添加10个标签',
+        title: '最多添加5个标签',
         icon: 'none'
       });
       return;
     }
     
-    const tags = [...this.data.tags, tagInput];
     this.setData({
-      tags,
+      tags: [...this.data.tags, tag],
       tagInput: ''
     });
   },
-  
-  /**
-   * 移除标签
-   */
-  removeTag: function (e) {
+
+  // 删除标签
+  removeTag: function(e) {
     const index = e.currentTarget.dataset.index;
     const tags = [...this.data.tags];
+    
     tags.splice(index, 1);
+    
     this.setData({
-      tags
+      tags: tags
     });
   },
-  
-  /**
-   * 选择封面图片
-   */
-  chooseCoverImage: function () {
+
+  // 选择封面图片
+  chooseCoverImage: function() {
     const that = this;
+    
     wx.chooseImage({
       count: 1,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
-      success: function (res) {
+      success: function(res) {
         that.setData({
           coverImage: res.tempFilePaths[0],
           'errors.coverImage': ''
@@ -364,14 +250,18 @@ Page({
       }
     });
   },
-  
-  /**
-   * 选择活动图片
-   */
-  chooseActivityImage: function () {
+
+  // 删除封面图片
+  removeCoverImage: function() {
+    this.setData({
+      coverImage: ''
+    });
+  },
+
+  // 选择活动图片
+  chooseActivityImages: function() {
     const that = this;
-    const currentCount = that.data.activityImages.length;
-    const remainCount = 9 - currentCount;
+    const remainCount = this.data.maxImageCount - this.data.activityImages.length;
     
     if (remainCount <= 0) {
       wx.showToast({
@@ -385,62 +275,102 @@ Page({
       count: remainCount,
       sizeType: ['compressed'],
       sourceType: ['album', 'camera'],
-      success: function (res) {
+      success: function(res) {
         that.setData({
           activityImages: [...that.data.activityImages, ...res.tempFilePaths]
         });
       }
     });
   },
-  
-  /**
-   * 删除图片
-   */
-  removeImage: function (e) {
+
+  // 删除活动图片
+  removeActivityImage: function(e) {
     const index = e.currentTarget.dataset.index;
-    const activityImages = [...this.data.activityImages];
-    activityImages.splice(index, 1);
+    const images = [...this.data.activityImages];
+    
+    images.splice(index, 1);
+    
     this.setData({
-      activityImages
+      activityImages: images
     });
   },
-  
-  /**
-   * 删除封面图
-   */
-  removeCoverImage: function () {
+
+  // 切换隐私设置
+  togglePrivate: function(e) {
     this.setData({
-      coverImage: ''
+      isPrivate: e.detail.value
     });
   },
-  
-  /**
-   * 切换公开设置
-   */
-  togglePublic: function (e) {
+
+  // 切换审核设置
+  toggleReview: function(e) {
     this.setData({
-      isPublic: e.detail.value
+      needsReview: e.detail.value
     });
   },
-  
-  /**
-   * 表单验证
-   */
-  validateForm: function () {
+
+  // 提交表单
+  submitForm: function() {
+    if (this.data.submitting) {
+      return;
+    }
+    
+    if (!this.validateForm()) {
+      return;
+    }
+    
+    this.setData({
+      submitting: true
+    });
+    
+    // 模拟请求
+    wx.showLoading({
+      title: '正在创建...',
+      mask: true
+    });
+    
+    // 这里应该是上传图片和提交表单的逻辑
+    // 由于我们暂时没有后端，所以使用setTimeout来模拟请求
+    setTimeout(() => {
+      wx.hideLoading();
+      
+      wx.showModal({
+        title: '创建成功',
+        content: '活动已成功创建',
+        showCancel: false,
+        success: (res) => {
+          if (res.confirm) {
+            // 跳转到活动详情页或活动列表页
+            wx.navigateBack();
+          }
+        }
+      });
+      
+      this.setData({
+        submitting: false
+      });
+    }, 2000);
+  },
+
+  // 表单验证
+  validateForm: function() {
     let isValid = true;
     const errors = {
       title: '',
       type: '',
-      address: '',
+      description: '',
+      location: '',
       startTime: '',
       endTime: '',
-      maxParticipants: '',
       coverImage: ''
     };
     
     // 验证标题
     if (!this.data.title.trim()) {
       errors.title = '请输入活动标题';
+      isValid = false;
+    } else if (this.data.title.length < 5) {
+      errors.title = '标题至少5个字符';
       isValid = false;
     }
     
@@ -450,145 +380,54 @@ Page({
       isValid = false;
     }
     
-    // 验证地址
-    if (!this.data.address.trim()) {
-      errors.address = '请输入活动地点';
+    // 验证描述
+    if (!this.data.description.trim()) {
+      errors.description = '请输入活动描述';
+      isValid = false;
+    } else if (this.data.description.length < 10) {
+      errors.description = '描述至少10个字符';
       isValid = false;
     }
     
-    // 验证开始时间
-    const now = new Date();
-    const startDateTime = new Date(this.getDateTimeValue(this.data.startDate, this.data.startTime));
-    
-    if (startDateTime < now) {
-      errors.startTime = '开始时间不能早于当前时间';
+    // 验证地点
+    if (!this.data.location.trim()) {
+      errors.location = '请输入活动地点';
       isValid = false;
     }
     
-    // 验证结束时间
-    const endDateTime = new Date(this.getDateTimeValue(this.data.endDate, this.data.endTime));
-    
-    if (endDateTime <= startDateTime) {
-      errors.endTime = '结束时间必须晚于开始时间';
+    // 验证时间
+    if (!this.data.startTime) {
+      errors.startTime = '请选择开始时间';
       isValid = false;
     }
     
-    // 验证人数限制
-    if (this.data.maxParticipants && (parseInt(this.data.maxParticipants) <= 0 || parseInt(this.data.maxParticipants) > 10000)) {
-      errors.maxParticipants = '请输入合理的人数限制(1-10000)';
+    if (!this.data.endTime) {
+      errors.endTime = '请选择结束时间';
       isValid = false;
     }
     
-    // 验证封面图
+    // 验证封面图片
     if (!this.data.coverImage) {
-      errors.coverImage = '请上传活动封面图';
+      errors.coverImage = '请上传活动封面图片';
       isValid = false;
     }
     
-    this.setData({ errors });
-    return isValid;
-  },
-  
-  /**
-   * 提交表单
-   */
-  submitForm: function () {
-    if (!this.validateForm()) {
+    this.setData({
+      errors: errors
+    });
+    
+    if (!isValid) {
       wx.showToast({
         title: '请完善表单信息',
         icon: 'none'
       });
-      return;
     }
     
-    this.setData({ isSubmitting: true });
-    
-    // 构造活动数据
-    const activityData = {
-      title: this.data.title,
-      type: this.data.type,
-      description: this.data.description,
-      address: this.data.address,
-      longitude: this.data.longitude,
-      latitude: this.data.latitude,
-      startTime: this.getDateTimeValue(this.data.startDate, this.data.startTime),
-      endTime: this.getDateTimeValue(this.data.endDate, this.data.endTime),
-      maxParticipants: this.data.maxParticipants ? parseInt(this.data.maxParticipants) : 0,
-      tags: this.data.tags,
-      coverImage: this.data.coverImage,
-      activityImages: this.data.activityImages,
-      isPublic: this.data.isPublic
-    };
-    
-    // 如果是编辑模式，添加活动ID
-    if (this.data.isEdit) {
-      activityData.id = this.data.activityId;
-    }
-    
-    console.log('提交的活动数据:', activityData);
-    
-    // 上传图片并提交表单
-    this.uploadImagesAndSubmit(activityData);
+    return isValid;
   },
-  
-  /**
-   * 上传图片并提交表单
-   */
-  uploadImagesAndSubmit: function (activityData) {
-    // 在这里实现图片上传逻辑
-    // 上传完成后调用创建/更新活动的API
-    
-    // 示例代码，实际项目中需要替换为真实的上传和API调用
-    setTimeout(() => {
-      wx.showToast({
-        title: this.data.isEdit ? '活动更新成功' : '活动创建成功',
-        icon: 'success',
-        duration: 2000,
-        success: () => {
-          setTimeout(() => {
-            // 返回上一页或跳转到活动详情页
-            if (this.data.isEdit) {
-              wx.navigateBack();
-            } else {
-              wx.redirectTo({
-                url: '/pages/activity/detail/index?id=新创建的活动ID'
-              });
-            }
-          }, 2000);
-        }
-      });
-      
-      this.setData({ isSubmitting: false });
-    }, 2000);
-  },
-  
-  /**
-   * 格式化日期 (YYYY-MM-DD)
-   */
-  formatDate: function (date) {
-    date = new Date(date);
-    return util.formatDate(date, 'YYYY-MM-DD');
-  },
-  
-  /**
-   * 格式化时间 (HH:mm)
-   */
-  formatTime: function (date) {
-    date = new Date(date);
-    const hours = date.getHours().toString().padStart(2, '0');
-    const minutes = date.getMinutes().toString().padStart(2, '0');
-    return `${hours}:${minutes}`;
-  },
-  
-  /**
-   * 获取完整的日期时间值
-   */
-  getDateTimeValue: function (dateStr, timeStr) {
-    if (!dateStr || !timeStr) return new Date();
-    
-    const [year, month, day] = dateStr.split('-').map(num => parseInt(num));
-    const [hours, minutes] = timeStr.split(':').map(num => parseInt(num));
-    
-    return new Date(year, month - 1, day, hours, minutes, 0);
+
+  // 格式化日期时间
+  formatDateTime: function(date) {
+    return utils.formatDate(date, 'yyyy-MM-dd HH:mm');
   }
 });
