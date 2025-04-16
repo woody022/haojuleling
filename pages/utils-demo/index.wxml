@@ -3,54 +3,85 @@
   <view class="header">
     <text class="title">工具类使用示例</text>
   </view>
-  
+
   <view class="section">
-    <view class="section-title">测试结果</view>
-    <view class="results-container">
-      <scroll-view scroll-y="true" class="results-list">
-        <block wx:if="{{results.length > 0}}">
-          <view wx:for="{{results}}" wx:key="id" class="result-item">
-            <text>{{item.text}}</text>
-          </view>
-        </block>
-        <view wx:else class="empty-results">
-          <text>暂无测试结果</text>
-        </view>
-      </scroll-view>
-    </view>
-    
-    <view class="buttons">
-      <button bindtap="clearResults" type="default" size="mini">清空结果</button>
-      <button bindtap="testDeepClone" type="primary" size="mini">测试深拷贝</button>
-      <button bindtap="testMerge" type="primary" size="mini">测试对象合并</button>
+    <view class="section-title">方法测试</view>
+    <view class="button-group">
+      <button bindtap="testIsEmpty" class="test-btn">测试isEmpty</button>
+      <button bindtap="testDeepClone" class="test-btn">测试deepClone</button>
+      <button bindtap="testMerge" class="test-btn">测试merge</button>
+      <button bindtap="testFormatDate" class="test-btn">测试formatDate</button>
+      <button bindtap="testFormatNumber" class="test-btn">测试formatNumber</button>
+      <button bindtap="testRandom" class="test-btn">测试random</button>
+      <button bindtap="testDebounceThrottle" class="test-btn">测试防抖节流</button>
+      <button bindtap="testUrlMethods" class="test-btn">测试URL方法</button>
+      <button bindtap="testRandomString" class="test-btn">测试随机字符串</button>
+      <button bindtap="testFormatFileSize" class="test-btn">测试文件大小格式化</button>
+      <button bindtap="testTreeMethods" class="test-btn">测试树结构方法</button>
     </view>
   </view>
-  
+
+  <view class="section" wx:if="{{results.length > 0}}">
+    <view class="section-title">测试结果</view>
+    <view class="result-container">
+      <view wx:for="{{results}}" wx:key="index" class="result-item">
+        {{item}}
+      </view>
+    </view>
+    <button bindtap="clearResults" class="clear-btn">清空结果</button>
+  </view>
+
+  <view class="section" wx:if="{{normalCount !== undefined}}">
+    <view class="section-title">防抖/节流测试</view>
+    <view class="desc">快速多次点击下方按钮测试防抖和节流效果</view>
+    <button bindtap="handleTestClick" class="test-btn bounce">点击测试</button>
+  </view>
+
   <view class="section">
     <view class="section-title">表单验证示例</view>
     <view class="form-container">
       <view class="form-item">
         <text class="form-label">用户名:</text>
-        <input class="form-input" data-field="username" bindinput="onInputChange" value="{{formData.username}}" placeholder="请输入用户名" />
-        <text wx:if="{{formErrors.username}}" class="error-text">{{formErrors.username}}</text>
+        <input 
+          class="form-input {{errors.username ? 'error' : ''}}" 
+          placeholder="请输入用户名" 
+          value="{{formData.username}}" 
+          data-field="username" 
+          bindinput="handleInput" 
+        />
+        <text wx:if="{{errors.username}}" class="error-msg">{{errors.username}}</text>
       </view>
       
       <view class="form-item">
         <text class="form-label">手机号:</text>
-        <input class="form-input" data-field="phone" bindinput="onInputChange" value="{{formData.phone}}" placeholder="请输入手机号" />
-        <text wx:if="{{formErrors.phone}}" class="error-text">{{formErrors.phone}}</text>
+        <input 
+          class="form-input {{errors.phone ? 'error' : ''}}" 
+          placeholder="请输入手机号" 
+          value="{{formData.phone}}" 
+          type="number" 
+          maxlength="11" 
+          data-field="phone" 
+          bindinput="handleInput" 
+        />
+        <text wx:if="{{errors.phone}}" class="error-msg">{{errors.phone}}</text>
       </view>
       
       <view class="form-item">
         <text class="form-label">邮箱:</text>
-        <input class="form-input" data-field="email" bindinput="onInputChange" value="{{formData.email}}" placeholder="请输入邮箱" />
-        <text wx:if="{{formErrors.email}}" class="error-text">{{formErrors.email}}</text>
+        <input 
+          class="form-input {{errors.email ? 'error' : ''}}" 
+          placeholder="请输入邮箱" 
+          value="{{formData.email}}" 
+          data-field="email" 
+          bindinput="handleInput" 
+        />
+        <text wx:if="{{errors.email}}" class="error-msg">{{errors.email}}</text>
       </view>
       
-      <button bindtap="submitForm" type="primary">提交表单</button>
+      <button bindtap="submitForm" class="submit-btn">提交表单</button>
       
       <view wx:if="{{networkResult}}" class="network-result">
-        <text>{{networkResult}}</text>
+        {{networkResult}}
       </view>
     </view>
   </view>
