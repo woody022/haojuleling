@@ -2,16 +2,16 @@
 
 .activity-create-container {
   padding: 30rpx;
-  background-color: #f7f7f7;
+  background-color: #f8f8f8;
   min-height: 100vh;
 }
 
+/* 头部样式 */
 .header {
   margin-bottom: 40rpx;
 }
 
 .title {
-  display: block;
   font-size: 36rpx;
   font-weight: bold;
   color: #333;
@@ -19,12 +19,16 @@
 }
 
 .description {
-  display: block;
   font-size: 28rpx;
   color: #666;
 }
 
-.section {
+/* 表单样式 */
+.form-container {
+  margin-bottom: 40rpx;
+}
+
+.form-section {
   background-color: #fff;
   border-radius: 12rpx;
   padding: 30rpx;
@@ -36,115 +40,141 @@
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
-  margin-bottom: 20rpx;
-  padding-bottom: 15rpx;
-  border-bottom: 1rpx solid #eee;
+  margin-bottom: 30rpx;
+  border-left: 8rpx solid #07c160;
+  padding-left: 20rpx;
 }
 
 .form-item {
   margin-bottom: 30rpx;
 }
 
-.label {
-  display: block;
+.form-label {
   font-size: 28rpx;
   color: #333;
   margin-bottom: 15rpx;
+  display: flex;
+  align-items: center;
 }
 
-.required::before {
-  content: '*';
-  color: #ff4d4f;
-  margin-right: 5rpx;
+.required {
+  color: #e64340;
+  margin-left: 8rpx;
 }
 
-.input-container {
-  position: relative;
-}
-
-.input {
+.form-input {
   width: 100%;
   height: 80rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
   padding: 0 20rpx;
-  border: 1rpx solid #ddd;
-  border-radius: 8rpx;
   box-sizing: border-box;
   font-size: 28rpx;
-  background-color: #f9f9f9;
-}
-
-.textarea {
-  width: 100%;
-  height: 200rpx;
-  padding: 20rpx;
-  border: 1rpx solid #ddd;
-  border-radius: 8rpx;
-  box-sizing: border-box;
-  font-size: 28rpx;
-  background-color: #f9f9f9;
-}
-
-.textarea-counter {
-  position: absolute;
-  right: 10rpx;
-  bottom: -40rpx;
-  font-size: 24rpx;
-  color: #999;
+  background-color: #fafafa;
 }
 
 .error-text {
   font-size: 24rpx;
-  color: #ff4d4f;
+  color: #e64340;
   margin-top: 10rpx;
 }
 
-.location-input {
-  display: flex;
-  align-items: center;
-}
-
-.location-input .input {
-  flex: 1;
-}
-
-.location-btn {
-  width: 150rpx;
-  height: 80rpx;
-  line-height: 80rpx;
-  margin-left: 20rpx;
-  padding: 0;
-  font-size: 28rpx;
-  background-color: #3cc51f;
-  color: #fff;
-  border-radius: 8rpx;
-}
-
-.date-picker {
+/* 选择器样式 */
+.picker-text {
   width: 100%;
   height: 80rpx;
-  line-height: 80rpx;
-  padding: 0 20rpx;
   border: 1rpx solid #ddd;
   border-radius: 8rpx;
+  padding: 0 20rpx;
   box-sizing: border-box;
   font-size: 28rpx;
-  background-color: #f9f9f9;
+  background-color: #fafafa;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-}
-
-.picker-arrow {
-  color: #999;
-  transform: rotate(90deg);
-  display: inline-block;
 }
 
 .placeholder {
   color: #999;
 }
 
-.tag-input-container {
+/* 文本区域样式 */
+.textarea-container {
+  position: relative;
+  width: 100%;
+}
+
+.form-textarea {
+  width: 100%;
+  height: 200rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 8rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+  font-size: 28rpx;
+  background-color: #fafafa;
+}
+
+.textarea-counter {
+  position: absolute;
+  bottom: 10rpx;
+  right: 20rpx;
+  font-size: 24rpx;
+  color: #999;
+}
+
+.textarea-counter.error {
+  color: #e64340;
+}
+
+/* 地点选择样式 */
+.location-input-group {
+  display: flex;
+  align-items: center;
+}
+
+.location-input {
+  flex: 1;
+  margin-right: 20rpx;
+}
+
+.location-btn {
+  width: 180rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0;
+  font-size: 28rpx;
+  background-color: #07c160;
+  color: #fff;
+}
+
+.address-text {
+  font-size: 24rpx;
+  color: #666;
+  margin-top: 10rpx;
+  padding: 0 20rpx;
+}
+
+/* 时间选择样式 */
+.time-item {
+  position: relative;
+}
+
+.time-picker {
+  width: 100%;
+}
+
+/* 滑块样式 */
+.slider-item {
+  margin-bottom: 40rpx;
+}
+
+.slider-container {
+  padding: 0 20rpx;
+  margin-top: 20rpx;
+}
+
+/* 标签样式 */
+.tag-input-group {
   display: flex;
   align-items: center;
   margin-bottom: 20rpx;
@@ -152,53 +182,80 @@
 
 .tag-input {
   flex: 1;
+  margin-right: 20rpx;
 }
 
-.tag-add-btn {
+.tag-btn {
   width: 120rpx;
   height: 80rpx;
   line-height: 80rpx;
-  margin-left: 20rpx;
   padding: 0;
   font-size: 28rpx;
-  background-color: #3cc51f;
+  background-color: #07c160;
   color: #fff;
-  border-radius: 8rpx;
 }
 
 .tags-container {
   display: flex;
   flex-wrap: wrap;
+  margin-bottom: 20rpx;
 }
 
 .tag-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 0 20rpx;
-  height: 60rpx;
-  background-color: #eaf8e9;
-  color: #3cc51f;
-  border-radius: 30rpx;
+  background-color: #e6f7f1;
+  padding: 10rpx 20rpx;
+  border-radius: 40rpx;
   margin-right: 20rpx;
   margin-bottom: 20rpx;
+}
+
+.tag-text {
   font-size: 26rpx;
+  color: #07c160;
+  margin-right: 10rpx;
 }
 
 .tag-remove {
-  margin-left: 10rpx;
   font-size: 28rpx;
+  color: #07c160;
   font-weight: bold;
 }
 
-.image-picker-container {
+/* 图片上传样式 */
+.cover-upload-container {
   margin-bottom: 20rpx;
 }
 
-.cover-image-container {
+.cover-upload-box {
+  width: 100%;
+  height: 320rpx;
+  border: 2rpx dashed #ddd;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #fafafa;
+}
+
+.upload-icon {
+  font-size: 60rpx;
+  color: #ccc;
+  margin-bottom: 20rpx;
+}
+
+.upload-text {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.cover-preview {
   position: relative;
-  width: 300rpx;
-  height: 200rpx;
-  border-radius: 8rpx;
+  width: 100%;
+  height: 320rpx;
+  border-radius: 12rpx;
   overflow: hidden;
 }
 
@@ -207,56 +264,48 @@
   height: 100%;
 }
 
-.image-picker {
+.image-remove {
+  position: absolute;
+  top: 10rpx;
+  right: 10rpx;
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  font-size: 32rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.image-upload-box {
   width: 200rpx;
   height: 200rpx;
-  border: 1rpx dashed #ddd;
+  border: 2rpx dashed #ddd;
   border-radius: 8rpx;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  box-sizing: border-box;
-}
-
-.image-picker-icon {
-  font-size: 50rpx;
-  color: #999;
-  margin-bottom: 10rpx;
-}
-
-.image-picker-text {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.image-remove {
-  position: absolute;
-  top: 5rpx;
-  right: 5rpx;
-  width: 40rpx;
-  height: 40rpx;
-  line-height: 40rpx;
-  text-align: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border-radius: 50%;
-  font-size: 28rpx;
-}
-
-.image-list {
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.image-item {
-  position: relative;
-  width: 160rpx;
-  height: 160rpx;
+  background-color: #fafafa;
   margin-right: 20rpx;
   margin-bottom: 20rpx;
+}
+
+.image-preview {
+  position: relative;
+  width: 200rpx;
+  height: 200rpx;
   border-radius: 8rpx;
   overflow: hidden;
+  margin-right: 20rpx;
+  margin-bottom: 20rpx;
 }
 
 .activity-image {
@@ -264,57 +313,79 @@
   height: 100%;
 }
 
-.image-tip {
-  font-size: 24rpx;
-  color: #999;
+/* 开关设置项样式 */
+.switch-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0;
 }
 
-.submit-container {
-  margin-top: 40rpx;
-  padding-bottom: 40rpx;
+.switch-label {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 表单操作按钮 */
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 0 60rpx 0;
+}
+
+.cancel-btn {
+  width: 45%;
+  height: 90rpx;
+  line-height: 90rpx;
+  background-color: #f8f8f8;
+  color: #333;
+  border: 1rpx solid #ddd;
+  font-size: 32rpx;
 }
 
 .submit-btn {
-  width: 100%;
+  width: 45%;
   height: 90rpx;
   line-height: 90rpx;
-  background-color: #3cc51f;
+  background-color: #07c160;
   color: #fff;
   font-size: 32rpx;
-  border-radius: 45rpx;
 }
 
-/* 日期选择器弹窗样式 */
-.date-picker-modal {
+.submit-btn.disabled {
+  background-color: #a5e1c0;
+}
+
+/* 时间选择器弹窗样式 */
+.picker-modal {
   position: fixed;
-  top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
   z-index: 999;
 }
 
-.date-picker-mask {
+.picker-mask {
   position: absolute;
-  top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
-.date-picker-content {
+.picker-content {
   position: absolute;
-  bottom: 0;
   left: 0;
-  right: 0;
+  bottom: 0;
+  width: 100%;
   background-color: #fff;
-  border-top-left-radius: 20rpx;
-  border-top-right-radius: 20rpx;
+  border-radius: 24rpx 24rpx 0 0;
   overflow: hidden;
 }
 
-.date-picker-header {
+.picker-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -322,48 +393,44 @@
   border-bottom: 1rpx solid #eee;
 }
 
-.date-picker-title {
+.picker-title {
   font-size: 32rpx;
   font-weight: bold;
   color: #333;
 }
 
-.date-picker-close {
+.picker-close {
   font-size: 40rpx;
   color: #999;
 }
 
-.picker-view {
+.time-picker-view {
   width: 100%;
   height: 400rpx;
 }
 
-.date-picker-footer {
+.picker-actions {
   display: flex;
-  padding: 20rpx;
+  justify-content: space-between;
+  padding: 20rpx 30rpx;
   border-top: 1rpx solid #eee;
 }
 
-.date-picker-footer button {
-  flex: 1;
+.picker-cancel, 
+.picker-confirm {
+  width: 45%;
   height: 80rpx;
   line-height: 80rpx;
-  margin: 0 10rpx;
-  border-radius: 8rpx;
+  font-size: 30rpx;
 }
 
-.cancel-btn {
-  background-color: #f7f7f7;
+.picker-cancel {
+  background-color: #f8f8f8;
   color: #333;
+  border: 1rpx solid #ddd;
 }
 
-.confirm-btn {
-  background-color: #3cc51f;
+.picker-confirm {
+  background-color: #07c160;
   color: #fff;
-}
-
-.switch-text {
-  margin-left: 20rpx;
-  font-size: 28rpx;
-  color: #666;
 }
