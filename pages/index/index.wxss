@@ -1,233 +1,71 @@
-/**
- * 小红书风格首页样式 - 图片展示优化版 - 蓝色主题 - 适老化设计
- */
-
-/* 读者艺术小程序首页 index.wxss */
-
-/* 全局样式设置 */
-page {
-  background-color: #f5f5f5;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+/* pages/index/index.wxss */
+.container {
+  padding-bottom: 120rpx;
 }
 
-.reader-art-container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  padding-bottom: calc(120rpx + constant(safe-area-inset-bottom)); /* iOS 11.2及以下 */
-  padding-bottom: calc(120rpx + env(safe-area-inset-bottom)); /* iOS 11.2以上 */
-}
-
-/* 顶部用户信息区 */
-.user-info-area {
-  width: 100%;
-  height: 80rpx;
-  padding: 0 40rpx;
-  box-sizing: border-box;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.user-info {
+/* 搜索栏样式 */
+.search-bar {
   display: flex;
   align-items: center;
+  padding: 20rpx 30rpx;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.avatar {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  background-color: #e6e6e6;
-}
-
-.user-text {
-  margin-left: 16rpx;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.welcome-text {
-  font-size: 20rpx;
-  font-weight: 600;
-  color: #333333;
-}
-
-.profile-link {
-  font-size: 16rpx;
-  color: #808080;
-  margin-top: 4rpx;
-}
-
-.message-btn {
-  display: flex;
-  align-items: center;
-  background-color: #f2f2f7;
-  border-radius: 18rpx;
-  padding: 6rpx 20rpx;
-  position: relative;
-}
-
-.message-btn text {
-  font-size: 18rpx;
-  font-weight: 500;
-  color: #333333;
-}
-
-.message-dot {
-  width: 8rpx;
-  height: 8rpx;
-  border-radius: 50%;
-  background-color: #ff3333;
-  position: absolute;
-  top: 6rpx;
-  right: 6rpx;
-}
-
-/* 顶部banner背景区 */
-.banner-bg {
-  width: 100%;
-  padding: 20rpx 0;
-  background-color: #f8f8f8;
-  position: relative;
-}
-
-.banner-swiper {
-  width: 100%;
-  height: 340rpx;
-}
-
-.banner-item {
-  width: 92%;
-  height: 100%;
-  margin: 0 auto;
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
-  display: flex;
-  overflow: hidden;
-}
-
-.banner-info {
+.search-input-wrapper {
   flex: 1;
-  padding: 40rpx 30rpx;
+  height: 72rpx;
+  background-color: #f5f5f5;
+  border-radius: 36rpx;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
+  padding: 0 20rpx;
 }
 
-.banner-category {
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 20rpx;
-  font-weight: 500;
+.search-icon {
+  margin-right: 10rpx;
 }
 
-.banner-title {
-  font-size: 32rpx;
-  font-weight: bold;
-  color: #ffffff;
-  margin-bottom: 20rpx;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.banner-price {
+.search-placeholder {
+  color: #999;
   font-size: 28rpx;
-  color: rgba(255, 255, 255, 0.95);
-  font-weight: bold;
 }
 
-/* 右侧图片容器 */
-.banner-image-container {
-  width: 50%;
-  height: 100%;
+.location {
   display: flex;
-  flex-direction: column;
-  padding: 28rpx 28rpx 28rpx 0;
-  box-sizing: border-box;
+  align-items: center;
+  margin-left: 20rpx;
 }
 
-.banner-image-wrapper {
+.location-text {
+  max-width: 160rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.location-icon {
+  margin-left: 6rpx;
+  font-size: 32rpx;
+}
+
+/* 轮播图样式 */
+.banner {
   width: 100%;
-  height: 85%;
-  overflow: hidden;
-  border-radius: 12rpx;
-  position: relative;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.15);
+  height: 300rpx;
 }
 
 .banner-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  aspect-ratio: 16/9;
-  transform: scale(1.02); /* 轻微放大以避免边缘可能出现的白线 */
 }
 
-/* 图片下方滑块样式 */
-.banner-image-slider {
-  width: 100%;
-  height: 15%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.slider-dot {
-  width: 12rpx;
-  height: 12rpx;
-  background-color: rgba(255, 255, 255, 0.4);
-  border-radius: 50%;
-  margin: 0 8rpx;
-  transition: all 0.3s;
-}
-
-.slider-dot.active {
-  width: 28rpx;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 6rpx;
-}
-
-/* 导航栏样式 */
-.nav-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 30rpx 40rpx 20rpx;
-  background-color: #ffffff;
-}
-
-.nav-item {
-  text-align: center;
-  padding: 10rpx 20rpx;
-  border-radius: 30rpx;
-  background-color: #f2f2f7;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-}
-
-.nav-item text {
-  font-size: 24rpx;
-  font-weight: 500;
-  color: #333333;
-}
-
-/* 分隔线样式 */
-.divider {
-  height: 16rpx;
-  background-color: #f5f5f5;
-}
-
-/* 区块标题样式 */
-.section {
-  margin: 20rpx 0;
-  padding: 20rpx;
-  background-color: #ffffff;
+/* 活动类型样式 */
+.category-section {
+  padding: 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
 }
 
 .section-header {
@@ -239,208 +77,149 @@ page {
 
 .section-title {
   font-size: 32rpx;
-  font-weight: bold;
-  color: #333333;
+  font-weight: 500;
+  color: #333;
 }
 
-.view-more {
+.section-more {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.category-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.category-icon {
+  width: 80rpx;
+  height: 80rpx;
+  margin-bottom: 10rpx;
+}
+
+.category-name {
   font-size: 24rpx;
-  color: #3B82F6;
+  color: #333;
 }
 
 /* 活动列表样式 */
+.activity-section {
+  padding: 30rpx;
+  background-color: #fff;
+  margin-bottom: 20rpx;
+}
+
 .activity-list {
   display: flex;
-  white-space: nowrap;
-  width: 100%;
+  flex-direction: column;
 }
 
-/* 活动卡片样式 */
-.activity-card {
-  width: 300rpx;
-  height: 380rpx;
-  background-color: #ffffff;
-  border-radius: 12rpx;
+.activity-item {
+  display: flex;
+  margin-bottom: 30rpx;
+  padding-bottom: 30rpx;
+  border-bottom: 1rpx solid #eee;
+}
+
+.activity-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.activity-image {
+  width: 200rpx;
+  height: 150rpx;
+  border-radius: 8rpx;
   margin-right: 20rpx;
-  overflow: hidden;
+}
+
+.activity-info {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-
-.activity-card:active {
-  transform: scale(0.98);
-}
-
-.activity-cover {
-  width: 100%;
-  height: 280rpx;
-  position: relative;
-  overflow: hidden;
-}
-
-.activity-cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: all 0.3s ease;
-}
-
-.activity-card:hover .activity-cover-image {
-  transform: scale(1.05);
-}
-
-.activity-info-overlay {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 20rpx;
-  box-sizing: border-box;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+  justify-content: space-between;
 }
 
 .activity-title {
-  font-size: 24rpx;
-  font-weight: bold;
-  color: #ffffff;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-}
-
-.enrollment-info {
-  display: flex;
-  align-items: center;
-  margin-top: 8rpx;
-}
-
-.enrolled-text {
-  font-size: 20rpx;
-  color: rgba(255,255,255,0.8);
-}
-
-.enrolled-count {
-  font-size: 20rpx;
-  color: #ffffff;
+  font-size: 30rpx;
   font-weight: 500;
-  margin-left: 8rpx;
+  color: #333;
+  margin-bottom: 10rpx;
 }
 
-.activity-bottom {
-  padding: 16rpx;
+.activity-meta {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10rpx;
+}
+
+.activity-time {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 6rpx;
+}
+
+.activity-location {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.activity-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.organizer {
-  font-size: 22rpx;
-  color: #333333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 180rpx;
+.activity-participants {
+  font-size: 24rpx;
+  color: #999;
 }
 
-.tag {
-  font-size: 18rpx;
+.activity-status {
+  font-size: 24rpx;
+  color: #999;
   padding: 4rpx 12rpx;
-  border-radius: 10rpx;
-  color: #ffffff;
+  border-radius: 4rpx;
+  background-color: #f5f5f5;
 }
 
-.hot-tag {
-  background-color: #ff3b30;
+.status-active {
+  color: #3cc51f;
+  background-color: rgba(60, 197, 31, 0.1);
 }
 
-.recommend-tag {
-  background-color: #3B82F6;
-}
-
-.new-tag {
-  background-color: #34c759;
-}
-
-/* 底部Tab栏样式 */
-.tab-bar {
+/* 创建活动按钮 */
+.create-activity {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100rpx;
-  background-color: #ffffff;
-  display: flex;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.05);
-  padding-bottom: constant(safe-area-inset-bottom); /* iOS 11.2及以下 */
-  padding-bottom: env(safe-area-inset-bottom); /* iOS 11.2以上 */
-}
-
-.tab-item {
-  flex: 1;
+  right: 30rpx;
+  bottom: 160rpx;
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background-color: #3cc51f;
+  color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  position: relative;
+  box-shadow: 0 4rpx 20rpx rgba(60, 197, 31, 0.3);
+  z-index: 100;
 }
 
-.tab-item text {
-  font-size: 22rpx;
-  color: #999999;
-  margin-top: 6rpx;
+.create-icon {
+  font-size: 48rpx;
+  margin-bottom: -10rpx;
 }
 
-.tab-active text {
-  color: #3B82F6;
-  font-weight: 500;
-}
-
-.active-indicator {
-  width: 40rpx;
-  height: 6rpx;
-  background-color: #3B82F6;
-  border-radius: 3rpx;
-  position: absolute;
-  bottom: 12rpx;
-}
-
-.tab-center {
-  position: relative;
-}
-
-.plus-btn {
-  width: 80rpx;
-  height: 80rpx;
-  background-color: #3B82F6;
-  border-radius: 50%;
-  margin-top: -30rpx;
-  position: relative;
-  box-shadow: 0 4rpx 10rpx rgba(59, 130, 246, 0.3);
-}
-
-.plus-btn::before,
-.plus-btn::after {
-  content: '';
-  position: absolute;
-  background-color: #ffffff;
-}
-
-.plus-btn::before {
-  width: 4rpx;
-  height: 36rpx;
-  top: 22rpx;
-  left: 38rpx;
-}
-
-.plus-btn::after {
-  width: 36rpx;
-  height: 4rpx;
-  top: 38rpx;
-  left: 22rpx;
+.create-text {
+  font-size: 20rpx;
 }
