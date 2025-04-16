@@ -1,1 +1,6 @@
-{\n  \"navigationBarTitleText\": \"好聚乐龄\",\n  \"enablePullDownRefresh\": true,\n  \"backgroundTextStyle\": \"dark\",\n  \"usingComponents\": {}\n}
+{
+  "usingComponents": {},
+  "navigationStyle": "custom",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}
