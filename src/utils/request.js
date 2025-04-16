@@ -1,439 +1,358 @@
 /**
- * 网络请求工具类
- * 封装微信小程序网络请求API，提供更方便的使用方式
- * 支持请求拦截、响应拦截、统一错误处理等功能
+ * 微信小程序网络请求封装
+ * 统一处理请求、响应拦截和错误处理
  */
 
 import config from '../config/index';
-import storage from './storage';
 
-// 请求队列，用于处理重复请求
-const pendingRequests = new Map();
-
-// 生成请求唯一标识
-const generateRequestKey = (config) => {
-  const { url, method, data } = config;
-  return `${method}-${url}-${JSON.stringify(data)}`;
-};
-
-// 取消重复请求
-const removePendingRequest = (key) => {
-  if (pendingRequests.has(key)) {
-    const controller = pendingRequests.get(key);
-    controller.abort(); // 取消请求
-    pendingRequests.delete(key);
+/**
+ * 请求配置
+ */
+const DEFAULT_OPTIONS = {
+  // 是否显示loading
+  showLoading: false,
+  // loading提示文本
+  loadingText: '加载中...',
+  // 是否显示错误提示
+  showError: true,
+  // 请求超时时间
+  timeout: config.request.timeout,
+  // 自定义请求头
+  header: {
+    'content-type': 'application/json'
   }
 };
+
+/**
+ * 请求计数器，用于处理并发请求的loading显示
+ */
+let requestCount = 0;
+
+/**
+ * 显示loading
+ * @param {string} title loading标题
+ */
+function showLoading(title) {
+  if (requestCount === 0) {
+    wx.showLoading({
+      title,
+      mask: true
+    });
+  }
+  requestCount++;
+}
+
+/**
+ * 隐藏loading
+ */
+function hideLoading() {
+  requestCount--;
+  if (requestCount === 0) {
+    wx.hideLoading();
+  }
+}
+
+/**
+ * 显示错误提示
+ * @param {string} msg 错误信息
+ */
+function showErrorToast(msg) {
+  wx.showToast({
+    title: msg || '请求失败',
+    icon: 'none',
+    duration: 2000
+  });
+}
+
+/**
+ * 获取完整请求URL
+ * @param {string} url 请求地址
+ * @returns {string} 完整请求地址
+ */
+function getFullUrl(url) {
+  if (url.startsWith('http')) {
+    return url;
+  }
+  return `${config.request.baseUrl}${url}`;
+}
 
 /**
  * 请求拦截器
- * @param {object} requestConfig - 请求配置
- * @returns {object} 处理后的请求配置
+ * @param {Object} options 请求配置
+ * @returns {Object} 处理后的请求配置
  */
-const requestInterceptor = (requestConfig) => {
-  // 添加公共请求头
-  requestConfig.header = {
-    ...requestConfig.header,
-    'Content-Type': 'application/json',
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-Client-Version': config.VERSION,
-    'X-Client-Platform': 'MiniProgram'
-  };
+function requestInterceptor(options) {
+  // 获取本地存储的token
+  const token = wx.getStorageSync(config.storage.token);
   
   // 添加token到请求头
-  const token = storage.token.get();
   if (token) {
-    requestConfig.header.Authorization = `Bearer ${token}`;
+    options.header = {
+      ...options.header,
+      'Authorization': `Bearer ${token}`
+    };
   }
   
-  // 处理请求超时
-  if (!requestConfig.timeout) {
-    requestConfig.timeout = config.REQUEST.TIMEOUT;
-  }
+  // 添加其他公共参数
+  options.header = {
+    ...options.header,
+    'X-Client-Version': config.version,
+    'X-Client-Platform': 'WeChat-MiniProgram'
+  };
   
-  // 创建取消请求的控制器
-  if (requestConfig.cancelDuplicated !== false) {
-    const requestKey = generateRequestKey(requestConfig);
-    removePendingRequest(requestKey);
-    
-    const controller = new AbortController();
-    requestConfig.signal = controller.signal;
-    pendingRequests.set(requestKey, controller);
-  }
-  
-  return requestConfig;
-};
+  return options;
+}
 
 /**
  * 响应拦截器
- * @param {object} response - 响应对象
- * @param {object} requestConfig - 请求配置
- * @returns {object|Promise} 处理后的响应数据或错误对象
+ * @param {Object} response 响应结果
+ * @param {Object} options 请求配置
+ * @returns {Promise} 处理后的响应结果
  */
-const responseInterceptor = (response, requestConfig) => {
-  // 从请求队列中移除已完成的请求
-  if (requestConfig.cancelDuplicated !== false) {
-    const requestKey = generateRequestKey(requestConfig);
-    pendingRequests.delete(requestKey);
-  }
+function responseInterceptor(response, options) {
+  const { statusCode, data } = response;
   
   // 请求成功
-  if (response.statusCode >= 200 && response.statusCode < 300) {
-    return response.data;
-  }
-  
-  // 处理不同错误状态码
-  const error = {
-    code: response.statusCode,
-    message: response.data?.message || '请求失败，请稍后再试',
-    data: response.data
-  };
-  
-  // 处理特定状态码
-  switch (response.statusCode) {
-    case 401:
-      // 未授权，清除本地token
-      storage.token.remove();
+  if (statusCode >= 200 && statusCode < 300) {
+    // 业务状态处理
+    if (data.code === 0 || data.code === 200) {
+      return Promise.resolve(data.data);
+    }
+    
+    // 登录失效/未登录
+    if (data.code === 401) {
+      // 清空登录信息
+      wx.removeStorageSync(config.storage.token);
+      wx.removeStorageSync(config.storage.userInfo);
+      
       // 跳转到登录页
-      if (config.REQUEST.AUTO_REDIRECT_LOGIN) {
-        wx.navigateTo({ url: '/pages/login/index' });
-      }
-      error.message = '登录已过期，请重新登录';
-      break;
-    case 403:
-      error.message = '没有权限访问该资源';
-      break;
-    case 404:
-      error.message = '请求的资源不存在';
-      break;
-    case 500:
-      error.message = '服务器错误，请稍后再试';
-      break;
+      wx.navigateTo({
+        url: config.pages.login
+      });
+      
+      return Promise.reject(data);
+    }
+    
+    // 其他业务错误
+    if (options.showError) {
+      showErrorToast(data.message || '操作失败');
+    }
+    return Promise.reject(data);
   }
   
-  // 是否显示错误提示
-  if (requestConfig.showError !== false) {
-    wx.showToast({
-      title: error.message,
-      icon: 'none',
-      duration: 2000
-    });
+  // 请求失败
+  if (options.showError) {
+    if (statusCode === 404) {
+      showErrorToast('请求的资源不存在');
+    } else if (statusCode === 500) {
+      showErrorToast('服务器内部错误');
+    } else if (statusCode === 502) {
+      showErrorToast('服务暂时不可用');
+    } else if (statusCode === 503) {
+      showErrorToast('服务器正在维护');
+    } else {
+      showErrorToast('网络请求失败');
+    }
+  }
+  
+  return Promise.reject(response);
+}
+
+/**
+ * 请求错误处理
+ * @param {Object} error 错误信息
+ * @param {Object} options 请求配置
+ * @returns {Promise} 错误结果
+ */
+function errorHandler(error, options) {
+  if (options.showError) {
+    if (error.errMsg) {
+      if (error.errMsg.includes('timeout')) {
+        showErrorToast('请求超时');
+      } else if (error.errMsg.includes('fail')) {
+        showErrorToast('网络连接失败');
+      } else {
+        showErrorToast(error.errMsg);
+      }
+    } else {
+      showErrorToast('请求失败');
+    }
   }
   
   return Promise.reject(error);
-};
+}
 
 /**
- * 发送请求的核心方法
- * @param {object} options - 请求配置
- * @returns {Promise} 请求结果
+ * 发起网络请求
+ * @param {string} method 请求方法
+ * @param {string} url 请求地址
+ * @param {Object} data 请求数据
+ * @param {Object} options 请求配置
+ * @returns {Promise} 返回Promise对象
  */
-const request = (options) => {
-  // 合并默认配置和用户配置
-  const requestConfig = {
-    url: '',
-    method: 'GET',
-    data: {},
-    header: {},
-    dataType: 'json',
-    responseType: 'text',
-    showError: true,
-    cancelDuplicated: true,
+function request(method, url, data = {}, options = {}) {
+  // 合并请求配置
+  const mergedOptions = {
+    ...DEFAULT_OPTIONS,
     ...options
   };
   
-  // 处理基础URL
-  if (!requestConfig.url.startsWith('http')) {
-    requestConfig.url = `${config.API.BASE_URL}${requestConfig.url}`;
+  // 显示loading
+  if (mergedOptions.showLoading) {
+    showLoading(mergedOptions.loadingText);
   }
   
-  // 应用请求拦截器
-  const processedConfig = requestInterceptor(requestConfig);
+  // 执行请求拦截
+  const interceptedOptions = requestInterceptor(mergedOptions);
   
-  // 返回Promise
   return new Promise((resolve, reject) => {
     wx.request({
-      ...processedConfig,
+      url: getFullUrl(url),
+      method,
+      data,
+      header: interceptedOptions.header,
+      timeout: interceptedOptions.timeout,
       success: (res) => {
-        try {
-          const result = responseInterceptor(res, processedConfig);
-          // 如果是Promise.reject，会被catch捕获
-          if (result instanceof Promise) {
-            result.catch(reject);
-          } else {
-            resolve(result);
-          }
-        } catch (error) {
-          reject(error);
-        }
+        // 响应拦截
+        responseInterceptor(res, interceptedOptions)
+          .then(resolve)
+          .catch(reject);
       },
       fail: (err) => {
-        // 处理请求失败（网络错误等）
-        const errorMsg = err.errMsg || '网络异常，请检查网络设置';
-        
-        // 判断是否为取消请求
-        if (errorMsg.includes('abort')) {
-          reject({ code: -1, message: '请求已取消' });
-          return;
-        }
-        
-        // 显示错误提示
-        if (requestConfig.showError !== false) {
-          wx.showToast({
-            title: '网络异常，请检查网络设置',
-            icon: 'none',
-            duration: 2000
-          });
-        }
-        
-        reject({
-          code: -1,
-          message: errorMsg,
-          data: err
-        });
+        // 错误处理
+        errorHandler(err, interceptedOptions)
+          .then(resolve)
+          .catch(reject);
       },
       complete: () => {
-        // 请求完成时的处理
+        // 隐藏loading
+        if (interceptedOptions.showLoading) {
+          hideLoading();
+        }
       }
     });
   });
-};
-
-/**
- * GET请求
- * @param {string} url - 请求地址
- * @param {object} [data] - 请求参数
- * @param {object} [options] - 其他配置
- * @returns {Promise} 请求结果
- */
-const get = (url, data = {}, options = {}) => {
-  return request({
-    url,
-    method: 'GET',
-    data,
-    ...options
-  });
-};
-
-/**
- * POST请求
- * @param {string} url - 请求地址
- * @param {object} [data] - 请求数据
- * @param {object} [options] - 其他配置
- * @returns {Promise} 请求结果
- */
-const post = (url, data = {}, options = {}) => {
-  return request({
-    url,
-    method: 'POST',
-    data,
-    ...options
-  });
-};
-
-/**
- * PUT请求
- * @param {string} url - 请求地址
- * @param {object} [data] - 请求数据
- * @param {object} [options] - 其他配置
- * @returns {Promise} 请求结果
- */
-const put = (url, data = {}, options = {}) => {
-  return request({
-    url,
-    method: 'PUT',
-    data,
-    ...options
-  });
-};
-
-/**
- * DELETE请求
- * @param {string} url - 请求地址
- * @param {object} [data] - 请求数据
- * @param {object} [options] - 其他配置
- * @returns {Promise} 请求结果
- */
-const del = (url, data = {}, options = {}) => {
-  return request({
-    url,
-    method: 'DELETE',
-    data,
-    ...options
-  });
-};
+}
 
 /**
  * 上传文件
- * @param {string} url - 请求地址
- * @param {string} filePath - 本地文件路径
- * @param {string} [name='file'] - 文件对应的key
- * @param {object} [formData] - 其他表单数据
- * @param {object} [options] - 其他配置
- * @returns {Promise} 上传结果
+ * @param {string} url 上传地址
+ * @param {Object} data 上传参数
+ * @param {Object} options 请求配置
+ * @returns {Promise} 返回Promise对象
  */
-const uploadFile = (url, filePath, name = 'file', formData = {}, options = {}) => {
-  // 处理基础URL
-  if (!url.startsWith('http')) {
-    url = `${config.API.BASE_URL}${url}`;
-  }
-  
-  // 获取token
-  const token = storage.token.get();
-  const header = {
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-Client-Version': config.VERSION,
-    'X-Client-Platform': 'MiniProgram'
+function uploadFile(url, data = {}, options = {}) {
+  // 合并请求配置
+  const mergedOptions = {
+    ...DEFAULT_OPTIONS,
+    ...options
   };
   
-  if (token) {
-    header.Authorization = `Bearer ${token}`;
+  // 显示loading
+  if (mergedOptions.showLoading) {
+    showLoading(mergedOptions.loadingText || '上传中...');
   }
+  
+  // 执行请求拦截
+  const interceptedOptions = requestInterceptor(mergedOptions);
   
   return new Promise((resolve, reject) => {
     const uploadTask = wx.uploadFile({
-      url,
-      filePath,
-      name,
-      formData,
-      header,
+      url: getFullUrl(url),
+      filePath: data.filePath,
+      name: data.name || 'file',
+      formData: data.formData || {},
+      header: interceptedOptions.header,
+      timeout: interceptedOptions.timeout,
       success: (res) => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          // 上传成功
-          let data = res.data;
+        // 将返回的JSON字符串转为对象
+        if (typeof res.data === 'string') {
           try {
-            // 尝试解析JSON
-            if (typeof data === 'string') {
-              data = JSON.parse(data);
-            }
-            resolve(data);
-          } catch (error) {
-            resolve(data);
+            res.data = JSON.parse(res.data);
+          } catch (e) {
+            // 解析失败
           }
-        } else {
-          // 上传失败
-          const error = {
-            code: res.statusCode,
-            message: '文件上传失败',
-            data: res.data
-          };
-          
-          if (options.showError !== false) {
-            wx.showToast({
-              title: error.message,
-              icon: 'none',
-              duration: 2000
-            });
-          }
-          
-          reject(error);
         }
+        
+        // 响应拦截
+        responseInterceptor(res, interceptedOptions)
+          .then(resolve)
+          .catch(reject);
       },
       fail: (err) => {
-        const error = {
-          code: -1,
-          message: '文件上传失败',
-          data: err
-        };
-        
-        if (options.showError !== false) {
-          wx.showToast({
-            title: error.message,
-            icon: 'none',
-            duration: 2000
-          });
+        // 错误处理
+        errorHandler(err, interceptedOptions)
+          .then(resolve)
+          .catch(reject);
+      },
+      complete: () => {
+        // 隐藏loading
+        if (interceptedOptions.showLoading) {
+          hideLoading();
         }
-        
-        reject(error);
       }
     });
     
-    // 上传进度监听
-    if (options.onProgress) {
-      uploadTask.onProgressUpdate(options.onProgress);
-    }
-    
-    // 返回上传任务，方便外部控制取消
-    if (options.getTask) {
-      options.getTask(uploadTask);
+    // 监听上传进度
+    if (typeof data.onProgress === 'function') {
+      uploadTask.onProgressUpdate((res) => {
+        data.onProgress(res);
+      });
     }
   });
-};
+}
 
-/**
- * 下载文件
- * @param {string} url - 文件地址
- * @param {object} [options] - 其他配置
- * @returns {Promise} 下载结果
- */
-const downloadFile = (url, options = {}) => {
-  // 处理基础URL
-  if (!url.startsWith('http')) {
-    url = `${config.API.BASE_URL}${url}`;
-  }
-  
-  return new Promise((resolve, reject) => {
-    const downloadTask = wx.downloadFile({
-      url,
-      ...options,
-      success: (res) => {
-        if (res.statusCode >= 200 && res.statusCode < 300) {
-          resolve(res);
-        } else {
-          const error = {
-            code: res.statusCode,
-            message: '文件下载失败',
-            data: res
-          };
-          
-          if (options.showError !== false) {
-            wx.showToast({
-              title: error.message,
-              icon: 'none',
-              duration: 2000
-            });
-          }
-          
-          reject(error);
-        }
-      },
-      fail: (err) => {
-        const error = {
-          code: -1,
-          message: '文件下载失败',
-          data: err
-        };
-        
-        if (options.showError !== false) {
-          wx.showToast({
-            title: error.message,
-            icon: 'none',
-            duration: 2000
-          });
-        }
-        
-        reject(error);
-      }
-    });
-    
-    // 下载进度监听
-    if (options.onProgress) {
-      downloadTask.onProgressUpdate(options.onProgress);
-    }
-    
-    // 返回下载任务，方便外部控制取消
-    if (options.getTask) {
-      options.getTask(downloadTask);
-    }
-  });
-};
-
+// 导出请求方法
 export default {
-  request,
-  get,
-  post,
-  put,
-  delete: del,
-  uploadFile,
-  downloadFile
+  /**
+   * GET请求
+   * @param {string} url 请求地址
+   * @param {Object} options 请求配置
+   * @returns {Promise} 返回Promise对象
+   */
+  get(url, options = {}) {
+    return request('GET', url, options.params, options);
+  },
+  
+  /**
+   * POST请求
+   * @param {string} url 请求地址
+   * @param {Object} data 请求数据
+   * @param {Object} options 请求配置
+   * @returns {Promise} 返回Promise对象
+   */
+  post(url, data = {}, options = {}) {
+    return request('POST', url, data, options);
+  },
+  
+  /**
+   * PUT请求
+   * @param {string} url 请求地址
+   * @param {Object} data 请求数据
+   * @param {Object} options 请求配置
+   * @returns {Promise} 返回Promise对象
+   */
+  put(url, data = {}, options = {}) {
+    return request('PUT', url, data, options);
+  },
+  
+  /**
+   * DELETE请求
+   * @param {string} url 请求地址
+   * @param {Object} data 请求数据
+   * @param {Object} options 请求配置
+   * @returns {Promise} 返回Promise对象
+   */
+  delete(url, data = {}, options = {}) {
+    return request('DELETE', url, data, options);
+  },
+  
+  /**
+   * 上传文件
+   * @param {string} url 上传地址
+   * @param {Object} data 上传参数
+   * @param {Object} options 请求配置
+   * @returns {Promise} 返回Promise对象
+   */
+  uploadFile
 };
